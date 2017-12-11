@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <ProjectGuid>{908F2B23-0CFE-47A5-BBD6-44A601370683}</ProjectGuid>
+    <ProjectTypeGuids>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <OutputType>Library</OutputType>
+    <RootNamespace>IOTStudio.Core</RootNamespace>
+    <AssemblyName>IOTStudio.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <NoWin32Manifest>False</NoWin32Manifest>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>Full</DebugType>
+    <Optimize>False</Optimize>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DebugSymbols>False</DebugSymbols>
+    <DebugType>None</DebugType>
+    <Optimize>True</Optimize>
+    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="log4net">
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="Microsoft.Expression.Interactions">
+      <HintPath>..\packages\System.Windows.Interactivity.WPF.2.0.20525\lib\net40\Microsoft.Expression.Interactions.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="PresentationFramework">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization.Json" />
+    <Reference Include="System.Windows" />
+    <Reference Include="System.Windows.Interactivity">
+      <HintPath>..\packages\System.Windows.Interactivity.WPF.2.0.20525\lib\net40\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock">
+      <HintPath>..\packages\Extended.WPF.Toolkit.Binaries.NET.4.x\Extended WPF Toolkit Binaries .NET 4.x\Xceed.Wpf.AvalonDock.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero">
+      <HintPath>..\packages\Extended.WPF.Toolkit.Binaries.NET.4.x\Extended WPF Toolkit Binaries .NET 4.x\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro">
+      <HintPath>..\packages\Extended.WPF.Toolkit.Binaries.NET.4.x\Extended WPF Toolkit Binaries .NET 4.x\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010">
+      <HintPath>..\packages\Extended.WPF.Toolkit.Binaries.NET.4.x\Extended WPF Toolkit Binaries .NET 4.x\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Elements\BaseElement.cs" />
+    <Compile Include="Elements\Editor\BaseProjectElement.cs" />
+    <Compile Include="Elements\Editor\BaseProjectItemElement.cs" />
+    <Compile Include="Elements\Editor\BaseWorkspaceElement.cs" />
+    <Compile Include="Elements\GUI\BaseLayoutElement.cs" />
+    <Compile Include="Elements\Interfaces\IBaseElement.cs" />
+    <Compile Include="Elements\Interfaces\IEditorElement.cs" />
+    <Compile Include="Elements\Interfaces\ILayoutElement.cs" />
+    <Compile Include="Elements\Interfaces\IProjectElement.cs" />
+    <Compile Include="Elements\Interfaces\IProjectItemElement.cs" />
+    <Compile Include="Elements\Interfaces\IWorkspaceElement.cs" />
+    <Compile Include="Models\Editor\Project.cs" />
+    <Compile Include="Models\Editor\ProjectItem.cs" />
+    <Compile Include="Models\Editor\Workspace.cs" />
+    <Compile Include="Models\Layouts\DefaultLayout.cs" />
+    <Compile Include="Models\Layouts\LayoutSelector.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Providers\Logging\Logger.cs" />
+    <Compile Include="Providers\Properties\PropertyProvider.cs" />
+    <Compile Include="Serializers\JSONSerializer.cs" />
+    <Compile Include="Serializers\NewtonsoftJSONSerializer.cs" />
+    <Compile Include="Serializers\XAMLSerializer.cs" />
+    <Compile Include="Types\EditorElementType.cs" />
+    <Compile Include="Types\LayoutElementType.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Elements" />
+    <Folder Include="Elements\Interfaces" />
+    <Folder Include="Elements\Editor" />
+    <Folder Include="Elements\GUI" />
+    <Folder Include="Models" />
+    <Folder Include="Models\Layouts" />
+    <Folder Include="Models\Editor" />
+    <Folder Include="Providers" />
+    <Folder Include="Providers\Logging" />
+    <Folder Include="Providers\Properties" />
+    <Folder Include="Serializers" />
+    <Folder Include="Types" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
