@@ -20,7 +20,7 @@ namespace IOTStudio.Core.Elements.GUI
 	/// <summary>
 	/// Description of BaseLayoutElement.
 	/// </summary>
-	public class BaseLayoutElement : DockingManager, IBaseElement, ILayoutElement
+	public class BaseLayoutElement : DependencyObject, IBaseElement, ILayoutElement
 	{
 		private BaseElement baseElement = new BaseElement();
 		
@@ -31,6 +31,11 @@ namespace IOTStudio.Core.Elements.GUI
 			set {
 				baseElement.Id = value;
 			}
+		}
+		
+		public string Name {
+			get { return baseElement.Name; }
+			set { baseElement.Name = value; }
 		}
 
 	public ObservableCollection<Behavior<UIElement>> Behaviors {

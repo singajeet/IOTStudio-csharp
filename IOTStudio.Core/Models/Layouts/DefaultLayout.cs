@@ -11,6 +11,10 @@ using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Controls;
 using IOTStudio.Core.Elements.GUI;
+using IOTStudio.Core.Providers.Properties;
+using IOTStudio.Core.Serializers;
+using Xceed.Wpf.AvalonDock;
+using Xceed.Wpf.AvalonDock.Layout.Serialization;
 
 namespace IOTStudio.Core.Models.Layouts
 {
@@ -20,10 +24,20 @@ namespace IOTStudio.Core.Models.Layouts
 	[DataContract(IsReference=true)]
 	public class DefaultLayout: BaseLayoutElement
 	{
+		//private DockingManager dockingManager = new DockingManager();
 		private RowDefinition menuRow = new RowDefinition();
 		private RowDefinition toolbarRow = new RowDefinition();
 		private RowDefinition contentRow = new RowDefinition();
 		private RowDefinition statusbarRow = new RowDefinition();
+		
+		public static readonly DependencyProperty WindowsDockingManagerProperty =
+			DependencyProperty.Register("WindowsDockingManager", typeof(DockingManager), typeof(DefaultLayout),
+			                            new FrameworkPropertyMetadata());
+		
+		public DockingManager WindowsDockingManager {
+			get { return (DockingManager)GetValue(WindowsDockingManagerProperty); }
+			set { SetValue(WindowsDockingManagerProperty, value); }
+		}
 		
 		public static readonly DependencyProperty RootProperty =
 			DependencyProperty.Register("Root", typeof(Grid), typeof(DefaultLayout),
@@ -87,11 +101,12 @@ namespace IOTStudio.Core.Models.Layouts
 
 		void AssignDefaultValues()
 		{
-			Root = new Grid();
-			MenuSection = new DockPanel();
-			ToolBarSection = new DockPanel();
-			ContentSection = new StackPanel();
-			StatusBarSection = new StackPanel();
+			WindowsDockingManager = WindowsDockingManager ?? new DockingManager();
+			Root = Root ?? new Grid();
+			MenuSection = MenuSection ?? new DockPanel();
+			ToolBarSection = ToolBarSection ?? new DockPanel();
+			ContentSection = ContentSection ?? new StackPanel();
+			StatusBarSection = StatusBarSection ?? new StackPanel();
 		}
 		void SetupLayout()
 		{
@@ -129,6 +144,30 @@ namespace IOTStudio.Core.Models.Layouts
 			
 			Root.Children.Add(StatusBarSection);
 			Grid.SetRow(StatusBarSection, 3);
+			
+			ContentSection.Children.Add(WindowsDockingManager);
+		}
+		
+		public static void SaveLayout(DefaultLayout layout)
+		{
+			string layoutSavePath = PropertyProvider.Layout.GetProperty("SelectedLayoutSavePath") as String;
+			NewtonsoftJSONSerializer.Serialize(layout, layoutSavePath + @"\DefaultLayout.json");
+			
+			XmlLayoutSerializer dockManagerSerializer = new XmlLayoutSerializer(layout.WindowsDockingManager);
+			dockManagerSerializer.Serialize(layoutSavePath + @"\DockWindows.json");
+		}
+		
+		public static DefaultLayout LoadLayout()
+		{
+			string layoutSavePath = PropertyProvider.Layout.GetProperty("SelectedLayoutSavePath") as String;
+			DefaultLayout layout = NewtonsoftJSONSerializer.Deserialize(layoutSavePath + @"\DefaultLayout.json") as DefaultLayout;
+			
+			if (layout.WindowsDockingManager == null)
+				layout.WindowsDockingManager = new DockingManager();
+			XmlLayoutSerializer dockManagerSerializer = new XmlLayoutSerializer(layout.WindowsDockingManager);
+			dockManagerSerializer.Deserialize(layoutSavePath + @"\DockWindows.json");
+			
+			return layout;
 		}
 	}
 }

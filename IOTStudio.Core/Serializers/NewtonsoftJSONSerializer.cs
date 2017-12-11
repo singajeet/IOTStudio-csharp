@@ -19,14 +19,16 @@ namespace IOTStudio.Core.Serializers
 	public static class NewtonsoftJSONSerializer
 	{
 		private static JsonSerializer serializer;
-		private static StreamWriter stream;
+		private static StreamWriter streamOut;
+		private static StreamReader streamIn;
 		private static JsonWriter jsonWriter;
+		private static JsonReader jsonReader;
 		
 		public static void Serialize(object instance, string filename)
 		{
 			serializer = new JsonSerializer();
-			stream = new StreamWriter(filename);
-			jsonWriter = new JsonTextWriter(stream);
+			streamOut = new StreamWriter(filename);
+			jsonWriter = new JsonTextWriter(streamOut);
 			
 			serializer.PreserveReferencesHandling = (PreserveReferencesHandling)Enum.Parse(typeof(PreserveReferencesHandling),
 			                                                   PropertyProvider.Serializer
@@ -37,7 +39,29 @@ namespace IOTStudio.Core.Serializers
 			
 			using (jsonWriter) {
 				serializer.Serialize(jsonWriter, instance);
+			}		
+			
+		}
+		
+		public static object Deserialize(string filename)
+		{
+			object instance = null;
+			serializer = new JsonSerializer();
+			streamIn = new StreamReader(filename);
+			jsonReader = new JsonTextReader(streamIn);
+			
+			serializer.PreserveReferencesHandling = (PreserveReferencesHandling)Enum.Parse(typeof(PreserveReferencesHandling),
+			                                                   PropertyProvider.Serializer
+			                                                   .GetProperty("PreserveReferencesHandling") as String);
+			serializer.ReferenceLoopHandling = (ReferenceLoopHandling)Enum.Parse(typeof(ReferenceLoopHandling),
+			                                                   PropertyProvider.Serializer
+			                                                   .GetProperty("ReferenceLoopHandling") as String);
+			
+			using (jsonReader) {
+				instance = serializer.Deserialize(jsonReader);
 			}
+			
+			return instance;
 		}
 	}
 }
