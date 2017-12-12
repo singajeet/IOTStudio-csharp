@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Reflection;
+using IOTStudio.Core.Providers.Logging;
 
 namespace IOTStudio.Core.Providers.Assemblies
 {
@@ -21,8 +22,11 @@ namespace IOTStudio.Core.Providers.Assemblies
 	{
 		private static IList<FileInfo> Files(string path)
 		{
+			Logger.Debug("Looking for assembly files in the following path: {0}", path);
+			
 			IList<FileInfo> files = new List<FileInfo>();
 			foreach (string file in Directory.GetFiles(path)) {
+				Logger.Debug("File {0} found in the search path", file);
 				files.Add(new FileInfo(file));
 			}
 			
@@ -31,11 +35,13 @@ namespace IOTStudio.Core.Providers.Assemblies
 		
 		public static Assembly LoadAssembly(string fileName)
 		{
+			Logger.Debug("Loading assembly from the following path: {0}", fileName);
 			return Assembly.LoadFrom(fileName);
 		}		
 		
 		public static ObservableCollection<T> GetCollectionOfObjects<T>(string path)
 		{
+			Logger.Debug("Creating object instances of type {0} from the configured path", typeof(T));
 			if (!Directory.Exists(path))
 				throw new Exception(string.Format("Invalid Path Provided => {0}", path));
 			
@@ -43,20 +49,37 @@ namespace IOTStudio.Core.Providers.Assemblies
 			
 			foreach (FileInfo fileInfo in Files(path)) {
 				
-				if (fileInfo.Extension.ToUpper().Equals("DLL") || fileInfo.Extension.ToUpper().Equals("EXE")) {
-					
+				if (fileInfo.Extension.ToUpper().Equals(".DLL") || fileInfo.Extension.ToUpper().Equals(".EXE")) {
+										
 					Assembly assembly = LoadAssembly(fileInfo.FullName);
 					if (assembly != null) {
+						Logger.Debug("Assembly loaded successfully");
+						
 						Type[] types = assembly.GetTypes();
+						Logger.Debug("{0} types found in the assembly", types.Length);
+						
 						foreach (Type type in types) {
-							if (type == typeof(T)) {
-								T instance = Activator.CreateInstance<T>();
-								collection.Add(instance);
+							Logger.Debug("Checking whether type {0} matches the required type", type.FullName);
+						
+							if (type.GetInterface(typeof(T).FullName) != null) {
+								
+								T instance = (T)Activator.CreateInstance(type);
+								if (instance != null) {
+									collection.Add(instance);
+									Logger.Debug("Type {0} matches and is added to collection", type);
+								} else {
+									Logger.Warn("Unable to create instance of type {0}", type);
+								}
+							} else {
+								Logger.Debug("Type {0} does not match with the required type and is skipped", type);
 							}
 						}
 					}
+				} else {
+					Logger.Debug("File {0} is not a valid assembely file and is skipped", fileInfo.Name);
 				}
 			}
+			Logger.Debug("Total {0} objects will be returned", collection.Count);
 			return collection;
 		}
 	}

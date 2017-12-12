@@ -11,6 +11,7 @@ using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Controls;
 using IOTStudio.Core.Elements.GUI;
+using IOTStudio.Core.Providers.Logging;
 using IOTStudio.Core.Providers.Properties;
 using IOTStudio.Core.Serializers;
 using Xceed.Wpf.AvalonDock;
@@ -95,12 +96,16 @@ namespace IOTStudio.Core.Models.Layouts
 		
 		public DefaultLayout()
 		{
+			Logger.Debug("Instance created successfully!");
+			
 			AssignDefaultValues();
 			SetupLayout();
 		}
 
 		void AssignDefaultValues()
 		{
+			Logger.Debug("Assigning default values to data members");
+			
 			WindowsDockingManager = WindowsDockingManager ?? new DockingManager();
 			Root = Root ?? new Grid();
 			MenuSection = MenuSection ?? new DockPanel();
@@ -110,6 +115,8 @@ namespace IOTStudio.Core.Models.Layouts
 		}
 		void SetupLayout()
 		{
+			Logger.Debug("Setting up layout");
+			
 			MenuSectionHeight = 28;
 			ToolBarSectionHeight = 28;
 			StatusBarSectionHeight = 28;
@@ -146,26 +153,44 @@ namespace IOTStudio.Core.Models.Layouts
 			Grid.SetRow(StatusBarSection, 3);
 			
 			ContentSection.Children.Add(WindowsDockingManager);
+			
+			Logger.Debug("Layout setup completed successfully");
 		}
 		
 		public static void SaveLayout(DefaultLayout layout)
 		{
+			Logger.Debug("Starting save action of layout: DefaultLayout");
+			
 			string layoutSavePath = PropertyProvider.Layout.GetProperty("SelectedLayoutSavePath") as String;
+			Logger.Debug("Layout will be serialized to the following file: {0}", layoutSavePath + @"\DefaultLayout.json");
+			
 			NewtonsoftJSONSerializer.Serialize(layout, layoutSavePath + @"\DefaultLayout.json");
 			
 			XmlLayoutSerializer dockManagerSerializer = new XmlLayoutSerializer(layout.WindowsDockingManager);
+			Logger.Debug("Dock Windows Layout will be serialized to the following path: {0}", layoutSavePath + @"\DockWindows.json");
+			
 			dockManagerSerializer.Serialize(layoutSavePath + @"\DockWindows.json");
+			
+			Logger.Debug("Layout save action completed successfully!");
 		}
 		
 		public static DefaultLayout LoadLayout()
 		{
+			Logger.Debug("Starting load action of layout: DefaultLayout");
+			
 			string layoutSavePath = PropertyProvider.Layout.GetProperty("SelectedLayoutSavePath") as String;
+			Logger.Debug("Layout will be deserialized from the following file: {0}", layoutSavePath + @"\DefaultLayout.json");
+			
 			DefaultLayout layout = NewtonsoftJSONSerializer.Deserialize(layoutSavePath + @"\DefaultLayout.json") as DefaultLayout;
 			
 			if (layout.WindowsDockingManager == null)
 				layout.WindowsDockingManager = new DockingManager();
 			XmlLayoutSerializer dockManagerSerializer = new XmlLayoutSerializer(layout.WindowsDockingManager);
+			Logger.Debug("Dock Windows Layout will be deserialized from the following path: {0}", layoutSavePath + @"\DockWindows.json");
+			
 			dockManagerSerializer.Deserialize(layoutSavePath + @"\DockWindows.json");
+			
+			Logger.Debug("Layout load action completed successfully!");
 			
 			return layout;
 		}

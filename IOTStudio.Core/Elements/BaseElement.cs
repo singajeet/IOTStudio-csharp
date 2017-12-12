@@ -9,6 +9,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Interactivity;
@@ -22,49 +24,61 @@ namespace IOTStudio.Core.Elements
 	/// </summary>
 	
 	[DataContract]
-	public class BaseElement : DependencyObject, IBaseElement, IEditorElement
+	public class BaseElement : INotifyPropertyChanged, IBaseElement, IEditorElement
 	{
-		public static readonly DependencyProperty
-											IdProperty = DependencyProperty
-											.Register("Id", typeof(Guid), typeof(BaseElement));
+		private Guid id;
+		private string name;
+
+		#region INotifyPropertyChanged implementation
+		public event PropertyChangedEventHandler PropertyChanged;
+		#endregion	
+		
 		[DataMember]
 		public virtual Guid Id{
-			get { return (Guid)GetValue(IdProperty); }
-			set { SetValue(IdProperty, value);}
+			get { return id; }
+			set { id= value;
+				OnPropertyChanged();
+			}
 		}
-		
-		public static readonly DependencyProperty
-											NameProperty = DependencyProperty
-															.Register("Name", typeof(string), typeof(BaseElement));
 		
 		[DataMember]
 		public virtual string Name{
-			get { return (string)GetValue(NameProperty); }
-			set { SetValue(NameProperty, value); }
+			get { return name; }
+			set { name= value; 
+				OnPropertyChanged();
+			}
 		}
 
-		public static readonly DependencyProperty
-											BehaviorsProperty = DependencyProperty
-																	.Register("Behaviors", 
-			          												typeof(ObservableCollection<Behavior<UIElement>>), 
-			          												typeof(BaseElement),
-			          												new PropertyMetadata(new ObservableCollection<Behavior<UIElement>>()));
+		private ObservableCollection<Behavior<UIElement>> behaviors;
+			
 		[DataMember]
 		public virtual ObservableCollection<Behavior<UIElement>> Behaviors{
-			get { return (ObservableCollection<Behavior<UIElement>>)GetValue(BehaviorsProperty); }
-			set { SetValue(BehaviorsProperty, value); }
+			get { return behaviors; }
+			set { behaviors= value; 
+				OnPropertyChanged();
+			}
 		}
 		
-		public static readonly DependencyProperty
-											EventTriggersProperty = DependencyProperty
-																	.Register("EventTriggers", 
-			          												typeof(ObservableCollection<TriggerAction<UIElement>>), 
-			          												typeof(BaseElement),
-			          												new PropertyMetadata(new ObservableCollection<TriggerAction<UIElement>>()));
+		private ObservableCollection<TriggerAction<UIElement>> eventTriggers;
 		
+		[DataMember]
 		public virtual ObservableCollection<TriggerAction<UIElement>> EventTriggers{
-			get { return (ObservableCollection<TriggerAction<UIElement>>)GetValue(EventTriggersProperty); }
-			set { SetValue(EventTriggersProperty, value); }
+			get { return eventTriggers; }
+			set { eventTriggers= value; 
+				OnPropertyChanged();
+			}
+		}
+		
+		protected void OnPropertyChanged([CallerMemberName]string memberName = null)
+		{
+			if (PropertyChanged != null)
+				PropertyChanged(this, new PropertyChangedEventArgs(memberName));
+		}
+		
+		public BaseElement()
+		{
+			Behaviors = Behaviors ?? new ObservableCollection<Behavior<UIElement>>();
+			EventTriggers = EventTriggers ?? new ObservableCollection<TriggerAction<UIElement>>();
 		}
 	}
 }

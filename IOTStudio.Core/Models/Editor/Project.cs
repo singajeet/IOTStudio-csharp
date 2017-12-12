@@ -9,11 +9,8 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
-using System.Windows;
-using IOTStudio.Core.Elements;
 using IOTStudio.Core.Elements.Editor;
 using IOTStudio.Core.Providers.Logging;
-using Newtonsoft.Json;
 
 namespace IOTStudio.Core.Models.Editor
 {
@@ -24,18 +21,14 @@ namespace IOTStudio.Core.Models.Editor
 	public class Project : BaseProjectElement
 	{
 		
-		public static readonly DependencyProperty
-											ProjectItemsProperty = DependencyProperty
-																	.Register("ProjectItems", 
-			          												typeof(ObservableCollection<ProjectItem>), 
-			          												typeof(BaseElement),
-			          												new PropertyMetadata(new ObservableCollection<ProjectItem>()));
-		
+		private ObservableCollection<ProjectItem> projectItems; 
 		
 		[DataMember]
 		public ObservableCollection<ProjectItem> ProjectItems{
-			get { return (ObservableCollection<ProjectItem>)GetValue(ProjectItemsProperty); }
-			set { SetValue(ProjectItemsProperty, value); }
+			get { return projectItems; }
+			set { projectItems= value; 
+				OnPropertyChanged();
+			}
 		}
 		
 		public void AddProjectItem(ProjectItem item)
@@ -52,6 +45,7 @@ namespace IOTStudio.Core.Models.Editor
 		
 		public Project()
 		{
+			ProjectItems = ProjectItems ?? new ObservableCollection<ProjectItem>();
 			Logger.Info("Project instance has been created");
 		}
 	}

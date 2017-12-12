@@ -9,9 +9,8 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
-using System.Windows;
 using IOTStudio.Core.Elements.Editor;
-using Newtonsoft.Json;
+using IOTStudio.Core.Providers.Logging;
 
 namespace IOTStudio.Core.Models.Editor
 {
@@ -21,32 +20,32 @@ namespace IOTStudio.Core.Models.Editor
 	[DataContract(IsReference = true)]
 	public class ProjectItem : BaseProjectItemElement
 	{
-		public static readonly DependencyProperty
-											ProjectItemsProperty = DependencyProperty
-																	.Register("ProjectItems", 
-			          												typeof(ObservableCollection<ProjectItem>), 
-			          												typeof(ProjectItem),
-			          												new PropertyMetadata(new ObservableCollection<ProjectItem>()));
-		
-		
+		private ObservableCollection<ProjectItem> projectItems;
+	
 		[DataMember]
 		public ObservableCollection<ProjectItem> ProjectItems{
-			get { return (ObservableCollection<ProjectItem>)GetValue(ProjectItemsProperty); }
-			set { SetValue(ProjectItemsProperty, value); }
+			get { return projectItems; }
+			set { projectItems= value; 
+				OnPropertyChanged();
+			}
 		}
 		
 		public void AddProjectItem(ProjectItem item)
 		{
 			this.ProjectItems.Add(item);
+			Logger.Debug("New ProjectItem [{0}] has been added to current item [{1}]", item.Name, this.Name);
 		}
 		
 		public void RemoveProjectItem(ProjectItem item)
 		{
+			Logger.Debug("ProjectItem [{0}] will be removed from current item [{1}]", item.Name, this.Name);
 			this.ProjectItems.Remove(item);
 		}
 		
 		public ProjectItem()
 		{
+			ProjectItems = ProjectItems ?? new ObservableCollection<ProjectItem>();
+			Logger.Info("Instance created successfully!");
 		}
 	}
 }

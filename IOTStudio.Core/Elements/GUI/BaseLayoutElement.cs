@@ -8,6 +8,9 @@
  */
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Interactivity;
 using IOTStudio.Core.Elements.Interfaces;
@@ -20,58 +23,83 @@ namespace IOTStudio.Core.Elements.GUI
 	/// <summary>
 	/// Description of BaseLayoutElement.
 	/// </summary>
-	public class BaseLayoutElement : DependencyObject, IBaseElement, ILayoutElement
+	[DataContract]
+	public class BaseLayoutElement : DependencyObject, INotifyPropertyChanged, IBaseElement, ILayoutElement
 	{
+		#region INotifyPropertyChanged implementation
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		#endregion
+		
+		protected void OnPropertyChanged([CallerMemberName]string memberName = null)
+		{
+			if (PropertyChanged != null)
+				PropertyChanged(this, new PropertyChangedEventArgs(memberName));
+		}
+
 		private BaseElement baseElement = new BaseElement();
 		
+		[DataMember]
 		public Guid Id {
 			get {
 				return baseElement.Id;
 			}
 			set {
 				baseElement.Id = value;
+				OnPropertyChanged();
 			}
 		}
 		
+		[DataMember]
 		public string Name {
 			get { return baseElement.Name; }
-			set { baseElement.Name = value; }
+			set {
+				baseElement.Name = value; 
+				OnPropertyChanged();
+			}
 		}
 
-	public ObservableCollection<Behavior<UIElement>> Behaviors {
-		get {
-				return baseElement.Behaviors;
-		}
-		set {
-				baseElement.Behaviors = value;
-		}
-	}
-
-	public ObservableCollection<TriggerAction<UIElement>> EventTriggers {
-		get {
-				return baseElement.EventTriggers;
-		}
-		set {
-				baseElement.EventTriggers = value;
-		}
-	}
-
-		
-		public static readonly DependencyProperty LayoutTypeProperty
-														= DependencyProperty
-															.Register("LayoutType", 
-								          						typeof(LayoutElementType), typeof(BaseLayoutElement));
-		
-		#region IProjectElement implementation
-		[JsonProperty]
-		public LayoutElementType LayoutType {
+		[DataMember]
+		public ObservableCollection<Behavior<UIElement>> Behaviors {
 			get {
-				return (LayoutElementType)GetValue(LayoutTypeProperty);
+				return baseElement.Behaviors;
 			}
 			set {
-				SetValue(LayoutTypeProperty, value);
+				baseElement.Behaviors = value;
+				OnPropertyChanged();
 			}
 		}
-		#endregion
+
+		[DataMember]
+		public ObservableCollection<TriggerAction<UIElement>> EventTriggers {
+			get {
+				return baseElement.EventTriggers;
+			}
+			set {
+				baseElement.EventTriggers = value;
+				OnPropertyChanged();
+			}
+		}
+
+		
+		public static readonly DependencyProperty LayoutTypeProperty =
+			DependencyProperty.Register("LayoutType", typeof(LayoutElementType), typeof(BaseLayoutElement),
+			                            new FrameworkPropertyMetadata());
+		
+		public LayoutElementType LayoutType {
+			get { return (LayoutElementType)GetValue(LayoutTypeProperty); }
+			set { SetValue(LayoutTypeProperty, value); }
+		}
+		
+		public static readonly DependencyProperty IsSelectedProperty =
+			DependencyProperty.Register("IsSelected", typeof(bool), typeof(BaseLayoutElement),
+			                            new FrameworkPropertyMetadata());
+		
+		public bool IsSelected {
+			get { return (bool)GetValue(IsSelectedProperty); }
+			set { SetValue(IsSelectedProperty, value); }
+		}
+		
 	}
 }

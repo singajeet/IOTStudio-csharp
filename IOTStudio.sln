@@ -12,7 +12,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IOTStudio.Components", "IOT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IOTStudio.Templates", "IOTStudio.Templates\IOTStudio.Templates.csproj", "{59F06C77-4BCE-4D1F-A1A3-8C6DD28E5708}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IOTStudio.Test", "IOTStudio.Test\IOTStudio.Test.csproj", "{576CBB91-AEFD-4127-A3A3-3BFC4A0F4C77}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IOTStudio.Tests", "IOTStudio.Tests", "{EDD794E3-B796-4C31-AA5C-4CEF87351808}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IOTStudio.Tests", "IOTStudio.Tests\IOTStudio.Tests.csproj", "{1290231C-EAE4-467C-B381-3EE0DCF60B6C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,9 +38,12 @@ Global
 		{59F06C77-4BCE-4D1F-A1A3-8C6DD28E5708}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{59F06C77-4BCE-4D1F-A1A3-8C6DD28E5708}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{59F06C77-4BCE-4D1F-A1A3-8C6DD28E5708}.Release|Any CPU.Build.0 = Release|Any CPU
-		{576CBB91-AEFD-4127-A3A3-3BFC4A0F4C77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{576CBB91-AEFD-4127-A3A3-3BFC4A0F4C77}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{576CBB91-AEFD-4127-A3A3-3BFC4A0F4C77}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{576CBB91-AEFD-4127-A3A3-3BFC4A0F4C77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1290231C-EAE4-467C-B381-3EE0DCF60B6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1290231C-EAE4-467C-B381-3EE0DCF60B6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1290231C-EAE4-467C-B381-3EE0DCF60B6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1290231C-EAE4-467C-B381-3EE0DCF60B6C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1290231C-EAE4-467C-B381-3EE0DCF60B6C} = {EDD794E3-B796-4C31-AA5C-4CEF87351808}
 	EndGlobalSection
 EndGlobal

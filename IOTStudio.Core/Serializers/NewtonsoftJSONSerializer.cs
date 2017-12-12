@@ -8,6 +8,7 @@
  */
 using System;
 using System.IO;
+using IOTStudio.Core.Providers.Logging;
 using IOTStudio.Core.Providers.Properties;
 using Newtonsoft.Json;
 
@@ -26,6 +27,8 @@ namespace IOTStudio.Core.Serializers
 		
 		public static void Serialize(object instance, string filename)
 		{
+			Logger.Debug("Serializing object [{0}] to file [{1}] in JSON format", instance.GetType().FullName, filename);
+			
 			serializer = new JsonSerializer();
 			streamOut = new StreamWriter(filename);
 			jsonWriter = new JsonTextWriter(streamOut);
@@ -40,11 +43,13 @@ namespace IOTStudio.Core.Serializers
 			using (jsonWriter) {
 				serializer.Serialize(jsonWriter, instance);
 			}		
-			
+			Logger.Debug("Serializing of object [{0}] has been completed", instance.GetType().FullName, filename);
 		}
 		
 		public static object Deserialize(string filename)
 		{
+			Logger.Debug("Deserializing object from file [{0}] stored in JSON format", filename);
+			
 			object instance = null;
 			serializer = new JsonSerializer();
 			streamIn = new StreamReader(filename);
@@ -60,6 +65,8 @@ namespace IOTStudio.Core.Serializers
 			using (jsonReader) {
 				instance = serializer.Deserialize(jsonReader);
 			}
+			
+			Logger.Debug("Deserialization of object from file [{0}] has been completed!", filename);
 			
 			return instance;
 		}

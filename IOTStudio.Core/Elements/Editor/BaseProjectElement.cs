@@ -8,10 +8,8 @@
  */
 using System;
 using System.Runtime.Serialization;
-using System.Windows;
 using IOTStudio.Core.Elements.Interfaces;
 using IOTStudio.Core.Types;
-using Newtonsoft.Json;
 
 namespace IOTStudio.Core.Elements.Editor
 {
@@ -21,19 +19,17 @@ namespace IOTStudio.Core.Elements.Editor
 	[DataContract]
 	public class BaseProjectElement : BaseElement, IProjectElement
 	{
-		public static readonly DependencyProperty ProjectTypeProperty
-														= DependencyProperty
-															.Register("ProjectType", 
-								          						typeof(EditorElementType), typeof(BaseProjectElement));
+		private EditorElementType projectType;
 		
 		#region IProjectElement implementation
 		[DataMember]
 		public EditorElementType ProjectType {
 			get {
-				return (EditorElementType)GetValue(ProjectTypeProperty);
+				return projectType;
 			}
 			set {
-				SetValue(ProjectTypeProperty, value);
+				projectType = value;
+				OnPropertyChanged();
 			}
 		}
 		#endregion

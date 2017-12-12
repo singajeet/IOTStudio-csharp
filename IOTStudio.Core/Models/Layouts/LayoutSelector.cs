@@ -12,9 +12,12 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Windows;
+using IOTStudio.Core.Elements.GUI;
 using IOTStudio.Core.Elements.Interfaces;
 using IOTStudio.Core.Providers.Assemblies;
+using IOTStudio.Core.Providers.Logging;
 using IOTStudio.Core.Providers.Properties;
+using System.Linq;
 
 namespace IOTStudio.Core.Models.Layouts
 {
@@ -23,40 +26,61 @@ namespace IOTStudio.Core.Models.Layouts
 	/// </summary>
 	[DataContract(IsReference = true)]
 	public class LayoutSelector: DependencyObject, INotifyPropertyChanged
-	{
+	{		
+
 		public static readonly DependencyProperty LayoutsProperty =
-			DependencyProperty.Register("Layouts", typeof(ObservableCollection<ILayoutElement>), typeof(LayoutSelector),
+			DependencyProperty.Register("Layouts", typeof(LayoutCollection), typeof(LayoutSelector),
 			                            new FrameworkPropertyMetadata());
 		
 		[DataMember]
-		public ObservableCollection<ILayoutElement> Layouts {
-			get { return (ObservableCollection<ILayoutElement>)GetValue(LayoutsProperty); }
+		public LayoutCollection Layouts {
+			get { return (LayoutCollection)GetValue(LayoutsProperty); }
 			set { SetValue(LayoutsProperty, value); }
 		}
 		
 		public static readonly DependencyProperty 
 											SelectedLayoutProperty = DependencyProperty
 																	.Register("SelectedLayout", 
-			          												typeof(ILayoutElement), 
+			          												typeof(BaseLayoutElement), 
 			          												typeof(LayoutSelector),
 			                                                        new PropertyMetadata());
 		
 		[DataMember]
-		public ILayoutElement SelectedLayout{
-			get { return (ILayoutElement)GetValue(SelectedLayoutProperty); }
+		public BaseLayoutElement SelectedLayout{
+			get { return (BaseLayoutElement)GetValue(SelectedLayoutProperty); }
 			set { SetValue(SelectedLayoutProperty, value); }
 		}
 		
 		public LayoutSelector()
 		{
+			Logger.Debug("Instance created successfully");
+			
+			Logger.Debug("Loading all available layouts");
 			Layouts = Layouts ?? LoadLayouts();
-			SelectedLayout = SelectedLayout ?? new DefaultLayout();
+			
+			Logger.Debug("{0} layouts loaded from the configured path", Layouts.Count);
+			
+			SelectedLayout = SelectedLayout ?? Layouts["DefaultLayout"];
 		}
 
-		ObservableCollection<ILayoutElement> LoadLayouts()
+		public void SelectLayout(string layout)
+		{
+			Layouts.Where(w => w.IsSelected == true)
+							.ToList()
+							.ForEach(f => f.IsSelected = false);
+			
+			SelectedLayout = Layouts[layout];
+			SelectedLayout.IsSelected = true;
+			
+			Logger.Debug("Selected layout changed to: {0}", SelectedLayout.Name);
+		}
+		
+		public LayoutCollection LoadLayouts()
 		{
 			string path = PropertyProvider.LayoutSelector.GetProperty("LayoutsCollectionPath") as string;
-			return AssemblyLoader.GetCollectionOfObjects<ILayoutElement>(path);
+			Logger.Debug("Layouts will be loaded from the following path: {0}", path);
+			
+			return (LayoutCollection)AssemblyLoader.GetCollectionOfObjects<BaseLayoutElement>(path);
 		}
 		#region INotifyPropertyChanged implementation
 
