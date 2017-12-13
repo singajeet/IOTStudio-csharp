@@ -15,10 +15,8 @@ using System.Windows;
 using System.Windows.Interactivity;
 using IOTStudio.Core.Elements.Interfaces;
 using IOTStudio.Core.Types;
-using Newtonsoft.Json;
-using Xceed.Wpf.AvalonDock;
 
-namespace IOTStudio.Core.Elements.GUI
+namespace IOTStudio.Core.Elements.UI
 {
 	/// <summary>
 	/// Description of BaseLayoutElement.

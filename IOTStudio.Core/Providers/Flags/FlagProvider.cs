@@ -10,6 +10,7 @@ using System;
 using System.Collections;
 using System.Windows;
 using IOTStudio.Core.Elements.Interfaces;
+using IOTStudio.Core.Providers.Logging;
 
 namespace IOTStudio.Core.Providers.Flags
 {
@@ -32,6 +33,7 @@ namespace IOTStudio.Core.Providers.Flags
 			}
 			
 			Flags.Add(key, value);
+			Logger.Debug("New Flag {0} registered with default value as {1}", key, value);
 		}
 		
 		public static bool ContainsKey(string key)
@@ -57,11 +59,13 @@ namespace IOTStudio.Core.Providers.Flags
 			}
 			
 			Flags.Remove(key);
+			Logger.Debug("Flag {0} has been unregistered from this provider", key);
 		}
 		
 		static FlagProvider()
 		{
 			Flags = Flags ?? new Hashtable();
+			Logger.Debug("Hashtable created for FlagProvider");
 		}
 	}
 }

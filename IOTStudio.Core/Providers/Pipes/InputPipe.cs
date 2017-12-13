@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using IOTStudio.Core.Features.Interfaces;
+using IOTStudio.Core.Providers.Logging;
 using IOTStudio.Core.Types;
 
 namespace IOTStudio.Core.Providers.Pipes
@@ -21,6 +22,9 @@ namespace IOTStudio.Core.Providers.Pipes
 	/// </summary>
 	public class InputPipe : INotifyPropertyChanged
 	{
+		private Guid id;
+		private string name;
+		
 		private event EventHandler _inputAvailable;
 		
 		private readonly object eventSyncObject = new object();
@@ -35,6 +39,20 @@ namespace IOTStudio.Core.Providers.Pipes
 		{
 			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(memberName));
+		}
+		
+		public Guid Id{
+			get{ return id; }
+			set { id = value; 
+				OnPropertyChanged();
+			}
+		}
+		
+		public string Name{
+			get { return name; }
+			set { name = value; 
+				OnPropertyChanged();
+			}
 		}
 		
 		private Stack inputObjects;
@@ -84,6 +102,8 @@ namespace IOTStudio.Core.Providers.Pipes
 		
 		protected void OnInputAvailable()
 		{
+			Logger.Debug("{0}: Input is available on stack, notifying all consumers now", Name);
+			
 			if (_inputAvailable != null) {
 				_inputAvailable(this, new InputAvailableEventArgs(this));
 			}
@@ -95,6 +115,9 @@ namespace IOTStudio.Core.Providers.Pipes
 		
 		public InputPipe()
 		{
+			Id = Guid.NewGuid();
+			Name = RuntimeNameProvider.GetName("InputPipe");
+			
 			InputObjects = InputObjects ?? new Stack();
 			InputConsumers = InputConsumers ?? new InputConsumerCollection();
 		}	
@@ -104,6 +127,8 @@ namespace IOTStudio.Core.Providers.Pipes
 			lock (featureSyncObject) {
 				InputConsumers.Add(consumer);
 			}
+			
+			Logger.Debug("{0}: New input consumer registered", Name);
 		}
 		
 		public void UnregisterConsumer(IInputConsumer consumer)
@@ -111,6 +136,8 @@ namespace IOTStudio.Core.Providers.Pipes
 			lock (featureSyncObject) {
 				InputConsumers.Remove(consumer);
 			}
+			
+			Logger.Debug("{0}: Input consumer has been unregistered", Name);
 		}
 		
 		public void PushObject(object instance)

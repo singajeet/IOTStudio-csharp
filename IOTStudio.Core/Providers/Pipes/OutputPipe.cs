@@ -20,6 +20,9 @@ namespace IOTStudio.Core.Providers.Pipes
 	/// </summary>
 	public class OutputPipe : INotifyPropertyChanged
 	{
+		private Guid id;
+		private string name;
+		
 		private event EventHandler _outputAvailable;
 		
 		private readonly object eventSyncObject = new object();
@@ -31,9 +34,26 @@ namespace IOTStudio.Core.Providers.Pipes
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		#endregion
-
+		
+		public Guid Id{
+			get{ return id; }
+			set { id = value; 
+				OnPropertyChanged();
+			}
+		}
+		
+		public string Name{
+			get { return name; }
+			set { name = value; 
+				OnPropertyChanged();
+			}
+		}
+		
 		public OutputPipe()
 		{
+			Id = Guid.NewGuid();
+			Name = RuntimeNameProvider.GetName("OutputPipe");
+			
 			OutputObjects = OutputObjects ?? new Stack();
 			OutputConsumers = OutputConsumers ?? new OutputConsumerCollection();
 		}

@@ -7,13 +7,11 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Windows;
-using IOTStudio.Core.Elements.GUI;
-using IOTStudio.Core.Elements.Interfaces;
+using IOTStudio.Core.Elements.UI;
 using IOTStudio.Core.Providers.Assemblies;
 using IOTStudio.Core.Providers.Logging;
 using IOTStudio.Core.Providers.Properties;

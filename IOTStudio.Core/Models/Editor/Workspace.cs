@@ -12,6 +12,7 @@ using System.Runtime.Serialization;
 using System.Windows;
 using IOTStudio.Core.Elements;
 using IOTStudio.Core.Elements.Editor;
+using IOTStudio.Core.Providers;
 using IOTStudio.Core.Providers.Logging;
 using Newtonsoft.Json;
 
@@ -48,6 +49,9 @@ namespace IOTStudio.Core.Models.Editor
 		
 		public Workspace()
 		{
+			Id = Guid.NewGuid();
+			Name = RuntimeNameProvider.GetName("Workspace");
+			
 			Projects = Projects ?? new ObservableCollection<Project>();
 			Logger.Debug("Instance created successfully!");
 		}

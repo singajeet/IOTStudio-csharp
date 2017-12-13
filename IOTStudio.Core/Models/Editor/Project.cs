@@ -10,6 +10,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using IOTStudio.Core.Elements.Editor;
+using IOTStudio.Core.Providers;
 using IOTStudio.Core.Providers.Logging;
 
 namespace IOTStudio.Core.Models.Editor
@@ -45,6 +46,9 @@ namespace IOTStudio.Core.Models.Editor
 		
 		public Project()
 		{
+			Id = Guid.NewGuid();
+			Name = RuntimeNameProvider.GetName("Project");
+			
 			ProjectItems = ProjectItems ?? new ObservableCollection<ProjectItem>();
 			Logger.Info("Project instance has been created");
 		}

@@ -10,7 +10,8 @@ using System;
 using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Controls;
-using IOTStudio.Core.Elements.GUI;
+using IOTStudio.Core.Elements.UI;
+using IOTStudio.Core.Providers;
 using IOTStudio.Core.Providers.Logging;
 using IOTStudio.Core.Providers.Properties;
 using IOTStudio.Core.Serializers;
@@ -97,6 +98,9 @@ namespace IOTStudio.Core.Models.Layouts
 		public DefaultLayout()
 		{
 			Logger.Debug("Instance created successfully!");
+			
+			Id = Guid.NewGuid();
+			Name = RuntimeNameProvider.GetName("DefaultLayout");
 			
 			AssignDefaultValues();
 			SetupLayout();
