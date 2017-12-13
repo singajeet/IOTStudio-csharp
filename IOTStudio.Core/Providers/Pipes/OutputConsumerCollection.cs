@@ -8,7 +8,6 @@
  */
 using System;
 using System.Collections.ObjectModel;
-using IOTStudio.Core.Features.Interfaces;
 
 namespace IOTStudio.Core.Providers.Pipes
 {

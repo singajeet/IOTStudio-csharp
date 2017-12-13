@@ -7,6 +7,7 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
 using IOTStudio.Core.Features;
@@ -21,6 +22,9 @@ namespace IOTStudio.Core.Elements.Interfaces
 	{
 		Guid Id { get; set; }
 		string Name { get; set; }
+		bool IsEnabled { get; set; }
+		
+		IFeatureInfo Info { get; set; }
 		
 		IFeature ParentFeature { get; set; }
 		FeatureCollection ChildFeatures { get; set; }
@@ -32,9 +36,11 @@ namespace IOTStudio.Core.Elements.Interfaces
 		
 		IUIFeatureOptionsElement UIOptionsElement { get; set; }
 		IUIRootElement RootElement { get; set; }
-		INavigationElement NavigationElement { get; set; }
+		ObservableCollection<INavigationElement> NavigationElements { get; set; }
 		
 		object Run(object parameter);
+		void Enable();
+		void Disable();
 		
 		event EventHandler UIRootElementChanged;
 		event EventHandler NavigationElementChanged;

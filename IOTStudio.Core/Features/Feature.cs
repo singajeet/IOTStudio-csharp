@@ -7,8 +7,11 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using System.Collections;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 using IOTStudio.Core.Elements.Interfaces;
 using IOTStudio.Core.Providers;
 using IOTStudio.Core.Providers.Pipes;
@@ -19,33 +22,47 @@ namespace IOTStudio.Core.Features
 	/// <summary>
 	/// Description of Feature.
 	/// </summary>
+	[DataContract]
 	public class Feature : IFeature, INotifyPropertyChanged
 	{
 		private Guid id;
 		private string name;
+		private bool isEnabled;
 		private IFeature parentFeature;
-		private FeatureCollection childFeatures;
-		private InputPipe inPipe;
-		private OutputPipe outPipe;
+		private FeatureCollection childFeatures = new FeatureCollection();
+		private InputPipe inPipe = new InputPipe();
+		private OutputPipe outPipe = new OutputPipe();
 		private string inputFlagName;
 		private string outputFlagName;
 		private IUIFeatureOptionsElement uiOptionsElement;
 		private IUIRootElement rootElement;
-		private INavigationElement navigationElement;
-		
+		private ObservableCollection<INavigationElement> navigationElements = new ObservableCollection<INavigationElement>();
+		private IFeatureInfo info = new FeatureInfo();
+
 		public Feature()
 		{
-			Id = Guid.NewGuid();
-			Name = RuntimeNameProvider.GetName("Feature");
+			Id = info.Id;
+			Name = info.Name;
 		}
 
 		#region IFeature implementation		
 
 		public object Run(object parameter)
 		{
-			
+			return null;
+		}
+		
+		public void Enable()
+		{
+			IsEnabled = true;
+		}
+		
+		public void Disable()
+		{
+			IsEnabled = false;
 		}
 
+		[DataMember]
 		public Guid Id {
 			get {
 				return id;
@@ -56,6 +73,7 @@ namespace IOTStudio.Core.Features
 			}
 		}
 
+		[DataMember]
 		public string Name {
 			get {
 				return name;
@@ -65,7 +83,24 @@ namespace IOTStudio.Core.Features
 				OnPropertyChanged();
 			}
 		}
+		
+		[DataMember]
+		public bool IsEnabled{
+			get { return isEnabled; }
+			set { isEnabled = value;
+				OnPropertyChanged();
+			}
+		}
+		
+		[IgnoreDataMember]
+		public IFeatureInfo Info{
+			get { return info; }
+			set { info = value; 
+				OnPropertyChanged();
+			}
+		}
 
+		[DataMember]
 		public IFeature ParentFeature {
 			get {
 				return parentFeature;
@@ -76,6 +111,7 @@ namespace IOTStudio.Core.Features
 			}
 		}
 
+		[DataMember]
 		public FeatureCollection ChildFeatures {
 			get {
 				return childFeatures;
@@ -86,6 +122,7 @@ namespace IOTStudio.Core.Features
 			}
 		}
 
+		[IgnoreDataMember]
 		public InputPipe InPipe {
 			get {
 				return inPipe;
@@ -96,6 +133,7 @@ namespace IOTStudio.Core.Features
 			}
 		}
 
+		[IgnoreDataMember]
 		public OutputPipe OutPipe {
 			get {
 				return outPipe;
@@ -106,6 +144,7 @@ namespace IOTStudio.Core.Features
 			}
 		}
 
+		[DataMember]
 		public string InputFlagName {
 			get {
 				return inputFlagName;
@@ -120,6 +159,7 @@ namespace IOTStudio.Core.Features
 			}
 		}
 
+		[DataMember]
 		public string OutputFlagName {
 			get {
 				return outputFlagName;
@@ -134,6 +174,7 @@ namespace IOTStudio.Core.Features
 			}
 		}
 
+		[IgnoreDataMember]
 		public IUIFeatureOptionsElement UIOptionsElement {
 			get {
 				return uiOptionsElement;
@@ -144,6 +185,7 @@ namespace IOTStudio.Core.Features
 			}
 		}
 
+		[IgnoreDataMember]
 		public IUIRootElement RootElement {
 			get {
 				return rootElement;
@@ -153,20 +195,21 @@ namespace IOTStudio.Core.Features
 				OnPropertyChanged();
 				
 				if (UIRootElementChanged != null)
-					UIRootElementChanged(this, new EventArgs());
+					UIRootElementChanged(this, new UIRootElementChangedEventArgs(value));
 			}
 		}
 
-		public INavigationElement NavigationElement {
+		[IgnoreDataMember]
+		public ObservableCollection<INavigationElement> NavigationElements {
 			get {
-				return navigationElement;
+				return navigationElements;
 			}
 			set {
-				navigationElement = value;
+				navigationElements = value;
 				OnPropertyChanged();
 				
 				if (NavigationElementChanged != null)
-					NavigationElementChanged(this, new EventArgs());
+					NavigationElementChanged(this, new NavigationElementChangedEventArgs(value));
 			}
 		}
 		
@@ -189,6 +232,40 @@ namespace IOTStudio.Core.Features
 		public event EventHandler FlagNameChanged;
 		
 		#endregion
+	}
+	
+	public class InputOutputPipeDataEventArgs : EventArgs
+	{
+		public Stack Data;
+		public StackType DataType;
+		public bool IsOperationCompleted;
+		
+		public InputOutputPipeDataEventArgs(Stack data, StackType dataType, bool isOpsCompleted)
+		{
+			Data = data;
+			DataType = dataType;
+			IsOperationCompleted = isOpsCompleted;
+		}
+	}
+	
+	public class UIRootElementChangedEventArgs : EventArgs
+	{
+		public IUIRootElement RootElement;
+		
+		public UIRootElementChangedEventArgs(IUIRootElement root)
+		{
+			RootElement = root;
+		}
+	}
+	
+	public class NavigationElementChangedEventArgs : EventArgs
+	{
+		public ObservableCollection<INavigationElement> NavigationElements;
+		
+		public NavigationElementChangedEventArgs(ObservableCollection<INavigationElement> elements)
+		{
+			NavigationElements = elements;
+		}
 	}
 	
 	public class FlagNameChangedEventArgs : EventArgs

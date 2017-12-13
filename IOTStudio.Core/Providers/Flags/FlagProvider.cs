@@ -8,6 +8,8 @@
  */
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows;
 using IOTStudio.Core.Elements.Interfaces;
 using IOTStudio.Core.Providers.Logging;
@@ -19,15 +21,15 @@ namespace IOTStudio.Core.Providers.Flags
 	/// </summary>
 	public static class FlagProvider
 	{
-		private static Hashtable flags;
+		private static Dictionary<string, bool> flags;
 		
-		public static Hashtable Flags {
+		public static Dictionary<string, bool> Flags {
 			get { return flags; }
 			set { flags= value; }
 		}
 		
 		public static void RegisterFlag(string key, bool value)
-		{			
+		{
 			if (Flags.ContainsKey(key)) {
 				throw new Exception("Key provided is already registered for another object");
 			}
@@ -64,8 +66,8 @@ namespace IOTStudio.Core.Providers.Flags
 		
 		static FlagProvider()
 		{
-			Flags = Flags ?? new Hashtable();
-			Logger.Debug("Hashtable created for FlagProvider");
+			Flags = Flags ?? new Dictionary<string, bool>();
+			Logger.Debug("Dictionary created for FlagProvider");
 		}
 	}
 }

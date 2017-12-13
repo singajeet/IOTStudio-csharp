@@ -22,6 +22,7 @@ namespace IOTStudio.Core.Providers.Properties
 		private const string LAYOUT_SELECTOR_SECTION_NAME = "Layouts/SelectorSettings";
 		private const string LAYOUT_SECTION_NAME = "Layouts/LayoutSettings";
 		private const string NAME_TABLE_SECTION_NAME = "NameTable/Settings";
+		private const string FEATURES_SECTION_NAME = "Features/Settings";
 		
 		public static class Serializer{
 			public static string GetProperty(string key)
@@ -71,6 +72,19 @@ namespace IOTStudio.Core.Providers.Properties
 			public static void SetProperty(string key, string value)
 			{
 				SetPropertyOfSection(key, value, NAME_TABLE_SECTION_NAME);
+			} 
+		}
+		
+		public static class Features
+		{
+			public static string GetProperty(string key)
+			{
+				return GetPropertyFromSection(key, FEATURES_SECTION_NAME);
+			}
+			
+			public static void SetProperty(string key, string value)
+			{
+				SetPropertyOfSection(key, value, FEATURES_SECTION_NAME);
 			} 
 		}
 		

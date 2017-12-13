@@ -92,6 +92,7 @@
     <Compile Include="Elements\Editor\BaseProjectItemElement.cs" />
     <Compile Include="Elements\Editor\BaseWorkspaceElement.cs" />
     <Compile Include="Elements\Interfaces\IFeature.cs" />
+    <Compile Include="Elements\Interfaces\IFeatureInfo.cs" />
     <Compile Include="Elements\Interfaces\INavigationElement.cs" />
     <Compile Include="Elements\Interfaces\IUIFeatureOptionsElement.cs" />
     <Compile Include="Elements\Interfaces\IUIRootElement.cs" />
@@ -104,6 +105,8 @@
     <Compile Include="Elements\Interfaces\IWorkspaceElement.cs" />
     <Compile Include="Features\Feature.cs" />
     <Compile Include="Features\FeatureCollection.cs" />
+    <Compile Include="Features\FeatureInfo.cs" />
+    <Compile Include="Features\FeatureManager.cs" />
     <Compile Include="Models\Editor\Project.cs" />
     <Compile Include="Models\Editor\ProjectItem.cs" />
     <Compile Include="Models\Editor\Workspace.cs" />

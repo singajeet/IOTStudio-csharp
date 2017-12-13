@@ -19,8 +19,9 @@ namespace IOTStudio.Core.Providers
 	/// Description of RuntimeNameProvider.
 	/// </summary>
 	[DataContract]
-	public static class RuntimeNameProvider : IDisposable
+	public static class RuntimeNameProvider
 	{
+		private static ObjectFinalizer finalizer = new ObjectFinalizer();
 		private static Hashtable nameTable = new Hashtable();
 		
 		static RuntimeNameProvider()
@@ -47,7 +48,7 @@ namespace IOTStudio.Core.Providers
 		{
 			if (nameTable.ContainsKey(key)) {
 				
-				int value = NameTable[key] as int;
+				int value = (int)NameTable[key];
 				value++;
 				NameTable[key] = value;
 				
@@ -67,13 +68,12 @@ namespace IOTStudio.Core.Providers
 			NewtonsoftJSONSerializer.Serialize(NameTable, nameTablePath + @"\NameTable.json");
 		}
 
-		#region IDisposable implementation
-
-		public static void Dispose()
+		private class ObjectFinalizer
 		{
-			SaveNameTable();
+			~ObjectFinalizer()
+			{
+				SaveNameTable();
+			}
 		}
-
-		#endregion
 	}
 }
