@@ -9,48 +9,59 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Windows;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using IOTStudio.Core.Features;
 using IOTStudio.Core.Features.Interfaces;
 
-namespace IOTStudio.Core.Providers.Stacks
+namespace IOTStudio.Core.Providers.Pipes
 {
 	/// <summary>
 	/// Description of StackProvider.
 	/// </summary>
-	public class InputStack : DependencyObject
+	public class InputPipe : INotifyPropertyChanged
 	{
 		private event EventHandler _inputAvailable;
 		
 		private readonly object eventSyncObject = new object();
 		private readonly object stackSyncObject = new object();
 		private readonly object featureSyncObject = new object();
+
+		#region INotifyPropertyChanged implementation
+		public event PropertyChangedEventHandler PropertyChanged;
+		#endregion
 		
-		public static readonly DependencyProperty InputObjectsProperty =
-			DependencyProperty.Register("InputObjects", typeof(Stack), typeof(InputStack),
-			                            new FrameworkPropertyMetadata());
+		protected void OnPropertyChanged([CallerMemberName]string memberName = null)
+		{
+			if (PropertyChanged != null)
+				PropertyChanged(this, new PropertyChangedEventArgs(memberName));
+		}
+		
+		private Stack inputObjects;
 		
 		public Stack InputObjects {
-			get { return (Stack)GetValue(InputObjectsProperty); }
-			set { SetValue(InputObjectsProperty, value); }
+			get { return inputObjects; }
+			set { inputObjects = value; 
+				OnPropertyChanged();
+			}
 		}
 		
-		public static readonly DependencyProperty InputNotificationTypeProperty =
-			DependencyProperty.Register("InputNotificationType", typeof(NotificationType), typeof(InputStack),
-			                            new FrameworkPropertyMetadata());
+		private NotificationType inputNotificationType;
 		
 		public NotificationType InputNotificationType {
-			get { return (NotificationType)GetValue(InputNotificationTypeProperty); }
-			set { SetValue(InputNotificationTypeProperty, value); }
+			get { return inputNotificationType; }
+			set { inputNotificationType = value; 
+				OnPropertyChanged();
+			}
 		}
 		
-		public static readonly DependencyProperty RegisteredFeaturesProperty =
-			DependencyProperty.Register("RegisteredFeatures", typeof(ObservableCollection<IFeature>), typeof(InputStack),
-			                            new FrameworkPropertyMetadata());
+		private FeatureCollection inputConsumerFeatures;
 		
-		public ObservableCollection<IFeature> RegisteredFeatures {
-			get { return (ObservableCollection<IFeature>)GetValue(RegisteredFeaturesProperty); }
-			set { SetValue(RegisteredFeaturesProperty, value); }
+		public FeatureCollection InputConsumerFeatures {
+			get { return inputConsumerFeatures; }
+			set { inputConsumerFeatures = value; 
+				OnPropertyChanged();
+			}
 		}
 		
 		public StackType ProviderType {
@@ -71,34 +82,34 @@ namespace IOTStudio.Core.Providers.Stacks
 			}
 		}
 		
-		private void OnInputAvailable()
+		protected void OnInputAvailable()
 		{
 			if (_inputAvailable != null) {
 				_inputAvailable(this, new InputAvailableEventArgs(this));
 			}
 			
-			foreach (IFeature feature in RegisteredFeatures) {				
-				feature.InputAvailableFromInputStack(this);
+			foreach (IFeature feature in InputConsumerFeatures) {				
+				feature.NotifyInputAvailable(this);
 			}
 		}		
 		
-		public InputStack()
+		public InputPipe()
 		{
 			InputObjects = InputObjects ?? new Stack();
-			RegisteredFeatures = RegisteredFeatures ?? new ObservableCollection<IFeature>();
+			InputConsumerFeatures = InputConsumerFeatures ?? new FeatureCollection();
 		}	
 		
-		public void RegisterFeature(IFeature feature)
+		public void RegisterConsumerFeature(IFeature feature)
 		{
 			lock (featureSyncObject) {
-				RegisteredFeatures.Add(feature);
+				InputConsumerFeatures.Add(feature);
 			}
 		}
 		
-		public void UnregisterFeature(IFeature feature)
+		public void UnregisterConsumerFeature(IFeature feature)
 		{
 			lock (featureSyncObject) {
-				RegisteredFeatures.Remove(feature);
+				InputConsumerFeatures.Remove(feature);
 			}
 		}
 		
@@ -129,10 +140,23 @@ namespace IOTStudio.Core.Providers.Stacks
 			return (InputObjects.Count > 0);
 		}
 		
-		public void Notify()
+		public void NotifyInputConsumers()
 		{
 			if (InputNotificationType == NotificationType.Manual)
 				OnInputAvailable();
+		}
+		
+		public object ConsumeInput()
+		{
+			lock (stackSyncObject) {
+				while (InputObjects.Count > 0) {
+					object input = InputObjects.Pop();
+					if (InputObjects.Count == 0)
+						yield break;
+					else
+						yield return input;
+				}
+			}
 		}
 		
 	}

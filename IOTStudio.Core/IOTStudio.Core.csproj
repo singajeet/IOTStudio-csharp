@@ -98,6 +98,7 @@
     <Compile Include="Elements\Interfaces\IProjectElement.cs" />
     <Compile Include="Elements\Interfaces\IProjectItemElement.cs" />
     <Compile Include="Elements\Interfaces\IWorkspaceElement.cs" />
+    <Compile Include="Features\FeatureCollection.cs" />
     <Compile Include="Features\Interfaces\IFeature.cs" />
     <Compile Include="Models\Editor\Project.cs" />
     <Compile Include="Models\Editor\ProjectItem.cs" />
@@ -110,7 +111,7 @@
     <Compile Include="Providers\Flags\FlagProvider.cs" />
     <Compile Include="Providers\Logging\Logger.cs" />
     <Compile Include="Providers\Properties\PropertyProvider.cs" />
-    <Compile Include="Providers\Stacks\InputStack.cs" />
+    <Compile Include="Providers\Pipes\InputPipe.cs" />
     <Compile Include="Serializers\JSONSerializer.cs" />
     <Compile Include="Serializers\NewtonsoftJSONSerializer.cs" />
     <Compile Include="Serializers\XAMLSerializer.cs" />
@@ -131,7 +132,7 @@
     <Folder Include="Providers\Logging" />
     <Folder Include="Providers\Assemblies" />
     <Folder Include="Providers\Flags" />
-    <Folder Include="Providers\Stacks" />
+    <Folder Include="Providers\Pipes" />
     <Folder Include="Providers\Properties" />
     <Folder Include="Serializers" />
     <Folder Include="Types" />

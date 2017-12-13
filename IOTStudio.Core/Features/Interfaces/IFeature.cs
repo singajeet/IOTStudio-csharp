@@ -17,6 +17,8 @@ namespace IOTStudio.Core.Features.Interfaces
 	/// </summary>
 	public interface IFeature
 	{
-		void InputAvailableFromInputStack(InputStack source);
+		Guid Id { get; set; }
+		string Name { get; set; }
+		void NotifyInputAvailable(InputStack source);
 	}
 }
