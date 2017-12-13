@@ -110,6 +110,11 @@
     <Compile Include="Providers\Assemblies\AssemblyLoader.cs" />
     <Compile Include="Providers\Flags\FlagProvider.cs" />
     <Compile Include="Providers\Logging\Logger.cs" />
+    <Compile Include="Providers\Pipes\IInputConsumer.cs" />
+    <Compile Include="Providers\Pipes\IOutputConsumer.cs" />
+    <Compile Include="Providers\Pipes\OutputConsumerCollection.cs" />
+    <Compile Include="Providers\Pipes\InputConsumerCollection.cs" />
+    <Compile Include="Providers\Pipes\OutputPipe.cs" />
     <Compile Include="Providers\Properties\PropertyProvider.cs" />
     <Compile Include="Providers\Pipes\InputPipe.cs" />
     <Compile Include="Serializers\JSONSerializer.cs" />
@@ -117,6 +122,8 @@
     <Compile Include="Serializers\XAMLSerializer.cs" />
     <Compile Include="Types\EditorElementType.cs" />
     <Compile Include="Types\LayoutElementType.cs" />
+    <Compile Include="Types\NotificationType.cs" />
+    <Compile Include="Types\StackType.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Elements" />

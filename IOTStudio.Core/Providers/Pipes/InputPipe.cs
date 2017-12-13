@@ -11,8 +11,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using IOTStudio.Core.Features;
 using IOTStudio.Core.Features.Interfaces;
+using IOTStudio.Core.Types;
 
 namespace IOTStudio.Core.Providers.Pipes
 {
@@ -55,11 +55,11 @@ namespace IOTStudio.Core.Providers.Pipes
 			}
 		}
 		
-		private FeatureCollection inputConsumerFeatures;
+		private InputConsumerCollection inputConsumers;
 		
-		public FeatureCollection InputConsumerFeatures {
-			get { return inputConsumerFeatures; }
-			set { inputConsumerFeatures = value; 
+		public InputConsumerCollection InputConsumers {
+			get { return inputConsumers; }
+			set { inputConsumers = value; 
 				OnPropertyChanged();
 			}
 		}
@@ -88,28 +88,28 @@ namespace IOTStudio.Core.Providers.Pipes
 				_inputAvailable(this, new InputAvailableEventArgs(this));
 			}
 			
-			foreach (IFeature feature in InputConsumerFeatures) {				
-				feature.NotifyInputAvailable(this);
+			foreach (IInputConsumer consumer in InputConsumers) {				
+				consumer.InputAvailableNotification(this);
 			}
 		}		
 		
 		public InputPipe()
 		{
 			InputObjects = InputObjects ?? new Stack();
-			InputConsumerFeatures = InputConsumerFeatures ?? new FeatureCollection();
+			InputConsumers = InputConsumers ?? new InputConsumerCollection();
 		}	
 		
-		public void RegisterConsumerFeature(IFeature feature)
+		public void RegisterConsumer(IInputConsumer consumer)
 		{
 			lock (featureSyncObject) {
-				InputConsumerFeatures.Add(feature);
+				InputConsumers.Add(consumer);
 			}
 		}
 		
-		public void UnregisterConsumerFeature(IFeature feature)
+		public void UnregisterConsumer(IInputConsumer consumer)
 		{
 			lock (featureSyncObject) {
-				InputConsumerFeatures.Remove(feature);
+				InputConsumers.Remove(consumer);
 			}
 		}
 		
@@ -146,7 +146,7 @@ namespace IOTStudio.Core.Providers.Pipes
 				OnInputAvailable();
 		}
 		
-		public object ConsumeInput()
+		public IEnumerable<object> ConsumeInput()
 		{
 			lock (stackSyncObject) {
 				while (InputObjects.Count > 0) {
@@ -161,23 +161,11 @@ namespace IOTStudio.Core.Providers.Pipes
 		
 	}
 	
-	public enum NotificationType
-	{
-		Auto,
-		Manual
-	}
-	
-	public enum StackType
-	{
-		InputStack,
-		OutputStack
-	}
-	
 	public class InputAvailableEventArgs : EventArgs
 	{
-		public InputStack Source;
+		public InputPipe Source;
 		
-		public InputAvailableEventArgs(InputStack source)
+		public InputAvailableEventArgs(InputPipe source)
 		{
 			this.Source = source;
 		}	
