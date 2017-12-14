@@ -100,7 +100,7 @@ namespace IOTStudio.Core.Models.Layouts
 			Logger.Debug("Instance created successfully!");
 			
 			Id = Guid.NewGuid();
-			Name = RuntimeNameProvider.GetName("DefaultLayout");
+			Name = ProvidersManager.i.NameProvider.GetName("DefaultLayout");
 			
 			AssignDefaultValues();
 			SetupLayout();

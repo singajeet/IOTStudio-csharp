@@ -7,7 +7,7 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using IOTStudio.Core.Providers.Logging;
 using IOTStudio.Core.Providers.Properties;
@@ -19,32 +19,37 @@ namespace IOTStudio.Core.Providers
 	/// Description of RuntimeNameProvider.
 	/// </summary>
 	[DataContract]
-	public static class RuntimeNameProvider
+	public class RuntimeNameProvider
 	{
-		private static ObjectFinalizer finalizer = new ObjectFinalizer();
-		private static Hashtable nameTable = new Hashtable();
 		
-		static RuntimeNameProvider()
+		private static Dictionary<string, int> nameTable = new Dictionary<string, int>();
+		
+		public RuntimeNameProvider()
 		{
-			LoadNameTable();
+			string nameTablePath = PropertyProvider.NameProvider.GetProperty("NameTablePath") as string;
+			
+			if(System.IO.File.Exists(nameTablePath + @"\NameTable.json"))
+				LoadNameTable();
+			
+			NameTable = NameTable ?? new Dictionary<string, int>();
 		}
 		
 		[DataMember]
-		private static Hashtable NameTable{
+		private Dictionary<string, int> NameTable{
 			get { return nameTable; }
 			set { nameTable = value; }
 		}
 
-		private static void LoadNameTable()
+		private void LoadNameTable()
 		{
 			string nameTablePath = PropertyProvider.NameProvider.GetProperty("NameTablePath") as string;
 			
 			Logger.Debug("NameTable will be deserialized from the following file: {0}", nameTablePath + @"\NameTable.json");
 			
-			NameTable = NewtonsoftJSONSerializer.Deserialize(nameTablePath + @"\NameTable.json") as Hashtable;
+			NameTable = NewtonsoftJSONSerializer.Deserialize(nameTablePath + @"\NameTable.json", typeof(Dictionary<string, int>)) as Dictionary<string, int>;
 		}
 		
-		public static string GetName(string key)
+		public string GetName(string key)
 		{
 			if (nameTable.ContainsKey(key)) {
 				
@@ -59,21 +64,19 @@ namespace IOTStudio.Core.Providers
 			}
 		}
 		
-		public static void SaveNameTable()
+		public void SaveNameTable()
 		{
 			string nameTablePath = PropertyProvider.NameProvider.GetProperty("NameTablePath") as string;
 			
 			Logger.Debug("NameTable will be serialized to the following file: {0}", nameTablePath + @"\NameTable.json");
 			
-			NewtonsoftJSONSerializer.Serialize(NameTable, nameTablePath + @"\NameTable.json");
+			NewtonsoftJSONSerializer.Serialize(NameTable, nameTablePath + @"\NameTable.json", typeof(Dictionary<string, int>));
 		}
 
-		private class ObjectFinalizer
-		{
-			~ObjectFinalizer()
+		~RuntimeNameProvider()
 			{
 				SaveNameTable();
 			}
-		}
+		
 	}
 }

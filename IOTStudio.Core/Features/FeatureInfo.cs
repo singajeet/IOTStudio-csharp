@@ -49,7 +49,7 @@ namespace IOTStudio.Core.Features
 				ReleasedDate = info.ReleasedDate;
 			} else {
 				Id = Guid.NewGuid();
-				Name = RuntimeNameProvider.GetName("Feature");
+				Name = ProvidersManager.i.NameProvider.GetName("Feature");
 				Version = "1.0.0.0";
 				ReleasedDate = DateTime.Now;
 				NewtonsoftJSONSerializer.Serialize(this, FILENAME);

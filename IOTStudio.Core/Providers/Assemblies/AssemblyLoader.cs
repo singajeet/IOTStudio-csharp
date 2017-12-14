@@ -18,9 +18,13 @@ namespace IOTStudio.Core.Providers.Assemblies
 	/// <summary>
 	/// Description of AssemblyLoader.
 	/// </summary>
-	public static class AssemblyLoader
+	public class AssemblyLoader
 	{
-		private static IList<FileInfo> Files(string path)
+		public AssemblyLoader()
+		{
+		}
+		
+		private IList<FileInfo> Files(string path)
 		{
 			Logger.Debug("Looking for assembly files in the following path: {0}", path);
 			
@@ -33,13 +37,13 @@ namespace IOTStudio.Core.Providers.Assemblies
 			return files;
 		}
 		
-		public static Assembly LoadAssembly(string fileName)
+		public Assembly LoadAssembly(string fileName)
 		{
 			Logger.Debug("Loading assembly from the following path: {0}", fileName);
 			return Assembly.LoadFrom(fileName);
 		}		
 		
-		public static ObservableCollection<T> GetCollectionOfObjects<T>(string path)
+		public ObservableCollection<T> GetCollectionOfObjects<T>(string path)
 		{
 			Logger.Debug("Creating object instances of type {0} from the configured path", typeof(T));
 			if (!Directory.Exists(path))
@@ -61,17 +65,35 @@ namespace IOTStudio.Core.Providers.Assemblies
 						foreach (Type type in types) {
 							Logger.Debug("Checking whether type {0} matches the required type", type.FullName);
 						
-							if (type.GetInterface(typeof(T).FullName) != null) {
+							if (typeof(T).IsInterface) {
+								if (type.GetInterface(typeof(T).FullName) != null) {
 								
-								T instance = (T)Activator.CreateInstance(type);
-								if (instance != null) {
-									collection.Add(instance);
-									Logger.Debug("Type {0} matches and is added to collection", type);
+									T instance = (T)Activator.CreateInstance(type);
+									if (instance != null) {
+										collection.Add(instance);
+										Logger.Debug("Type {0} matches and is added to collection", type);
+									} else {
+										Logger.Warn("Unable to create instance of type {0}", type);
+									}
 								} else {
-									Logger.Warn("Unable to create instance of type {0}", type);
+									Logger.Debug("Type {0} does not match with the required type and is skipped", type);
 								}
 							} else {
-								Logger.Debug("Type {0} does not match with the required type and is skipped", type);
+								if (typeof(T).IsClass) {
+									if(type.IsSubclassOf(typeof(T))){
+										T instance = (T)Activator.CreateInstance(type);
+										if (instance != null) {
+											collection.Add(instance);
+											Logger.Debug("Type {0} matches and is added to collection", type);
+										} else {
+											Logger.Warn("Unable to create instance of type {0}", type);
+										}
+									}else {
+										Logger.Debug("Type {0} does not match with the required type and is skipped", type);
+									}
+								} else {
+									Logger.Warn("Only class or interface types are sipported as of now");
+								}
 							}
 						}
 					}

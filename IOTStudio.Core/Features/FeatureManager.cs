@@ -20,20 +20,24 @@ namespace IOTStudio.Core.Features
 	/// Description of FeatureManager.
 	/// </summary>
 	[DataContract]
-	public static class FeatureManager 
+	public class FeatureManager 
 	{
-		private static ObjectFinalizer finalizer = new ObjectFinalizer();
-		private static Dictionary<string, IFeature> features = new Dictionary<string, IFeature>();
+		private Dictionary<string, IFeature> features = new Dictionary<string, IFeature>();
 		
 		[DataMember]
-		public static Dictionary<string, IFeature> Features{ get; set; }
+		public Dictionary<string, IFeature> Features{ get; set; }
 		
-		static FeatureManager()
+		public FeatureManager()
 		{
-			LoadFeaturesList();
+			string featureListPath = PropertyProvider.Features.GetProperty("FeaturesListPath") as string;
+			
+			if (System.IO.File.Exists(featureListPath + @"\FeaturesList.json"))
+				LoadFeaturesList();
+			
+			Features = Features ?? new Dictionary<string, IFeature>();
 		}
 		
-		public static void RegisterFeature(string key, IFeature feature)
+		public void RegisterFeature(string key, IFeature feature)
 		{
 			if (Features.ContainsKey(key))
 				throw new Exception(string.Format("Feature with key {0} is already registered", key));
@@ -41,7 +45,7 @@ namespace IOTStudio.Core.Features
 			Features.Add(key, feature);
 		}
 		
-		public static void UnregisterFeature(string key)
+		public void UnregisterFeature(string key)
 		{
 			if (!Features.ContainsKey(key))
 				throw new Exception(string.Format("No such feature found {0}", key));
@@ -49,23 +53,23 @@ namespace IOTStudio.Core.Features
 			Features.Remove(key);
 		}
 		
-		public static IFeature FindFeature(string key)
+		public IFeature FindFeature(string key)
 		{
 			return Features[key];
 		}
 		
-		private static void LoadFeaturesList()
+		private void LoadFeaturesList()
 		{
-			string featureListPath = PropertyProvider.NameProvider.GetProperty("FeaturesListPath") as string;
+			string featureListPath = PropertyProvider.Features.GetProperty("FeaturesListPath") as string;
 			
-			Logger.Debug("NameTable will be deserialized from the following file: {0}", featureListPath + @"\NameTable.json");
+			Logger.Debug("Features list will be deserialized from the following file: {0}", featureListPath + @"\FeaturesList.json");
 			
 			Features = NewtonsoftJSONSerializer.Deserialize(featureListPath + @"\FeaturesList.json") as Dictionary<string, IFeature>;
 		}
 		
-		public static void SaveFeatureList()
+		public void SaveFeatureList()
 		{
-			string featureListPath = PropertyProvider.NameProvider.GetProperty("FeaturesListPath") as string;
+			string featureListPath = PropertyProvider.Features.GetProperty("FeaturesListPath") as string;
 			
 			Logger.Debug("Features list will be serialized to the following file: {0}", featureListPath + @"\FeaturesList.json");
 			
@@ -73,12 +77,10 @@ namespace IOTStudio.Core.Features
 		
 		}
 
-		private class ObjectFinalizer
-		{
-			~ObjectFinalizer()
+		~FeatureManager()
 			{
 				SaveFeatureList();
 			}
-		}
+	
 	}
 }

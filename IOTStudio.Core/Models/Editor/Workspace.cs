@@ -50,7 +50,7 @@ namespace IOTStudio.Core.Models.Editor
 		public Workspace()
 		{
 			Id = Guid.NewGuid();
-			Name = RuntimeNameProvider.GetName("Workspace");
+			Name = ProvidersManager.i.NameProvider.GetName("Workspace");
 			
 			Projects = Projects ?? new ObservableCollection<Project>();
 			Logger.Debug("Instance created successfully!");

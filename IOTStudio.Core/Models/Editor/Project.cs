@@ -47,7 +47,7 @@ namespace IOTStudio.Core.Models.Editor
 		public Project()
 		{
 			Id = Guid.NewGuid();
-			Name = RuntimeNameProvider.GetName("Project");
+			Name = ProvidersManager.i.NameProvider.GetName("Project");
 			
 			ProjectItems = ProjectItems ?? new ObservableCollection<ProjectItem>();
 			Logger.Info("Project instance has been created");

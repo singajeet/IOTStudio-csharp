@@ -7,11 +7,13 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Windows;
 using IOTStudio.Core.Elements.UI;
+using IOTStudio.Core.Providers;
 using IOTStudio.Core.Providers.Assemblies;
 using IOTStudio.Core.Providers.Logging;
 using IOTStudio.Core.Providers.Properties;
@@ -27,12 +29,12 @@ namespace IOTStudio.Core.Models.Layouts
 	{		
 
 		public static readonly DependencyProperty LayoutsProperty =
-			DependencyProperty.Register("Layouts", typeof(LayoutCollection), typeof(LayoutSelector),
+			DependencyProperty.Register("Layouts", typeof(ObservableCollection<BaseLayoutElement>), typeof(LayoutSelector),
 			                            new FrameworkPropertyMetadata());
 		
 		[DataMember]
-		public LayoutCollection Layouts {
-			get { return (LayoutCollection)GetValue(LayoutsProperty); }
+		public ObservableCollection<BaseLayoutElement> Layouts {
+			get { return (ObservableCollection<BaseLayoutElement>)GetValue(LayoutsProperty); }
 			set { SetValue(LayoutsProperty, value); }
 		}
 		
@@ -58,7 +60,7 @@ namespace IOTStudio.Core.Models.Layouts
 			
 			Logger.Debug("{0} layouts loaded from the configured path", Layouts.Count);
 			
-			SelectedLayout = SelectedLayout ?? Layouts["DefaultLayout"];
+			SelectedLayout = SelectedLayout ?? Layouts[0];
 		}
 
 		public void SelectLayout(string layout)
@@ -67,18 +69,18 @@ namespace IOTStudio.Core.Models.Layouts
 							.ToList()
 							.ForEach(f => f.IsSelected = false);
 			
-			SelectedLayout = Layouts[layout];
+			SelectedLayout = Layouts.Where(w=> w.Name.Equals(layout)).ToList().Single();
 			SelectedLayout.IsSelected = true;
 			
 			Logger.Debug("Selected layout changed to: {0}", SelectedLayout.Name);
 		}
 		
-		public LayoutCollection LoadLayouts()
+		public ObservableCollection<BaseLayoutElement> LoadLayouts()
 		{
 			string path = PropertyProvider.LayoutSelector.GetProperty("LayoutsCollectionPath") as string;
 			Logger.Debug("Layouts will be loaded from the following path: {0}", path);
 			
-			return (LayoutCollection)AssemblyLoader.GetCollectionOfObjects<BaseLayoutElement>(path);
+			return ProvidersManager.i.AssemblyLoader.GetCollectionOfObjects<BaseLayoutElement>(path);
 		}
 		#region INotifyPropertyChanged implementation
 

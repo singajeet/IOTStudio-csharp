@@ -115,7 +115,7 @@ namespace IOTStudio.Core.Providers.Pipes
 		public InputPipe()
 		{
 			Id = Guid.NewGuid();
-			Name = RuntimeNameProvider.GetName("InputPipe");
+			Name = ProvidersManager.i.NameProvider.GetName("InputPipe");
 			
 			InputObjects = InputObjects ?? new Stack();
 			InputConsumers = InputConsumers ?? new InputConsumerCollection();

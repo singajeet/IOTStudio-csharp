@@ -21,7 +21,8 @@ namespace IOTStudio.Core.Providers.Properties
 		private const string SERIALIZER_SECTION_NAME = "Serializers/JsonSerializerSettings";
 		private const string LAYOUT_SELECTOR_SECTION_NAME = "Layouts/SelectorSettings";
 		private const string LAYOUT_SECTION_NAME = "Layouts/LayoutSettings";
-		private const string NAME_TABLE_SECTION_NAME = "NameTable/Settings";
+		private const string NAME_TABLE_SECTION_NAME = "Providers/NameTableSettings";
+		private const string FLAGS_SECTION_NAME = "Providers/FlagProviderSettings";
 		private const string FEATURES_SECTION_NAME = "Features/Settings";
 		
 		public static class Serializer{
@@ -72,6 +73,19 @@ namespace IOTStudio.Core.Providers.Properties
 			public static void SetProperty(string key, string value)
 			{
 				SetPropertyOfSection(key, value, NAME_TABLE_SECTION_NAME);
+			} 
+		}
+		
+		public static class FlagProvider
+		{
+			public static string GetProperty(string key)
+			{
+				return GetPropertyFromSection(key, FLAGS_SECTION_NAME);
+			}
+			
+			public static void SetProperty(string key, string value)
+			{
+				SetPropertyOfSection(key, value, FLAGS_SECTION_NAME);
 			} 
 		}
 		

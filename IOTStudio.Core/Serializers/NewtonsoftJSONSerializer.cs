@@ -46,6 +46,27 @@ namespace IOTStudio.Core.Serializers
 			Logger.Debug("Serializing of object [{0}] has been completed", instance.GetType().FullName, filename);
 		}
 		
+		public static void Serialize(object instance, string filename, Type type)
+		{
+			Logger.Debug("Serializing object [{0}] to file [{1}] in JSON format", instance.GetType().FullName, filename);
+			
+			serializer = new JsonSerializer();
+			streamOut = new StreamWriter(filename);
+			jsonWriter = new JsonTextWriter(streamOut);
+			
+			serializer.PreserveReferencesHandling = (PreserveReferencesHandling)Enum.Parse(typeof(PreserveReferencesHandling),
+			                                                   PropertyProvider.Serializer
+			                                                   .GetProperty("PreserveReferencesHandling") as String);
+			serializer.ReferenceLoopHandling = (ReferenceLoopHandling)Enum.Parse(typeof(ReferenceLoopHandling),
+			                                                   PropertyProvider.Serializer
+			                                                   .GetProperty("ReferenceLoopHandling") as String);
+			
+			using (jsonWriter) {
+				serializer.Serialize(jsonWriter, instance, type);
+			}		
+			Logger.Debug("Serializing of object [{0}] has been completed", instance.GetType().FullName, filename);
+		}
+		
 		public static object Deserialize(string filename)
 		{
 			Logger.Debug("Deserializing object from file [{0}] stored in JSON format", filename);
@@ -64,6 +85,32 @@ namespace IOTStudio.Core.Serializers
 			
 			using (jsonReader) {
 				instance = serializer.Deserialize(jsonReader);
+				
+			}
+			
+			Logger.Debug("Deserialization of object from file [{0}] has been completed!", filename);
+			
+			return instance;
+		}
+		
+		public static object Deserialize(string filename, Type type)
+		{
+			Logger.Debug("Deserializing object from file [{0}] stored in JSON format", filename);
+			
+			object instance = null;
+			serializer = new JsonSerializer();
+			streamIn = new StreamReader(filename);
+			jsonReader = new JsonTextReader(streamIn);
+			
+			serializer.PreserveReferencesHandling = (PreserveReferencesHandling)Enum.Parse(typeof(PreserveReferencesHandling),
+			                                                   PropertyProvider.Serializer
+			                                                   .GetProperty("PreserveReferencesHandling") as String);
+			serializer.ReferenceLoopHandling = (ReferenceLoopHandling)Enum.Parse(typeof(ReferenceLoopHandling),
+			                                                   PropertyProvider.Serializer
+			                                                   .GetProperty("ReferenceLoopHandling") as String);
+			
+			using (jsonReader) {
+				instance = serializer.Deserialize(jsonReader, type);				
 			}
 			
 			Logger.Debug("Deserialization of object from file [{0}] has been completed!", filename);
