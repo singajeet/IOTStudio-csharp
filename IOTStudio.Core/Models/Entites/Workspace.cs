@@ -9,19 +9,16 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
-using System.Windows;
-using IOTStudio.Core.Elements;
 using IOTStudio.Core.Elements.Editor;
 using IOTStudio.Core.Providers;
 using IOTStudio.Core.Providers.Logging;
-using Newtonsoft.Json;
 
-namespace IOTStudio.Core.Models.Editor
+namespace IOTStudio.Core.Models.Entites
 {
 	/// <summary>
 	/// Description of Workspace.
 	/// </summary>
-	[DataContract]//(MemberSerialization = MemberSerialization.OptIn)]
+	[DataContract]
 	public class Workspace : BaseWorkspaceElement
 	{
 		private ObservableCollection<Project> projects;
@@ -50,7 +47,7 @@ namespace IOTStudio.Core.Models.Editor
 		public Workspace()
 		{
 			Id = Guid.NewGuid();
-			Name = ProvidersManager.i.NameProvider.GetName("Workspace");
+			Name = Get.i.NameProvider.GetName("Workspace");
 			
 			Projects = Projects ?? new ObservableCollection<Project>();
 			Logger.Debug("Instance created successfully!");

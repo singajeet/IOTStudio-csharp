@@ -10,7 +10,7 @@ using System;
 using System.IO;
 using System.Runtime.Serialization.Json;
 
-namespace IOTStudio.Core.Serializers
+namespace IOTStudio.Core.Providers.DataStore.Serializers
 {
 	/// <summary>
 	/// Description of JSONSerializer.

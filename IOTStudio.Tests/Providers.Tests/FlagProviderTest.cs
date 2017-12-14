@@ -18,7 +18,7 @@ namespace IOTStudio.Tests.Providers.Tests
 	[TestFixture(Description="Test FlagProvider's functionality")]
 	public class FlagProviderTest
 	{
-		ProvidersManager m = ProvidersManager.i;
+		Get m = Get.i;
 		public FlagProviderTest()
 		{
 		}
@@ -26,15 +26,15 @@ namespace IOTStudio.Tests.Providers.Tests
 		[Test]
 		public void TestFlagProviderInitialize()
 		{
-			Assert.AreEqual(0, ProvidersManager.i.FlagProvider.Flags.Count);
+			Assert.AreEqual(0, Get.i.FlagProvider.Flags.Count);
 		}
 		
 		[Test]
 		public void TestKeyRegistration()
 		{
-			ProvidersManager.i.FlagProvider.RegisterFlag("TestFlag", false);
-			Assert.AreEqual(1, ProvidersManager.i.FlagProvider.Flags.Count);
-			Assert.AreEqual(false, ProvidersManager.i.FlagProvider.GetFlagStatus("TestFlag"));
+			Get.i.FlagProvider.RegisterFlag("TestFlag", false);
+			Assert.AreEqual(1, Get.i.FlagProvider.Flags.Count);
+			Assert.AreEqual(false, Get.i.FlagProvider.GetFlagStatus("TestFlag"));
 		}
 	}
 }

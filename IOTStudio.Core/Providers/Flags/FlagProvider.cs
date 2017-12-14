@@ -8,17 +8,33 @@
  */
 using System;
 using System.Collections.Generic;
+using IOTStudio.Core.Interfaces;
 using IOTStudio.Core.Providers.Logging;
 using IOTStudio.Core.Providers.Properties;
-using IOTStudio.Core.Serializers;
 
 namespace IOTStudio.Core.Providers.Flags
 {
 	/// <summary>
 	/// Description of FlagProvider.
 	/// </summary>
-	public class FlagProvider
+	public class FlagProvider : IProvider
 	{
+		#region IProvider implementation
+
+		public Guid Id {
+			get {
+				return new Guid("8D7EE3C3-7FC4-44B1-AF77-6FA3D248DCAD");
+			}
+		}
+	
+		public string Name {
+			get {
+				return "FlagProvider";
+			}
+		}
+	
+		#endregion
+
 		private Dictionary<string, bool> flags;
 		
 		public Dictionary<string, bool> Flags {
@@ -80,7 +96,7 @@ namespace IOTStudio.Core.Providers.Flags
 			
 			Logger.Debug("FlagProvider will be deserialized from the following file: {0}", flagProviderPath + @"\FlagProvider.json");
 			
-			Flags = NewtonsoftJSONSerializer.Deserialize(flagProviderPath + @"\FlagProvider.json", typeof(Dictionary<string, bool>)) as Dictionary<string, bool>;
+			Flags = Get.i.JSONSerializer.Deserialize(flagProviderPath + @"\FlagProvider.json", typeof(Dictionary<string, bool>)) as Dictionary<string, bool>;
 		}
 		
 		public void SaveFlags()
@@ -89,7 +105,7 @@ namespace IOTStudio.Core.Providers.Flags
 			
 			Logger.Debug("FlagProvider will be serialized to the following file: {0}", flagProviderPath + @"\FlagProvider.json");
 			
-			NewtonsoftJSONSerializer.Serialize(Flags, flagProviderPath + @"\FlagProvider.json", typeof(Dictionary<string, bool>));
+			Get.i.JSONSerializer.Serialize(Flags, flagProviderPath + @"\FlagProvider.json", typeof(Dictionary<string, bool>));
 		}
 
 		~FlagProvider()

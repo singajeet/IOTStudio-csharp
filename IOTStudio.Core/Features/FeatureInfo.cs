@@ -9,10 +9,9 @@
 using System;
 using System.IO;
 using System.Runtime.Serialization;
-using IOTStudio.Core.Elements.Interfaces;
+using IOTStudio.Core.Interfaces;
 using IOTStudio.Core.Providers;
 using IOTStudio.Core.Providers.Logging;
-using IOTStudio.Core.Serializers;
 
 namespace IOTStudio.Core.Features
 {
@@ -27,7 +26,7 @@ namespace IOTStudio.Core.Features
 		{
 			Logger.Debug("Trying to load feature info from => {0}", FILENAME);
 			if (File.Exists(FILENAME)) {
-				IFeatureInfo info = NewtonsoftJSONSerializer.Deserialize(FILENAME) as IFeatureInfo;
+				IFeatureInfo info = Get.i.JSONSerializer.Deserialize(FILENAME) as IFeatureInfo;
 				UpdateInfo(info);				
 				Logger.Debug("Feature info loaded successfully => [Id: {0}], [Name: {1}], [Description: {2}]", info.Id, info.Name, info.Description);
 			} else {
@@ -49,10 +48,10 @@ namespace IOTStudio.Core.Features
 				ReleasedDate = info.ReleasedDate;
 			} else {
 				Id = Guid.NewGuid();
-				Name = ProvidersManager.i.NameProvider.GetName("Feature");
+				Name = Get.i.NameProvider.GetName("Feature");
 				Version = "1.0.0.0";
 				ReleasedDate = DateTime.Now;
-				NewtonsoftJSONSerializer.Serialize(this, FILENAME);
+				Get.i.JSONSerializer.Serialize(this, FILENAME);
 				Logger.Debug("Default Feature info stored to {0}", FILENAME);
 			}
 		}

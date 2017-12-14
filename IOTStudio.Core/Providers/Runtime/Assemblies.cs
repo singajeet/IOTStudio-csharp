@@ -11,18 +11,32 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Reflection;
+using IOTStudio.Core.Interfaces;
 using IOTStudio.Core.Providers.Logging;
 
-namespace IOTStudio.Core.Providers.Assemblies
+namespace IOTStudio.Core.Providers.Runtime
 {
 	/// <summary>
-	/// Description of AssemblyLoader.
+	/// Description of Assemblies.
 	/// </summary>
-	public class AssemblyLoader
+	public class Assemblies : IProvider
 	{
-		public AssemblyLoader()
+		public Assemblies()
 		{
 		}
+
+		#region IProvider implementation
+		public Guid Id {
+			get {
+				return new Guid("EED6A94D-16D3-4553-858C-4445BD0586E5");
+			}
+		}
+		public string Name {
+			get {
+				return "Assemblies";
+			}
+		}
+		#endregion	
 		
 		private IList<FileInfo> Files(string path)
 		{

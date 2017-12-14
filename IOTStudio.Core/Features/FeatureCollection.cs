@@ -8,7 +8,7 @@
  */
 using System;
 using System.Collections.ObjectModel;
-using IOTStudio.Core.Elements.Interfaces;
+using IOTStudio.Core.Interfaces;
 
 namespace IOTStudio.Core.Features
 {

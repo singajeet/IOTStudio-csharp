@@ -10,7 +10,7 @@ using System;
 using System.Windows.Markup;
 using System.Xml;
 
-namespace IOTStudio.Core.Serializers
+namespace IOTStudio.Core.Providers.DataStore.Serializers
 {
 	/// <summary>
 	/// Description of XAMLSerializer.

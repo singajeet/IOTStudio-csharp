@@ -13,7 +13,7 @@ using IOTStudio.Core.Elements.Editor;
 using IOTStudio.Core.Providers;
 using IOTStudio.Core.Providers.Logging;
 
-namespace IOTStudio.Core.Models.Editor
+namespace IOTStudio.Core.Models.Entites
 {
 	/// <summary>
 	/// Description of Project.
@@ -47,7 +47,7 @@ namespace IOTStudio.Core.Models.Editor
 		public Project()
 		{
 			Id = Guid.NewGuid();
-			Name = ProvidersManager.i.NameProvider.GetName("Project");
+			Name = Get.i.NameProvider.GetName("Project");
 			
 			ProjectItems = ProjectItems ?? new ObservableCollection<ProjectItem>();
 			Logger.Info("Project instance has been created");

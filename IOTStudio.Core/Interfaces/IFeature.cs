@@ -8,12 +8,11 @@
  */
 using System;
 using System.Collections.ObjectModel;
-using System.Windows;
-using System.Windows.Input;
+using IOTStudio.Core.Elements.Interfaces;
 using IOTStudio.Core.Features;
 using IOTStudio.Core.Providers.Pipes;
 
-namespace IOTStudio.Core.Elements.Interfaces
+namespace IOTStudio.Core.Interfaces
 {
 	/// <summary>
 	/// Description of IFeature.

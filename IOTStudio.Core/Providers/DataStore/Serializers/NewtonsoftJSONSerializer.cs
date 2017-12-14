@@ -8,24 +8,37 @@
  */
 using System;
 using System.IO;
+using IOTStudio.Core.Interfaces;
 using IOTStudio.Core.Providers.Logging;
 using IOTStudio.Core.Providers.Properties;
 using Newtonsoft.Json;
 
-namespace IOTStudio.Core.Serializers
+namespace IOTStudio.Core.Providers.DataStore.Serializers
 {
 	/// <summary>
 	/// Description of NewtonsoftJSONSerializer.
 	/// </summary>
-	public static class NewtonsoftJSONSerializer
+	public class NewtonsoftJSONSerializer : IProvider
 	{
-		private static JsonSerializer serializer;
-		private static StreamWriter streamOut;
-		private static StreamReader streamIn;
-		private static JsonWriter jsonWriter;
-		private static JsonReader jsonReader;
-		
-		public static void Serialize(object instance, string filename)
+		private JsonSerializer serializer;
+		private StreamWriter streamOut;
+		private StreamReader streamIn;
+		private JsonWriter jsonWriter;
+		private JsonReader jsonReader;
+
+		#region IProvider implementation
+		public Guid Id {
+			get {
+				return new Guid("CAB5251E-1724-45F0-9037-364BF6683858");
+			}
+		}
+		public string Name {
+			get {
+				return "NewtonsoftJSONSerializer";
+			}
+		}
+		#endregion		
+		public void Serialize(object instance, string filename)
 		{
 			Logger.Debug("Serializing object [{0}] to file [{1}] in JSON format", instance.GetType().FullName, filename);
 			
@@ -46,7 +59,7 @@ namespace IOTStudio.Core.Serializers
 			Logger.Debug("Serializing of object [{0}] has been completed", instance.GetType().FullName, filename);
 		}
 		
-		public static void Serialize(object instance, string filename, Type type)
+		public void Serialize(object instance, string filename, Type type)
 		{
 			Logger.Debug("Serializing object [{0}] to file [{1}] in JSON format", instance.GetType().FullName, filename);
 			
@@ -67,7 +80,7 @@ namespace IOTStudio.Core.Serializers
 			Logger.Debug("Serializing of object [{0}] has been completed", instance.GetType().FullName, filename);
 		}
 		
-		public static object Deserialize(string filename)
+		public object Deserialize(string filename)
 		{
 			Logger.Debug("Deserializing object from file [{0}] stored in JSON format", filename);
 			
@@ -93,7 +106,7 @@ namespace IOTStudio.Core.Serializers
 			return instance;
 		}
 		
-		public static object Deserialize(string filename, Type type)
+		public object Deserialize(string filename, Type type)
 		{
 			Logger.Debug("Deserializing object from file [{0}] stored in JSON format", filename);
 			

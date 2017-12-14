@@ -8,13 +8,14 @@
  */
 using System;
 
-namespace IOTStudio.Core.Elements.Interfaces
+namespace IOTStudio.Core.Interfaces
 {
 	/// <summary>
 	/// Description of IProvider.
 	/// </summary>
 	public interface IProvider
 	{
-		
+		Guid Id { get; }
+		string Name { get; }		
 	}
 }

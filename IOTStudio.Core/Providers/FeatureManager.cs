@@ -9,21 +9,32 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using IOTStudio.Core.Elements.Interfaces;
+using IOTStudio.Core.Interfaces;
 using IOTStudio.Core.Providers.Logging;
 using IOTStudio.Core.Providers.Properties;
-using IOTStudio.Core.Serializers;
 
-namespace IOTStudio.Core.Features
+namespace IOTStudio.Core.Providers
 {
 	/// <summary>
 	/// Description of FeatureManager.
 	/// </summary>
 	[DataContract]
-	public class FeatureManager 
+	public class FeatureManager : IProvider
 	{
 		private Dictionary<string, IFeature> features = new Dictionary<string, IFeature>();
-		
+
+		#region IProvider implementation
+		public Guid Id {
+			get {
+				return new Guid("1CA3AD47-59A9-4C45-A079-54384F49172E");
+			}
+		}
+		public string Name {
+			get {
+				return "FeatureManager";
+			}
+		}
+		#endregion		
 		[DataMember]
 		public Dictionary<string, IFeature> Features{ get; set; }
 		
@@ -64,7 +75,7 @@ namespace IOTStudio.Core.Features
 			
 			Logger.Debug("Features list will be deserialized from the following file: {0}", featureListPath + @"\FeaturesList.json");
 			
-			Features = NewtonsoftJSONSerializer.Deserialize(featureListPath + @"\FeaturesList.json") as Dictionary<string, IFeature>;
+			Features = Get.i.JSONSerializer.Deserialize(featureListPath + @"\FeaturesList.json", typeof(Dictionary<string, IFeature>)) as Dictionary<string, IFeature>;
 		}
 		
 		public void SaveFeatureList()
@@ -73,7 +84,7 @@ namespace IOTStudio.Core.Features
 			
 			Logger.Debug("Features list will be serialized to the following file: {0}", featureListPath + @"\FeaturesList.json");
 			
-			NewtonsoftJSONSerializer.Serialize(Features, featureListPath + @"\FeaturesList.json");
+			Get.i.JSONSerializer.Serialize(Features, featureListPath + @"\FeaturesList.json", typeof(Dictionary<string, IFeature>));
 		
 		}
 

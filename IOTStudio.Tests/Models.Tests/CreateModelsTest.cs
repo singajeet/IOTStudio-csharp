@@ -8,7 +8,7 @@
  */
 using System;
 using System.Threading;
-using IOTStudio.Core.Models.Editor;
+using IOTStudio.Core.Models.Entites;
 using NUnit.Framework;
 
 namespace IOTStudio.Tests.Models.Tests

@@ -14,7 +14,6 @@ using System.Runtime.Serialization;
 using System.Windows;
 using IOTStudio.Core.Elements.UI;
 using IOTStudio.Core.Providers;
-using IOTStudio.Core.Providers.Assemblies;
 using IOTStudio.Core.Providers.Logging;
 using IOTStudio.Core.Providers.Properties;
 using System.Linq;
@@ -80,7 +79,7 @@ namespace IOTStudio.Core.Models.Layouts
 			string path = PropertyProvider.LayoutSelector.GetProperty("LayoutsCollectionPath") as string;
 			Logger.Debug("Layouts will be loaded from the following path: {0}", path);
 			
-			return ProvidersManager.i.AssemblyLoader.GetCollectionOfObjects<BaseLayoutElement>(path);
+			return Get.i.Assemblies.GetCollectionOfObjects<BaseLayoutElement>(path);
 		}
 		#region INotifyPropertyChanged implementation
 

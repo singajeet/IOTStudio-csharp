@@ -9,22 +9,34 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using IOTStudio.Core.Interfaces;
 using IOTStudio.Core.Providers.Logging;
 using IOTStudio.Core.Providers.Properties;
-using IOTStudio.Core.Serializers;
 
 namespace IOTStudio.Core.Providers
 {
 	/// <summary>
-	/// Description of RuntimeNameProvider.
+	/// Description of Names.
 	/// </summary>
 	[DataContract]
-	public class RuntimeNameProvider
+	public class Names : IProvider
 	{
 		
 		private static Dictionary<string, int> nameTable = new Dictionary<string, int>();
-		
-		public RuntimeNameProvider()
+
+		#region IProvider implementation
+		public Guid Id {
+			get {
+				return new Guid("06DFF8DC-53EA-45DB-AD84-35B249ACEC77");
+			}
+		}
+		public string Name {
+			get {
+				return "Names";
+			}
+		}
+		#endregion		
+		public Names()
 		{
 			string nameTablePath = PropertyProvider.NameProvider.GetProperty("NameTablePath") as string;
 			
@@ -46,7 +58,7 @@ namespace IOTStudio.Core.Providers
 			
 			Logger.Debug("NameTable will be deserialized from the following file: {0}", nameTablePath + @"\NameTable.json");
 			
-			NameTable = NewtonsoftJSONSerializer.Deserialize(nameTablePath + @"\NameTable.json", typeof(Dictionary<string, int>)) as Dictionary<string, int>;
+			NameTable = Get.i.JSONSerializer.Deserialize(nameTablePath + @"\NameTable.json", typeof(Dictionary<string, int>)) as Dictionary<string, int>;
 		}
 		
 		public string GetName(string key)
@@ -70,10 +82,10 @@ namespace IOTStudio.Core.Providers
 			
 			Logger.Debug("NameTable will be serialized to the following file: {0}", nameTablePath + @"\NameTable.json");
 			
-			NewtonsoftJSONSerializer.Serialize(NameTable, nameTablePath + @"\NameTable.json", typeof(Dictionary<string, int>));
+			Get.i.JSONSerializer.Serialize(NameTable, nameTablePath + @"\NameTable.json", typeof(Dictionary<string, int>));
 		}
 
-		~RuntimeNameProvider()
+		~Names()
 			{
 				SaveNameTable();
 			}

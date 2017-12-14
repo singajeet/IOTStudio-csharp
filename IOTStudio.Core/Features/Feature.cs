@@ -13,7 +13,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using IOTStudio.Core.Elements.Interfaces;
-using IOTStudio.Core.Providers;
+using IOTStudio.Core.Interfaces;
 using IOTStudio.Core.Providers.Pipes;
 using IOTStudio.Core.Types;
 

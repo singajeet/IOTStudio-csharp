@@ -8,7 +8,7 @@
  */
 using System;
 
-namespace IOTStudio.Core.Elements.Interfaces
+namespace IOTStudio.Core.Interfaces
 {
 	/// <summary>
 	/// Description of IFeatureInfo.
