@@ -7,10 +7,13 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using IOTStudio.Core.Interfaces;
+using IOTStudio.Core.Providers.FlagProviders;
 using IOTStudio.Core.Providers.Runtime;
-using IOTStudio.Core.Providers.DataStore.Serializers;
-using IOTStudio.Core.Providers.Flags;
 using IOTStudio.Core.Providers.Logging;
+using IOTStudio.Core.Providers.Stores;
+using IOTStudio.Core.Providers.Stores.Database;
+using IOTStudio.Core.Providers.Stores.Serializers;
 
 namespace IOTStudio.Core.Providers
 {
@@ -22,10 +25,12 @@ namespace IOTStudio.Core.Providers
 		private static Get manager;
 		
 		private Names nameProvider;
-		private FlagProvider flagProvider;
+		private Flags flagProvider;
 		private Assemblies assemblyLoader;
-		private FeatureManager featureManager;
+		private Features featureManager;
 		private NewtonsoftJSONSerializer jsonSerializer;
+		private IDatabase database;
+		private DataStore dataStore;
 		
 		private Get()
 		{
@@ -34,18 +39,24 @@ namespace IOTStudio.Core.Providers
 			nameProvider = new Names();
 			Logger.Debug("Names [{0}] has been initiated", nameProvider.Id);
 			
-			flagProvider = new FlagProvider();
+			flagProvider = new Flags();
 			Logger.Debug("FlagProvider [{0}] has been initiated", flagProvider.Id);
 			
 			assemblyLoader = new Assemblies();
 			Logger.Debug("Assemblies [{0}] has been initiated", assemblyLoader.Id);
 			
-			featureManager = new FeatureManager();
+			featureManager = new Features();
 			Logger.Debug("FeatureManager [{0}] has been initiated", featureManager.Id);
 			
 			jsonSerializer = new NewtonsoftJSONSerializer();
 			Logger.Debug("NewtonsoftJSONSerializer [{0}] has been initiated", jsonSerializer.Id);
 			
+			string configuredDatabase = Properties.DB.Get("ActiveDatabase");
+			database = DatabaseFactory.Instance.LoadDatabase(configuredDatabase);
+			Logger.Debug("Database [{0}] has been initiated", configuredDatabase);
+			
+			dataStore = new DataStore(database);
+			Logger.Debug("DataStore [{0}] has been initiated", dataStore.Id);
 		}
 		
 		public static Get i
@@ -58,19 +69,23 @@ namespace IOTStudio.Core.Providers
 			}
 		}
 		
+		public IDatabase DB{
+			get { return database; }
+		}
+		
 		public NewtonsoftJSONSerializer JSONSerializer{
 			 get {
 				return jsonSerializer;
 			}
 		}
 		
-		public Names NameProvider{
+		public Names Names{
 			get {
 				return nameProvider;
 			}
 		}
 		
-		public FlagProvider FlagProvider{
+		public Flags Flags{
 			get{ return flagProvider; }
 		}
 		
@@ -78,7 +93,7 @@ namespace IOTStudio.Core.Providers
 			get { return assemblyLoader; }
 		}
 		
-		public FeatureManager FeatureManager{
+		public FeatureManager Features{
 			get { return featureManager; }
 		}
 	}

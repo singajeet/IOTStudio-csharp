@@ -10,10 +10,9 @@ using System;
 using System.IO;
 using IOTStudio.Core.Interfaces;
 using IOTStudio.Core.Providers.Logging;
-using IOTStudio.Core.Providers.Properties;
 using Newtonsoft.Json;
 
-namespace IOTStudio.Core.Providers.DataStore.Serializers
+namespace IOTStudio.Core.Providers.Stores.Serializers
 {
 	/// <summary>
 	/// Description of NewtonsoftJSONSerializer.
@@ -47,10 +46,10 @@ namespace IOTStudio.Core.Providers.DataStore.Serializers
 			jsonWriter = new JsonTextWriter(streamOut);
 			
 			serializer.PreserveReferencesHandling = (PreserveReferencesHandling)Enum.Parse(typeof(PreserveReferencesHandling),
-			                                                   PropertyProvider.Serializer
+			                                                   Properties.Serializer
 			                                                   .GetProperty("PreserveReferencesHandling") as String);
 			serializer.ReferenceLoopHandling = (ReferenceLoopHandling)Enum.Parse(typeof(ReferenceLoopHandling),
-			                                                   PropertyProvider.Serializer
+			                                                   Properties.Serializer
 			                                                   .GetProperty("ReferenceLoopHandling") as String);
 			
 			using (jsonWriter) {
@@ -68,10 +67,10 @@ namespace IOTStudio.Core.Providers.DataStore.Serializers
 			jsonWriter = new JsonTextWriter(streamOut);
 			
 			serializer.PreserveReferencesHandling = (PreserveReferencesHandling)Enum.Parse(typeof(PreserveReferencesHandling),
-			                                                   PropertyProvider.Serializer
+			                                                   Properties.Serializer
 			                                                   .GetProperty("PreserveReferencesHandling") as String);
 			serializer.ReferenceLoopHandling = (ReferenceLoopHandling)Enum.Parse(typeof(ReferenceLoopHandling),
-			                                                   PropertyProvider.Serializer
+			                                                   Properties.Serializer
 			                                                   .GetProperty("ReferenceLoopHandling") as String);
 			
 			using (jsonWriter) {
@@ -90,10 +89,10 @@ namespace IOTStudio.Core.Providers.DataStore.Serializers
 			jsonReader = new JsonTextReader(streamIn);
 			
 			serializer.PreserveReferencesHandling = (PreserveReferencesHandling)Enum.Parse(typeof(PreserveReferencesHandling),
-			                                                   PropertyProvider.Serializer
+			                                                   Properties.Serializer
 			                                                   .GetProperty("PreserveReferencesHandling") as String);
 			serializer.ReferenceLoopHandling = (ReferenceLoopHandling)Enum.Parse(typeof(ReferenceLoopHandling),
-			                                                   PropertyProvider.Serializer
+			                                                   Properties.Serializer
 			                                                   .GetProperty("ReferenceLoopHandling") as String);
 			
 			using (jsonReader) {
@@ -116,10 +115,10 @@ namespace IOTStudio.Core.Providers.DataStore.Serializers
 			jsonReader = new JsonTextReader(streamIn);
 			
 			serializer.PreserveReferencesHandling = (PreserveReferencesHandling)Enum.Parse(typeof(PreserveReferencesHandling),
-			                                                   PropertyProvider.Serializer
+			                                                   Properties.Serializer
 			                                                   .GetProperty("PreserveReferencesHandling") as String);
 			serializer.ReferenceLoopHandling = (ReferenceLoopHandling)Enum.Parse(typeof(ReferenceLoopHandling),
-			                                                   PropertyProvider.Serializer
+			                                                   Properties.Serializer
 			                                                   .GetProperty("ReferenceLoopHandling") as String);
 			
 			using (jsonReader) {

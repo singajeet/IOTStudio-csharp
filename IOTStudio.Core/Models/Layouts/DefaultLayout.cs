@@ -164,7 +164,7 @@ namespace IOTStudio.Core.Models.Layouts
 		{
 			Logger.Debug("Starting save action of layout: DefaultLayout");
 			
-			string layoutSavePath = PropertyProvider.Layout.GetProperty("SelectedLayoutSavePath") as String;
+			string layoutSavePath = Properties.Layout.Get("SelectedLayoutSavePath") as String;
 			Logger.Debug("Layout will be serialized to the following file: {0}", layoutSavePath + @"\DefaultLayout.json");
 			
 			Get.i.JSONSerializer.Serialize(layout, layoutSavePath + @"\DefaultLayout.json", typeof(DefaultLayout));
@@ -181,7 +181,7 @@ namespace IOTStudio.Core.Models.Layouts
 		{
 			Logger.Debug("Starting load action of layout: DefaultLayout");
 			
-			string layoutSavePath = PropertyProvider.Layout.GetProperty("SelectedLayoutSavePath") as String;
+			string layoutSavePath = Properties.Layout.Get("SelectedLayoutSavePath") as String;
 			Logger.Debug("Layout will be deserialized from the following file: {0}", layoutSavePath + @"\DefaultLayout.json");
 			
 			DefaultLayout layout = Get.i.JSONSerializer.Deserialize(layoutSavePath + @"\DefaultLayout.json", typeof(DefaultLayout)) as DefaultLayout;

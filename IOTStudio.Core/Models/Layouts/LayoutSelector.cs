@@ -76,7 +76,7 @@ namespace IOTStudio.Core.Models.Layouts
 		
 		public ObservableCollection<BaseLayoutElement> LoadLayouts()
 		{
-			string path = PropertyProvider.LayoutSelector.GetProperty("LayoutsCollectionPath") as string;
+			string path = Properties.LayoutSelector.Get("LayoutsCollectionPath") as string;
 			Logger.Debug("Layouts will be loaded from the following path: {0}", path);
 			
 			return Get.i.Assemblies.GetCollectionOfObjects<BaseLayoutElement>(path);

@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using IOTStudio.Core.Interfaces;
 using IOTStudio.Core.Providers.Logging;
-using IOTStudio.Core.Providers.Properties;
+using IOTStudio.Core.Providers.DataStore;
 
 namespace IOTStudio.Core.Providers
 {
@@ -38,7 +38,7 @@ namespace IOTStudio.Core.Providers
 		#endregion		
 		public Names()
 		{
-			string nameTablePath = PropertyProvider.NameProvider.GetProperty("NameTablePath") as string;
+			string nameTablePath = Properties.Names.Get("NameTablePath") as string;
 			
 			if(System.IO.File.Exists(nameTablePath + @"\NameTable.json"))
 				LoadNameTable();
@@ -54,7 +54,7 @@ namespace IOTStudio.Core.Providers
 
 		private void LoadNameTable()
 		{
-			string nameTablePath = PropertyProvider.NameProvider.GetProperty("NameTablePath") as string;
+			string nameTablePath = Properties.Names.Get("NameTablePath") as string;
 			
 			Logger.Debug("NameTable will be deserialized from the following file: {0}", nameTablePath + @"\NameTable.json");
 			
@@ -78,7 +78,7 @@ namespace IOTStudio.Core.Providers
 		
 		public void SaveNameTable()
 		{
-			string nameTablePath = PropertyProvider.NameProvider.GetProperty("NameTablePath") as string;
+			string nameTablePath = Properties.Names.Get("NameTablePath") as string;
 			
 			Logger.Debug("NameTable will be serialized to the following file: {0}", nameTablePath + @"\NameTable.json");
 			

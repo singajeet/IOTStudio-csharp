@@ -11,15 +11,39 @@ using System.IO;
 using IOTStudio.Core.Interfaces;
 using IOTStudio.Core.Types;
 
-namespace IOTStudio.Core.Providers.FileStore
+namespace IOTStudio.Core.Providers.Stores
 {
 	/// <summary>
 	/// Description of FileStore.
 	/// </summary>
-	public class DataStore : IDataStore
+	public class DataStore : IDataStore, IProvider
 	{
+		#region IProvider implementation
+
+		public Guid Id {
+			get {
+				return new Guid("306E92DF-8DF0-4282-8F86-6818CF65E32C");
+			}
+		}
+	
+		public string Name {
+			get {
+				return "DataStore";
+			}
+		}
+
+		#endregion
+
 		
 		public DataStore()
+		{
+		}
+		
+		public DataStore(IDatabase database)
+		{
+		}
+		
+		public bool Exists(string name)
 		{
 		}
 

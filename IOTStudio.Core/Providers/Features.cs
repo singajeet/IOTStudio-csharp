@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using IOTStudio.Core.Interfaces;
+using IOTStudio.Core.Providers.DataStore;
 using IOTStudio.Core.Providers.Logging;
 using IOTStudio.Core.Providers.Properties;
 
@@ -19,7 +20,7 @@ namespace IOTStudio.Core.Providers
 	/// Description of FeatureManager.
 	/// </summary>
 	[DataContract]
-	public class FeatureManager : IProvider
+	public class Features : IProvider
 	{
 		private Dictionary<string, IFeature> features = new Dictionary<string, IFeature>();
 
@@ -36,59 +37,59 @@ namespace IOTStudio.Core.Providers
 		}
 		#endregion		
 		[DataMember]
-		public Dictionary<string, IFeature> Features{ get; set; }
+		public Dictionary<string, IFeature> AllFeatures{ get; set; }
 		
-		public FeatureManager()
+		public Features()
 		{
-			string featureListPath = PropertyProvider.Features.GetProperty("FeaturesListPath") as string;
+			string featureListPath = Properties.Features.Get("FeaturesListPath") as string;
 			
-			if (System.IO.File.Exists(featureListPath + @"\FeaturesList.json"))
+			if (Properties.DataStore.Exists(featureListPath))
 				LoadFeaturesList();
 			
-			Features = Features ?? new Dictionary<string, IFeature>();
+			AllFeatures = AllFeatures ?? new Dictionary<string, IFeature>();
 		}
 		
 		public void RegisterFeature(string key, IFeature feature)
 		{
-			if (Features.ContainsKey(key))
+			if (AllFeatures.ContainsKey(key))
 				throw new Exception(string.Format("Feature with key {0} is already registered", key));
 			
-			Features.Add(key, feature);
+			AllFeatures.Add(key, feature);
 		}
 		
 		public void UnregisterFeature(string key)
 		{
-			if (!Features.ContainsKey(key))
+			if (!AllFeatures.ContainsKey(key))
 				throw new Exception(string.Format("No such feature found {0}", key));
 			
-			Features.Remove(key);
+			AllFeatures.Remove(key);
 		}
 		
 		public IFeature FindFeature(string key)
 		{
-			return Features[key];
+			return AllFeatures[key];
 		}
 		
 		private void LoadFeaturesList()
 		{
-			string featureListPath = PropertyProvider.Features.GetProperty("FeaturesListPath") as string;
+			string featureListPath = Properties.Features.Get("FeaturesListPath") as string;
 			
-			Logger.Debug("Features list will be deserialized from the following file: {0}", featureListPath + @"\FeaturesList.json");
+			Logger.Debug("Features list will be deserialized from the following DataStore: {0}", featureListPath);
 			
-			Features = Get.i.JSONSerializer.Deserialize(featureListPath + @"\FeaturesList.json", typeof(Dictionary<string, IFeature>)) as Dictionary<string, IFeature>;
+			AllFeatures = Get.i.JSONSerializer.Deserialize(featureListPath, typeof(Dictionary<string, IFeature>)) as Dictionary<string, IFeature>;
 		}
 		
 		public void SaveFeatureList()
 		{
-			string featureListPath = PropertyProvider.Features.GetProperty("FeaturesListPath") as string;
+			string featureListPath = Properties.Features.Get("FeaturesListPath") as string;
 			
-			Logger.Debug("Features list will be serialized to the following file: {0}", featureListPath + @"\FeaturesList.json");
+			Logger.Debug("Features list will be serialized to the following DataStore: {0}", featureListPath);
 			
-			Get.i.JSONSerializer.Serialize(Features, featureListPath + @"\FeaturesList.json", typeof(Dictionary<string, IFeature>));
+			Get.i.JSONSerializer.Serialize(AllFeatures, featureListPath, typeof(Dictionary<string, IFeature>));
 		
 		}
 
-		~FeatureManager()
+		~Features()
 			{
 				SaveFeatureList();
 			}

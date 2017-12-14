@@ -8,16 +8,29 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using IOTStudio.Core.Interfaces;
+using IOTStudio.Core.Providers.DataStore;
 using IOTStudio.Core.Providers.Logging;
-using IOTStudio.Core.Providers.Properties;
+using System.Linq;
 
-namespace IOTStudio.Core.Providers.Flags
+namespace IOTStudio.Core.Providers.FlagProviders
 {
+	
+	public class Flag{
+		public string Key { get; set;} 
+		public bool Value { get; set;}
+		
+		public Flag(string key, bool value){
+		Key= key;
+		Value= value;
+		}
+	}
+	
 	/// <summary>
 	/// Description of FlagProvider.
 	/// </summary>
-	public class FlagProvider : IProvider
+	public class Flags : IProvider
 	{
 		#region IProvider implementation
 
@@ -29,86 +42,90 @@ namespace IOTStudio.Core.Providers.Flags
 	
 		public string Name {
 			get {
-				return "FlagProvider";
+				return "Flags";
 			}
 		}
 	
 		#endregion
 
-		private Dictionary<string, bool> flags;
+		private ObservableCollection<Flag> allFlags;
 		
-		public Dictionary<string, bool> Flags {
-			get { return flags; }
-			set { flags= value; }
+		public ObservableCollection<Flag> AllFlags {
+			get { return allFlags; }
+			set { allFlags= value; }
 		}
 		
 		public void RegisterFlag(string key, bool value)
 		{
-			if (Flags.ContainsKey(key)) {
+			if (this.ContainsKey(key)) {
 				throw new Exception("Key provided is already registered for another object");
 			}
 			
-			Flags.Add(key, value);
+			AllFlags.Add(new Flag(key, value));
 			Logger.Debug("New Flag {0} registered with default value as {1}", key, value);
 		}
 		
 		public bool ContainsKey(string key)
 		{
-			return Flags.ContainsKey(key);
+			return AllFlags.Where(f => f.Key.Equals(key)).ToList().Count > 0;
 		}
 		
 		public bool GetFlagStatus(string key)
 		{
-			bool value = (bool)Flags[key];
+			bool value = AllFlags.Where(f => f.Key.Equals(key))
+				.ToList().SingleOrDefault().Value;
 			return value;
 		}
 		
 		public void SetFlagStatus(string key, bool value)
 		{
-			Flags[key] = value;
+			AllFlags.Where(f => f.Key.Equals(key))
+				.ToList().SingleOrDefault().Value = value;
 		}
 		
 		public void UnregisterFlag(string key)
 		{
-			if (!Flags.ContainsKey(key)) {
+			if (!this.ContainsKey(key)) {
 				throw new Exception("No such key is registered");
 			}
 			
-			Flags.Remove(key);
+			Flag flag = AllFlags.Where(f => f.Key.Equals(key))
+				.ToList().SingleOrDefault();
+			AllFlags.Remove(flag);
 			Logger.Debug("Flag {0} has been unregistered from this provider", key);
 		}
 		
-		public FlagProvider()
+		public Flags()
 		{
-			string flagProviderPath = PropertyProvider.FlagProvider.GetProperty("FlagProviderPath") as string;
+			string flagProviderPath = Properties.Flags.Get("FlagProviderPath") as string;
 			
 			if (System.IO.File.Exists(flagProviderPath + @"\FlagProvider.json"))
 				LoadFlags();
 			
-			Flags = Flags ?? new Dictionary<string, bool>();
+			AllFlags = AllFlags ?? new ObservableCollection<Flag>();
 			
 			Logger.Debug("Dictionary created for FlagProvider");
 		}
 		
 		private void LoadFlags()
 		{
-			string flagProviderPath = PropertyProvider.FlagProvider.GetProperty("FlagProviderPath") as string;
+			string flagProviderPath = Properties.Flags.Get("FlagProviderPath") as string;
 			
 			Logger.Debug("FlagProvider will be deserialized from the following file: {0}", flagProviderPath + @"\FlagProvider.json");
 			
-			Flags = Get.i.JSONSerializer.Deserialize(flagProviderPath + @"\FlagProvider.json", typeof(Dictionary<string, bool>)) as Dictionary<string, bool>;
+			AllFlags = Get.i.JSONSerializer.Deserialize(flagProviderPath + @"\FlagProvider.json", typeof(ObservableCollection<Flag>)) as ObservableCollection<Flag>;
 		}
 		
 		public void SaveFlags()
 		{
-			string flagProviderPath = PropertyProvider.FlagProvider.GetProperty("FlagProviderPath") as string;
+			string flagProviderPath = Properties.FlagProvider.GetProperty("FlagProviderPath") as string;
 			
 			Logger.Debug("FlagProvider will be serialized to the following file: {0}", flagProviderPath + @"\FlagProvider.json");
 			
 			Get.i.JSONSerializer.Serialize(Flags, flagProviderPath + @"\FlagProvider.json", typeof(Dictionary<string, bool>));
 		}
 
-		~FlagProvider()
+		~Flags()
 			{
 				SaveFlags();
 			}
