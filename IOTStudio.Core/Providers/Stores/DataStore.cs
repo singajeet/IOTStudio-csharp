@@ -18,6 +18,7 @@ namespace IOTStudio.Core.Providers.Stores
 	/// </summary>
 	public class DataStore : IDataStore, IProvider
 	{
+		IDBDriver database;
 		#region IProvider implementation
 
 		public Guid Id {
@@ -39,12 +40,12 @@ namespace IOTStudio.Core.Providers.Stores
 		{
 		}
 		
-		public DataStore(IDatabase database)
-		{
-		}
+//		public IDatabase Get(DataStoreType type)
+//		{
+//		}
 		
 		public bool Exists(string name)
-		{
+		{return true;
 		}
 
 		#region IFileStore implementation

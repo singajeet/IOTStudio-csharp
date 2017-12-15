@@ -26,15 +26,15 @@ namespace IOTStudio.Tests.Providers.Tests
 		[Test]
 		public void TestFlagProviderInitialize()
 		{
-			Assert.AreEqual(0, Get.i.FlagProvider.Flags.Count);
+			Assert.AreEqual(0, Get.i.Flags.AllFlags.Count);
 		}
 		
 		[Test]
 		public void TestKeyRegistration()
 		{
-			Get.i.FlagProvider.RegisterFlag("TestFlag", false);
-			Assert.AreEqual(1, Get.i.FlagProvider.Flags.Count);
-			Assert.AreEqual(false, Get.i.FlagProvider.GetFlagStatus("TestFlag"));
+			Get.i.Flags.RegisterFlag("TestFlag", false);
+			Assert.AreEqual(1, Get.i.Flags.AllFlags.Count);
+			Assert.AreEqual(false, Get.i.Flags.GetFlagStatus("TestFlag"));
 		}
 	}
 }

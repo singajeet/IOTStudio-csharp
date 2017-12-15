@@ -14,7 +14,7 @@ namespace IOTStudio.Core.Interfaces
 	/// <summary>
 	/// Description of Idb.
 	/// </summary>
-	public interface IDatabase
+	public interface IDBDriver
 	{
 		string ConnectionString { get; set; }
 		LiteDatabase DB{ get; }

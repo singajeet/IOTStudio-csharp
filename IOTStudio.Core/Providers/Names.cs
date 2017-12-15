@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using IOTStudio.Core.Interfaces;
 using IOTStudio.Core.Providers.Logging;
-using IOTStudio.Core.Providers.DataStore;
+using IOTStudio.Core.Providers.Stores;
 
 namespace IOTStudio.Core.Providers
 {

@@ -52,7 +52,7 @@ namespace IOTStudio.Core.Providers.Pipes
 		public OutputPipe()
 		{
 			Id = Guid.NewGuid();
-			Name = Get.i.NameProvider.GetName("OutputPipe");
+			Name = Get.i.Names.GetName("OutputPipe");
 			
 			OutputObjects = OutputObjects ?? new Stack();
 			OutputConsumers = OutputConsumers ?? new OutputConsumerCollection();

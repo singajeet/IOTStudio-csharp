@@ -29,8 +29,8 @@ namespace IOTStudio.Core.Providers
 		private Assemblies assemblyLoader;
 		private Features featureManager;
 		private NewtonsoftJSONSerializer jsonSerializer;
-		private IDatabase database;
-		private DataStore dataStore;
+		private IDBDriver dbDriver;
+		private IDataStore dataStore;
 		
 		private Get()
 		{
@@ -52,11 +52,11 @@ namespace IOTStudio.Core.Providers
 			Logger.Debug("NewtonsoftJSONSerializer [{0}] has been initiated", jsonSerializer.Id);
 			
 			string configuredDatabase = Properties.DB.Get("ActiveDatabase");
-			database = DatabaseFactory.Instance.LoadDatabase(configuredDatabase);
+			dbDriver = DatabaseFactory.Instance.LoadDatabase(configuredDatabase,"");
 			Logger.Debug("Database [{0}] has been initiated", configuredDatabase);
 			
-			dataStore = new DataStore(database);
-			Logger.Debug("DataStore [{0}] has been initiated", dataStore.Id);
+			dataStore = new DataStore();
+			Logger.Debug("DataStore [{0}] has been initiated", ((DataStore)dataStore).Id);
 		}
 		
 		public static Get i
@@ -69,8 +69,12 @@ namespace IOTStudio.Core.Providers
 			}
 		}
 		
-		public IDatabase DB{
-			get { return database; }
+		public IDataStore DataStore{
+			get{ return dataStore; }
+		}
+		
+		public IDBDriver DBDriver{
+			get { return dbDriver; }
 		}
 		
 		public NewtonsoftJSONSerializer JSONSerializer{
@@ -93,7 +97,7 @@ namespace IOTStudio.Core.Providers
 			get { return assemblyLoader; }
 		}
 		
-		public FeatureManager Features{
+		public Features Features{
 			get { return featureManager; }
 		}
 	}

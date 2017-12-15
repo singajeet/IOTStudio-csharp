@@ -30,7 +30,7 @@ namespace IOTStudio.Core.Interfaces
 		
 		void MarkAsSpecialFolder(string path);
 		void MarkAsSpecialFolder(DirectoryInfo dir);
-		
+		bool Exists(string name);
 		FileInfo CreateFile(string path);
 		FileInfo OpenFile(string path);
 		FileInfo GetFileInfo(string path);

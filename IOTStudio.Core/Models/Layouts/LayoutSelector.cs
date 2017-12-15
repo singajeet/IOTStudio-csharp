@@ -15,8 +15,8 @@ using System.Windows;
 using IOTStudio.Core.Elements.UI;
 using IOTStudio.Core.Providers;
 using IOTStudio.Core.Providers.Logging;
-using IOTStudio.Core.Providers.Properties;
 using System.Linq;
+using IOTStudio.Core.Providers.Stores;
 
 namespace IOTStudio.Core.Models.Layouts
 {

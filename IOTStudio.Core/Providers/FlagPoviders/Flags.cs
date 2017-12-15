@@ -10,9 +10,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using IOTStudio.Core.Interfaces;
-using IOTStudio.Core.Providers.DataStore;
 using IOTStudio.Core.Providers.Logging;
 using System.Linq;
+using IOTStudio.Core.Providers.Stores;
 
 namespace IOTStudio.Core.Providers.FlagProviders
 {
@@ -118,11 +118,11 @@ namespace IOTStudio.Core.Providers.FlagProviders
 		
 		public void SaveFlags()
 		{
-			string flagProviderPath = Properties.FlagProvider.GetProperty("FlagProviderPath") as string;
+			string flagProviderPath = Properties.Flags.Get("FlagProviderPath") as string;
 			
 			Logger.Debug("FlagProvider will be serialized to the following file: {0}", flagProviderPath + @"\FlagProvider.json");
 			
-			Get.i.JSONSerializer.Serialize(Flags, flagProviderPath + @"\FlagProvider.json", typeof(Dictionary<string, bool>));
+			Get.i.JSONSerializer.Serialize(AllFlags, flagProviderPath + @"\FlagProvider.json", typeof(Dictionary<string, bool>));
 		}
 
 		~Flags()

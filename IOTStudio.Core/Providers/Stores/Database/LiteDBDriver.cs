@@ -16,11 +16,11 @@ namespace IOTStudio.Core.Providers.Stores.Database
 	/// <summary>
 	/// Description of DefaultDatabase.
 	/// </summary>
-	public class DefaultLiteDatabase : IDatabase
+	public class LiteDBDriver : IDBDriver
 	{		
 		private LiteDatabase database;
 		
-		public DefaultLiteDatabase()
+		public LiteDBDriver()
 		{
 			ConnectionString = Properties.DBLite.Get("ConnectionString");			
 			if (ConnectionString == null) {
@@ -61,5 +61,11 @@ namespace IOTStudio.Core.Providers.Stores.Database
 				return database.FileStorage; 
 			}
 		}
+		
+		public override string ToString()
+		{
+			return string.Format("[LiteDBDriver ConnectionString={0}]", ConnectionString);
+		}
+
 	}
 }

@@ -10,9 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using IOTStudio.Core.Interfaces;
-using IOTStudio.Core.Providers.DataStore;
 using IOTStudio.Core.Providers.Logging;
-using IOTStudio.Core.Providers.Properties;
+using IOTStudio.Core.Providers.Stores;
 
 namespace IOTStudio.Core.Providers
 {
@@ -43,7 +42,7 @@ namespace IOTStudio.Core.Providers
 		{
 			string featureListPath = Properties.Features.Get("FeaturesListPath") as string;
 			
-			if (Properties.DataStore.Exists(featureListPath))
+			if (Get.i.DataStore.Exists(featureListPath))
 				LoadFeaturesList();
 			
 			AllFeatures = AllFeatures ?? new Dictionary<string, IFeature>();

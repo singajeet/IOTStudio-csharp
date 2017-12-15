@@ -107,7 +107,7 @@
     <Compile Include="Features\Feature.cs" />
     <Compile Include="Features\FeatureCollection.cs" />
     <Compile Include="Features\FeatureInfo.cs" />
-    <Compile Include="Interfaces\IDatabase.cs" />
+    <Compile Include="Interfaces\IDBDriver.cs" />
     <Compile Include="Interfaces\IFeature.cs" />
     <Compile Include="Interfaces\IFeatureInfo.cs" />
     <Compile Include="Interfaces\IDataStore.cs" />
@@ -121,7 +121,7 @@
     <Compile Include="Models\Layouts\LayoutSelector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\Stores\Database\DatabaseFactory.cs" />
-    <Compile Include="Providers\Stores\Database\DefaultLiteDatabase.cs" />
+    <Compile Include="Providers\Stores\Database\LiteDBDriver.cs" />
     <Compile Include="Providers\Stores\Properties.cs" />
     <Compile Include="Providers\Runtime\Assemblies.cs" />
     <Compile Include="Providers\Features.cs" />

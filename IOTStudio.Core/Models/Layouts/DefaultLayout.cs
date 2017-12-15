@@ -13,7 +13,7 @@ using System.Windows.Controls;
 using IOTStudio.Core.Elements.UI;
 using IOTStudio.Core.Providers;
 using IOTStudio.Core.Providers.Logging;
-using IOTStudio.Core.Providers.Properties;
+using IOTStudio.Core.Providers.Stores;
 using Xceed.Wpf.AvalonDock;
 using Xceed.Wpf.AvalonDock.Layout.Serialization;
 
@@ -99,7 +99,7 @@ namespace IOTStudio.Core.Models.Layouts
 			Logger.Debug("Instance created successfully!");
 			
 			Id = Guid.NewGuid();
-			Name = Get.i.NameProvider.GetName("DefaultLayout");
+			Name = Get.i.Names.GetName("DefaultLayout");
 			
 			AssignDefaultValues();
 			SetupLayout();

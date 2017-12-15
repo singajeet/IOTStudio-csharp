@@ -47,7 +47,7 @@ namespace IOTStudio.Core.Models.Entites
 		public Workspace()
 		{
 			Id = Guid.NewGuid();
-			Name = Get.i.NameProvider.GetName("Workspace");
+			Name = Get.i.Names.GetName("Workspace");
 			
 			Projects = Projects ?? new ObservableCollection<Project>();
 			Logger.Debug("Instance created successfully!");

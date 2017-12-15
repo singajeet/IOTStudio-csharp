@@ -13,6 +13,14 @@ namespace IOTStudio.Core.Types
 	/// <summary>
 	/// Description of FileStoreStatus.
 	/// </summary>
+	public enum DataStoreType
+	{
+		FileStore,
+		ObjectStore,
+		PropertiesStore,
+		ProvidersStore
+	}
+	
 	public enum DataStoreStatus
 	{
 		Stopped,

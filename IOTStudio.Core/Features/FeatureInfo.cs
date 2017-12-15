@@ -48,7 +48,7 @@ namespace IOTStudio.Core.Features
 				ReleasedDate = info.ReleasedDate;
 			} else {
 				Id = Guid.NewGuid();
-				Name = Get.i.NameProvider.GetName("Feature");
+				Name = Get.i.Names.GetName("Feature");
 				Version = "1.0.0.0";
 				ReleasedDate = DateTime.Now;
 				Get.i.JSONSerializer.Serialize(this, FILENAME);
