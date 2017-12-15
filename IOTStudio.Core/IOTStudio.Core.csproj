@@ -124,6 +124,7 @@
     <Compile Include="Database\DatabaseFactory.cs" />
     <Compile Include="Database\LiteDBDriver.cs" />
     <Compile Include="Stores\Config\Properties.cs" />
+    <Compile Include="Stores\Objects\DefaultObjectStore.cs" />
     <Compile Include="Stores\Providers\Assemblies.cs" />
     <Compile Include="Stores\Providers\Features.cs" />
     <Compile Include="Stores\Providers\Flags.cs" />

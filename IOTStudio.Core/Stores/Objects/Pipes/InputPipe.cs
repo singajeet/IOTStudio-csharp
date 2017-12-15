@@ -11,10 +11,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using IOTStudio.Core.Providers.Logging;
+using IOTStudio.Core.Stores.Logs;
 using IOTStudio.Core.Types;
 
-namespace IOTStudio.Core.Providers.Pipes
+namespace IOTStudio.Core.Stores.Pipes
 {
 	/// <summary>
 	/// Description of StackProvider.
@@ -184,6 +184,12 @@ namespace IOTStudio.Core.Providers.Pipes
 				}
 			}
 		}
+		
+		public override string ToString()
+		{
+			return string.Format("[InputPipe Id={0}, Name={1}, InputNotificationType={2}]", id, name, inputNotificationType);
+		}
+
 		
 	}
 	

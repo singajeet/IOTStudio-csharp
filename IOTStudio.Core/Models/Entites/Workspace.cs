@@ -10,8 +10,8 @@ using System;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using IOTStudio.Core.Elements.Editor;
-using IOTStudio.Core.Providers;
-using IOTStudio.Core.Providers.Logging;
+using IOTStudio.Core.Stores;
+using IOTStudio.Core.Stores.Logs;
 
 namespace IOTStudio.Core.Models.Entites
 {
@@ -52,5 +52,11 @@ namespace IOTStudio.Core.Models.Entites
 			Projects = Projects ?? new ObservableCollection<Project>();
 			Logger.Debug("Instance created successfully!");
 		}
+		
+		public override string ToString()
+		{
+			return string.Format("[Workspace]");
+		}
+
 	}
 }

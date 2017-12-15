@@ -10,10 +10,10 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using IOTStudio.Core.Interfaces;
-using IOTStudio.Core.Providers.Logging;
 using System.Linq;
 using IOTStudio.Core.Stores;
 using IOTStudio.Core.Stores.Config;
+using IOTStudio.Core.Stores.Logs;
 
 namespace IOTStudio.Core.Database
 {

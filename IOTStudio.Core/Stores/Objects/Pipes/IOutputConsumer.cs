@@ -7,9 +7,8 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
-using IOTStudio.Core.Providers.Pipes;
 
-namespace IOTStudio.Core.Providers.Pipes
+namespace IOTStudio.Core.Stores.Pipes
 {
 	/// <summary>
 	/// Description of IOutputConsumer.

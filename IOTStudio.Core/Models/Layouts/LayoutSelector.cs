@@ -13,10 +13,10 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Windows;
 using IOTStudio.Core.Elements.UI;
-using IOTStudio.Core.Providers;
-using IOTStudio.Core.Providers.Logging;
 using System.Linq;
-using IOTStudio.Core.Providers.Stores;
+using IOTStudio.Core.Stores;
+using IOTStudio.Core.Stores.Config;
+using IOTStudio.Core.Stores.Logs;
 
 namespace IOTStudio.Core.Models.Layouts
 {
@@ -93,5 +93,10 @@ namespace IOTStudio.Core.Models.Layouts
 			
 		}
 		#endregion
+		
+		public override string ToString()
+		{
+			return base.ToString();
+		}
 	}
 }

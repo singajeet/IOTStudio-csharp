@@ -8,8 +8,12 @@
  */
 using System;
 using System.IO;
+using System.Reflection;
 using System.Runtime.Serialization;
 using IOTStudio.Core.Interfaces;
+using IOTStudio.Core.Stores;
+using IOTStudio.Core.Stores.Logs;
+using System.Linq;
 
 namespace IOTStudio.Core.Features
 {
@@ -19,17 +23,20 @@ namespace IOTStudio.Core.Features
 	[DataContract]
 	public class FeatureInfo : IFeatureInfo
 	{
-		private const string FILENAME = "FeatureInfo.json";
 		public FeatureInfo()
 		{
-			Logger.Debug("Trying to load feature info from => {0}", FILENAME);
-			if (File.Exists(FILENAME)) {
-				IFeatureInfo info = Get.i.JSONSerializer.Deserialize(FILENAME) as IFeatureInfo;
-				UpdateInfo(info);				
-				Logger.Debug("Feature info loaded successfully => [Id: {0}], [Name: {1}], [Description: {2}]", info.Id, info.Name, info.Description);
-			} else {
-				UpdateInfo(null);
-				Logger.Debug("Feature info not found; Assigning default values => [Id: {0}], [Name: {1}]", this.Id, this.Name);
+			Logger.Debug("Trying to load feature info");
+			string codeBasePath = typeof(FeatureInfo).Assembly.GetName().CodeBase;
+			
+			if (Directory.Exists(codeBasePath)) {
+				string[] files = Directory.GetFiles(codeBasePath, "*.finfo");
+				if (files.Count() == 1) {
+					Logger.Debug("Feature info file found [{0}]", files[0]);
+					UpdateInfo(null);
+				} else {
+					UpdateInfo(null);
+					Logger.Debug("Feature info not found; Assigning default values => [Id: {0}], [Name: {1}]", this.Id, this.Name);
+				}
 			}
 		}
 
@@ -49,8 +56,8 @@ namespace IOTStudio.Core.Features
 				Name = Get.i.Names.GetName("Feature");
 				Version = "1.0.0.0";
 				ReleasedDate = DateTime.Now;
-				Get.i.JSONSerializer.Serialize(this, FILENAME);
-				Logger.Debug("Default Feature info stored to {0}", FILENAME);
+				//Get.i.JSONSerializer.Serialize(this, FILENAME);
+				Logger.Debug("Default Feature info stored to {0}", Name);
 			}
 		}
 		#region IFeatureInfo implementation
@@ -101,6 +108,12 @@ namespace IOTStudio.Core.Features
 		public DateTime ReleasedDate {
 			get ;
 			internal set ;
+		}
+
+		
+		public override string ToString()
+		{
+			return string.Format("[FeatureInfo Id={0}, Name={1}, Company={2}, Version={3}, ReleasedDate={4}]", Id, Name, Company, Version, ReleasedDate);
 		}
 
 		#endregion

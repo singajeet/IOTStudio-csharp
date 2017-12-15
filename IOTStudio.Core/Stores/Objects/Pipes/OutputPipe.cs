@@ -13,7 +13,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using IOTStudio.Core.Types;
 
-namespace IOTStudio.Core.Providers.Pipes
+namespace IOTStudio.Core.Stores.Pipes
 {
 	/// <summary>
 	/// Description of OutputPipe.
@@ -188,6 +188,12 @@ namespace IOTStudio.Core.Providers.Pipes
 				}
 			}
 		}
+		
+		public override string ToString()
+		{
+			return string.Format("[OutputPipe Id={0}, Name={1}, OutputNotificationType={2}]", id, name, outputNotificationType);
+		}
+
 		
 	}
 	

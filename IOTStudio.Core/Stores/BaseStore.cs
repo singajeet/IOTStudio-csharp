@@ -19,7 +19,7 @@ namespace IOTStudio.Core.Providers.Stores
 	public abstract class BaseStore : IDataStore
 	{
 		protected const string PROVIDERS_STORE = "Providers.db";
-		
+		protected const string OBJECTS_STORE = "Objects.db";
 	}
 	
 //	public class DataStoreEntry

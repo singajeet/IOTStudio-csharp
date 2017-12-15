@@ -11,11 +11,9 @@ using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Controls;
 using IOTStudio.Core.Elements.UI;
-using IOTStudio.Core.Providers;
-using IOTStudio.Core.Providers.Logging;
-using IOTStudio.Core.Providers.Stores;
+using IOTStudio.Core.Stores;
+using IOTStudio.Core.Stores.Logs;
 using Xceed.Wpf.AvalonDock;
-using Xceed.Wpf.AvalonDock.Layout.Serialization;
 
 namespace IOTStudio.Core.Models.Layouts
 {
@@ -160,42 +158,10 @@ namespace IOTStudio.Core.Models.Layouts
 			Logger.Debug("Layout setup completed successfully");
 		}
 		
-		public static void SaveLayout(DefaultLayout layout)
+		public override string ToString()
 		{
-			Logger.Debug("Starting save action of layout: DefaultLayout");
-			
-			string layoutSavePath = Properties.Layout.Get("SelectedLayoutSavePath") as String;
-			Logger.Debug("Layout will be serialized to the following file: {0}", layoutSavePath + @"\DefaultLayout.json");
-			
-			Get.i.JSONSerializer.Serialize(layout, layoutSavePath + @"\DefaultLayout.json", typeof(DefaultLayout));
-			
-			XmlLayoutSerializer dockManagerSerializer = new XmlLayoutSerializer(layout.WindowsDockingManager);
-			Logger.Debug("Dock Windows Layout will be serialized to the following path: {0}", layoutSavePath + @"\DockWindows.json");
-			
-			dockManagerSerializer.Serialize(layoutSavePath + @"\DockWindows.json");
-			
-			Logger.Debug("Layout save action completed successfully!");
+			return string.Format("[DefaultLayout]");
 		}
-		
-		public static DefaultLayout LoadLayout()
-		{
-			Logger.Debug("Starting load action of layout: DefaultLayout");
-			
-			string layoutSavePath = Properties.Layout.Get("SelectedLayoutSavePath") as String;
-			Logger.Debug("Layout will be deserialized from the following file: {0}", layoutSavePath + @"\DefaultLayout.json");
-			
-			DefaultLayout layout = Get.i.JSONSerializer.Deserialize(layoutSavePath + @"\DefaultLayout.json", typeof(DefaultLayout)) as DefaultLayout;
-			
-			if (layout.WindowsDockingManager == null)
-				layout.WindowsDockingManager = new DockingManager();
-			XmlLayoutSerializer dockManagerSerializer = new XmlLayoutSerializer(layout.WindowsDockingManager);
-			Logger.Debug("Dock Windows Layout will be deserialized from the following path: {0}", layoutSavePath + @"\DockWindows.json");
-			
-			dockManagerSerializer.Deserialize(layoutSavePath + @"\DockWindows.json");
-			
-			Logger.Debug("Layout load action completed successfully!");
-			
-			return layout;
-		}
+
 	}
 }

@@ -109,5 +109,10 @@ namespace IOTStudio.Core.Stores.Providers
 			Logger.Debug("Flag {0} has been unregistered from this provider", key);
 		}	
 			
+		public override string ToString()
+		{
+			return string.Format("[FlagsStore Id={0}, Name={1}]", Id, Name);
+		}
+
 	}
 }

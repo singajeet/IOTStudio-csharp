@@ -10,7 +10,7 @@ using System;
 using System.Collections.ObjectModel;
 using IOTStudio.Core.Elements.Interfaces;
 using IOTStudio.Core.Features;
-using IOTStudio.Core.Providers.Pipes;
+using IOTStudio.Core.Stores.Pipes;
 
 namespace IOTStudio.Core.Interfaces
 {

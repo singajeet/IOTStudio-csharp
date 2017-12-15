@@ -12,16 +12,16 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Reflection;
 using IOTStudio.Core.Interfaces;
-using IOTStudio.Core.Providers.Logging;
+using IOTStudio.Core.Stores.Logs;
 
 namespace IOTStudio.Core.Stores.Providers
 {
 	/// <summary>
 	/// Description of Assemblies.
 	/// </summary>
-	public class Assemblies : IProvider
+	public class AssembliesStore : IProvider
 	{
-		public Assemblies()
+		public AssembliesStore()
 		{
 		}
 
@@ -118,5 +118,10 @@ namespace IOTStudio.Core.Stores.Providers
 			Logger.Debug("Total {0} objects will be returned", collection.Count);
 			return collection;
 		}
+		
+		public override string ToString()
+		{
+			return string.Format("[AssembliesStore Id={0}, Name={1}]", Id, Name);
+		} 
 	}
 }

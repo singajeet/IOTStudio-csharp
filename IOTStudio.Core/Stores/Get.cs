@@ -9,6 +9,7 @@
 using System;
 using IOTStudio.Core.Database;
 using IOTStudio.Core.Stores.Logs;
+using IOTStudio.Core.Stores.Objects;
 using IOTStudio.Core.Stores.Providers;
 
 namespace IOTStudio.Core.Stores
@@ -21,30 +22,37 @@ namespace IOTStudio.Core.Stores
 		private static Get manager;
 		
 		private NamesStore nameProvider;
-		private Flags flagProvider;
-		private Assemblies assemblyLoader;
-		private Features featureManager;
+		private FlagsStore flagProvider;
+		private AssembliesStore assemblyLoader;
+		private FeaturesStore featureManager;
+		private LayoutsStore layoutsStore;
 		private DatabaseFactory dbFactory;
+		private DefaultObjectsStore defaultObjectsStore;
 		
 		private Get()
 		{
 			Logger.Debug("Initiating Core Services...");
 			
 			nameProvider = new NamesStore();
-			Logger.Debug("Names [{0}] has been initiated", nameProvider.Id);
+			Logger.Debug("[{0}] has been initiated", nameProvider);
 			
-			flagProvider = new Flags();
-			Logger.Debug("FlagProvider [{0}] has been initiated", flagProvider.Id);
+			flagProvider = new FlagsStore();
+			Logger.Debug("[{0}] has been initiated", flagProvider);
 			
-			assemblyLoader = new Assemblies();
-			Logger.Debug("Assemblies [{0}] has been initiated", assemblyLoader.Id);
+			assemblyLoader = new AssembliesStore();
+			Logger.Debug("[{0}] has been initiated", assemblyLoader);
 			
-			featureManager = new Features();
-			Logger.Debug("FeatureManager [{0}] has been initiated", featureManager.Id);			
+			featureManager = new FeaturesStore();
+			Logger.Debug("[{0}] has been initiated", featureManager);	
+
+			layoutsStore = new LayoutsStore();
+			Logger.Debug("[{0}] has been initiated", layoutsStore);
 			
 			dbFactory = DatabaseFactory.Instance;
-			Logger.Debug("Database Factory [{0}] has been initiated", dbFactory.Id);		
+			Logger.Debug("[{0}] has been initiated", dbFactory);		
 			
+			defaultObjectsStore = new DefaultObjectsStore();
+			Logger.Debug("[{0}] has been initiated", defaultObjectsStore);
 		}
 		
 		public static Get i
@@ -65,16 +73,24 @@ namespace IOTStudio.Core.Stores
 			get { return nameProvider; }
 		}
 		
-		public Flags Flags{
+		public FlagsStore Flags{
 			get{ return flagProvider; }
 		}
 		
-		public Assemblies Assemblies{
+		public AssembliesStore Assemblies{
 			get { return assemblyLoader; }
 		}
 		
-		public Features Features{
+		public FeaturesStore Features{
 			get { return featureManager; }
+		}
+		
+		public LayoutsStore Layouts{
+			get{ return layoutsStore; }
+		}
+		
+		public DefaultObjectsStore Objects{
+			get { return defaultObjectsStore; }
 		}
 	}
 }

@@ -14,7 +14,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using IOTStudio.Core.Elements.Interfaces;
 using IOTStudio.Core.Interfaces;
-using IOTStudio.Core.Providers.Pipes;
+using IOTStudio.Core.Stores.Pipes;
 using IOTStudio.Core.Types;
 
 namespace IOTStudio.Core.Features
@@ -232,6 +232,12 @@ namespace IOTStudio.Core.Features
 		public event EventHandler FlagNameChanged;
 		
 		#endregion
+		
+		public override string ToString()
+		{
+			return string.Format("[Feature Id={0}, Name={1}, IsEnabled={2}, InputFlagName={3}, OutputFlagName={4}]", id, name, isEnabled, inputFlagName, outputFlagName);
+		}
+
 	}
 	
 	public class InputOutputPipeDataEventArgs : EventArgs

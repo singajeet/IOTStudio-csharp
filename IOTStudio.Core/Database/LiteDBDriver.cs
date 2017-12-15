@@ -14,7 +14,7 @@ using LiteDB;
 
 namespace IOTStudio.Core.Providers.Stores.Database
 {
-	using Logger = IOTStudio.Core.Providers.Logging.Logger;
+	using Logger = IOTStudio.Core.Stores.Logs.Logger;
 	/// <summary>
 	/// Description of DefaultDatabase.
 	/// </summary>
@@ -29,7 +29,7 @@ namespace IOTStudio.Core.Providers.Stores.Database
 		
 		public string ConnectionString { get; private set; }
 		public string Schema { get; private set; }
-		ConnectionStatus ConnectionStatus { get; private set; }
+		public ConnectionStatus ConnectionStatus { get; private set; }
 		
 		public LiteDatabase DB{
 			get { 

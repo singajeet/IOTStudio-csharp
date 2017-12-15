@@ -9,7 +9,7 @@
 using System;
 using System.Collections.ObjectModel;
 
-namespace IOTStudio.Core.Providers.Pipes
+namespace IOTStudio.Core.Stores.Pipes
 {
 	/// <summary>
 	/// Description of FeatureCollection.
