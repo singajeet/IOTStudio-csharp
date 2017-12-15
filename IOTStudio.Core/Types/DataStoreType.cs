@@ -21,11 +21,13 @@ namespace IOTStudio.Core.Types
 		ProvidersStore
 	}
 	
-	public enum DataStoreStatus
+	public enum ProvidersStoreType
 	{
-		Stopped,
-		Running,
-		BootingUp
+		FlagsStore,
+		AssembliesStore,
+		FeaturesStore,
+		NamesStore,
+		LayoutsStore
 	}
 	
 	public enum DataStoreObjectType

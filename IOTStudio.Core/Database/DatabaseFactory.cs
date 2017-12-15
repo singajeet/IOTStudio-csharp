@@ -9,12 +9,13 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Windows;
 using IOTStudio.Core.Interfaces;
 using IOTStudio.Core.Providers.Logging;
 using System.Linq;
+using IOTStudio.Core.Stores;
+using IOTStudio.Core.Stores.Config;
 
-namespace IOTStudio.Core.Providers.Stores.Database
+namespace IOTStudio.Core.Database
 {
 	/// <summary>
 	/// Description of DatabaseFactory.
@@ -23,6 +24,14 @@ namespace IOTStudio.Core.Providers.Stores.Database
 	{
 		private static DatabaseFactory instance = new DatabaseFactory();
 		private Dictionary<string, IDBDriver> drivers = new Dictionary<string, IDBDriver>();
+		
+		public Guid Id{
+			get { return new Guid("8B491B57-8276-4C3A-A7F3-F26F99823893"); }
+		}
+		
+		public string Name{
+			get { return "DatabaseFactory"; }
+		}
 		
 		public string DBDriverClassName{
 			get;
@@ -86,14 +95,14 @@ namespace IOTStudio.Core.Providers.Stores.Database
 		/// Database name configured in the app.config file.
 		/// Pass value "DefaultDatabase" for loading default DB
 		/// </param>
-		/// <param name="key">
-		/// Key is used to identify the schema or database file
+		/// <param name="schema">
+		/// schema or database file identifier
 		/// </param>
 		/// <returns>Returns IDBDriver</returns>
-		public IDBDriver LoadDatabase(string database, string key) 
+		public IDBDriver LoadDatabase(string database, string schema) 
 		{
-			if (DBDrivers.ContainsKey(key))
-				return DBDrivers[key];
+			if (DBDrivers.ContainsKey(schema))
+				return DBDrivers[schema];
 			
 			DatabaseConfigSection = Properties.DB.Get(database);
 			if (DatabaseConfigSection == null) {
@@ -119,10 +128,10 @@ namespace IOTStudio.Core.Providers.Stores.Database
 				DBDriverAssembly = Get.i.Assemblies.LoadAssembly(AssemblyPath + @"\" + DBDriverAssembly + ".dll");
 				Logger.Debug("Driver Assembly has been loaded successfully");
 			
-				DBDrivers[key] = DBDriverAssembly.CreateInstance(DBDriverClassName) as IDBDriver;
+				DBDrivers[schema] = DBDriverAssembly.CreateInstance(DBDriverClassName) as IDBDriver;
 			} else {
 				Logger.Debug("Driver assembly is already loaded");
-				DBDrivers[key] = DBDriverAssembly.CreateInstance(DBDriverClassName) as IDBDriver;
+				DBDrivers[schema] = DBDriverAssembly.CreateInstance(DBDriverClassName) as IDBDriver;
 			}
 			
 			DBAssembly = AppDomain.CurrentDomain.GetAssemblies().Where(w => w.GetName().Name.Equals(DBAssemblyName)).ToList().SingleOrDefault();
@@ -136,13 +145,19 @@ namespace IOTStudio.Core.Providers.Stores.Database
 			DBRootNamespace = DBAssembly.GetType().Namespace;
 			Logger.Debug("Root Namespace for database assembly => [{0}]", DBRootNamespace);
 			
-			if (DBDrivers[key] != null)
-				return DBDrivers[key];
-			else {
+			if (DBDrivers[schema] != null) {
+				DBDrivers[schema].SetSchema(schema);
+				return DBDrivers[schema];
+			} else {
 				Logger.Error("Unable to create database instance of type [{0}]", DBDriverClassName);
 				throw new Exception(string.Format( "Unable to create database instance of type [{0}]", DBDriverClassName));
 			}
 				
+		}
+		
+		public IDBDriver LoadDefaultDatabase(string schema)
+		{
+			return LoadDatabase("DefaultDatabase", schema);
 		}
 		
 		public override string ToString()

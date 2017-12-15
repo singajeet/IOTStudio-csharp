@@ -17,26 +17,26 @@ namespace IOTStudio.Core.Interfaces
 	/// </summary>
 	public interface IDataStore
 	{
-		FileInfo DataStoreMetaDataFile { get; set; }
-		DirectoryInfo DataStoreBaseDirectory { get; set; }
-		
-		bool IsBackedUp { get; set; }
-		bool IsCompressed { get; set; }
-		bool IsSecurityRequired { get; set; }
-		bool IsSecured { get; set; }
-		bool IsSpecialFolder { get; set; }
-		
-		DataStoreStatus Status { get; set; }
-		
-		void MarkAsSpecialFolder(string path);
-		void MarkAsSpecialFolder(DirectoryInfo dir);
-		bool Exists(string name);
-		FileInfo CreateFile(string path);
-		FileInfo OpenFile(string path);
-		FileInfo GetFileInfo(string path);
-		
-		DirectoryInfo CreateDirectory(string path);
-		DirectoryInfo OpenDirectory(string path);
-		DirectoryInfo GetDirectoryInfo(string path);
+//		FileInfo DataStoreMetaDataFile { get; set; }
+//		DirectoryInfo DataStoreBaseDirectory { get; set; }
+//		
+//		bool IsBackedUp { get; set; }
+//		bool IsCompressed { get; set; }
+//		bool IsSecurityRequired { get; set; }
+//		bool IsSecured { get; set; }
+//		bool IsSpecialFolder { get; set; }
+//		
+//		DataStoreStatus Status { get; set; }
+//		
+//		void MarkAsSpecialFolder(string path);
+//		void MarkAsSpecialFolder(DirectoryInfo dir);
+//		bool Exists(string name);
+//		FileInfo CreateFile(string path);
+//		FileInfo OpenFile(string path);
+//		FileInfo GetFileInfo(string path);
+//		
+//		DirectoryInfo CreateDirectory(string path);
+//		DirectoryInfo OpenDirectory(string path);
+//		DirectoryInfo GetDirectoryInfo(string path);
 	}
 }

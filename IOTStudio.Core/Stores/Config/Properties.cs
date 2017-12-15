@@ -10,7 +10,7 @@ using System;
 using System.Collections.Specialized;
 using System.Configuration;
 
-namespace IOTStudio.Core.Providers.Stores
+namespace IOTStudio.Core.Stores.Config
 {
 	/// <summary>
 	/// Description of PropertyProvider.

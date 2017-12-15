@@ -7,6 +7,7 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using IOTStudio.Core.Types;
 using LiteDB;
 
 namespace IOTStudio.Core.Interfaces
@@ -16,10 +17,13 @@ namespace IOTStudio.Core.Interfaces
 	/// </summary>
 	public interface IDBDriver
 	{
-		string ConnectionString { get; set; }
+		string ConnectionString { get; }
+		string Schema { get; }
+		void SetSchema(string schema);
 		LiteDatabase DB{ get; }
 		void Connect();
-		LiteCollection<T> GetCollection<T>(string collectionName);
-		LiteStorage FileStore{ get; }
+		ConnectionStatus ConnectionStatus { get; }
+//		LiteCollection<T> GetCollection<T>(string collectionName);
+//		LiteStorage FileStore{ get; }
 	}
 }

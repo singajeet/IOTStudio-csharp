@@ -8,10 +8,9 @@
  */
 using System;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using log4net;
 
-namespace IOTStudio.Core.Providers.Logging
+namespace IOTStudio.Core.Stores.Logs
 {
 	/// <summary>
 	/// Description of Logger.

@@ -10,8 +10,6 @@ using System;
 using System.IO;
 using System.Runtime.Serialization;
 using IOTStudio.Core.Interfaces;
-using IOTStudio.Core.Providers;
-using IOTStudio.Core.Providers.Logging;
 
 namespace IOTStudio.Core.Features
 {

@@ -14,7 +14,7 @@ using System.Reflection;
 using IOTStudio.Core.Interfaces;
 using IOTStudio.Core.Providers.Logging;
 
-namespace IOTStudio.Core.Providers.Runtime
+namespace IOTStudio.Core.Stores.Providers
 {
 	/// <summary>
 	/// Description of Assemblies.
