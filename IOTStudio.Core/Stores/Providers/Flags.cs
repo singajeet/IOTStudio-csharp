@@ -7,6 +7,8 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using IOTStudio.Core.Interfaces;
 using System.Linq;
 using IOTStudio.Core.Providers.Stores;
@@ -38,6 +40,7 @@ namespace IOTStudio.Core.Stores.Providers
 	public class FlagsStore : BaseStore, IProvider
 	{
 		IDBDriver dbDriver;
+		ObservableCollection<Flag> flags;
 		
 		#region IProvider implementation
 
@@ -61,9 +64,21 @@ namespace IOTStudio.Core.Stores.Providers
 			dbDriver.Connect();	
 		}	
 		
-		private LiteCollection<Flag> AllFlags{
+		private LiteCollection<Flag> _allFlags{
 			get { 
 				return dbDriver.DB.GetCollection<Flag>("flags");
+			}
+		}
+		
+		public ObservableCollection<Flag> AllFlags{
+			get{ 
+				if (flags == null || flags.Count != _allFlags.Count()) {
+					flags = new ObservableCollection<Flag>();
+					foreach (Flag flag in _allFlags.FindAll()) {
+						flags.Add(flag);
+					}
+				}
+				return flags;
 			}
 		}
 		
@@ -82,19 +97,19 @@ namespace IOTStudio.Core.Stores.Providers
 		
 		public bool ContainsKey(string key)
 		{
-			return AllFlags.Exists(f => f.Key.Equals(key));
+			return _allFlags.Exists(f => f.Key.Equals(key));
 		}
 		
 		public bool GetFlagStatus(string key)
 		{
-			return AllFlags.FindOne(f => f.Key.Equals(key)).Value;
+			return _allFlags.FindOne(f => f.Key.Equals(key)).Value;
 		}
 		
 		public void SetFlagStatus(string key, bool value)
 		{
-			Flag flag = AllFlags.FindOne(f => f.Key.Equals(key));
+			Flag flag = _allFlags.FindOne(f => f.Key.Equals(key));
 			flag.Value = value;
-			AllFlags.Update(flag);
+			_allFlags.Update(flag);
 			
 			Logger.Debug("Flag {0} status changed to {1}", flag.Key, flag.Value);
 		}
@@ -105,7 +120,7 @@ namespace IOTStudio.Core.Stores.Providers
 				throw new Exception("No such key is registered");
 			}				
 			
-			AllFlags.Delete(f => f.Key.Equals(key));
+			_allFlags.Delete(f => f.Key.Equals(key));
 			Logger.Debug("Flag {0} has been unregistered from this provider", key);
 		}	
 			

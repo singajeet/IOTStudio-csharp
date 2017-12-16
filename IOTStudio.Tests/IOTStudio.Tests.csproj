@@ -76,13 +76,13 @@
     <Compile Include="Models.Tests\CreateModelsTest.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Providers.Tests\FlagProviderTest.cs" />
+    <Compile Include="Stores.Tests\FlagsStoreTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Layouts.Tests" />
     <Folder Include="Models.Tests" />
     <Folder Include="Database.Tests" />
-    <Folder Include="Providers.Tests" />
+    <Folder Include="Stores.Tests" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\IOTStudio.Core\IOTStudio.Core.csproj">

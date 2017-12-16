@@ -130,6 +130,11 @@ namespace IOTStudio.Tests.Database.Tests
 			Assert.AreEqual("Test.db", dbDriver.Schema);
 		}
 		
+		[SetUp]
+		public void  Setup()
+		{
+		}
+		
 		[Test, Order(3)]
 		public void TestDatabaseDeleteQuery()
 		{
