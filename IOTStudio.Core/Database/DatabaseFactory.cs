@@ -14,6 +14,7 @@ using System.Linq;
 using IOTStudio.Core.Stores;
 using IOTStudio.Core.Stores.Config;
 using IOTStudio.Core.Stores.Logs;
+using IOTStudio.Core.Stores.Providers;
 
 namespace IOTStudio.Core.Database
 {
@@ -24,6 +25,7 @@ namespace IOTStudio.Core.Database
 	{
 		private static DatabaseFactory instance = new DatabaseFactory();
 		private Dictionary<string, IDBDriver> drivers = new Dictionary<string, IDBDriver>();
+		private AssembliesStore assyStore = new AssembliesStore();
 		
 		public Guid Id{
 			get { return new Guid("8B491B57-8276-4C3A-A7F3-F26F99823893"); }
@@ -111,21 +113,21 @@ namespace IOTStudio.Core.Database
 			}
 			
 			AssemblyPath = Properties.GetGet("AssemblyPath", DatabaseConfigSection);
-			Logger.Debug("Path to Database Assembly => [{0}]", AssemblyPath);
+			Logger.Debug("Path to Database & Driver Assemblies => [{0}]", AssemblyPath);
 			
 			DBDriverClassName = Properties.GetGet("LiteDatabaseDriver", DatabaseConfigSection);			
 			Logger.Debug("Configured Database Driver => [{0}]", DBDriverClassName);
 			
 			DBDriverAssemblyName= Properties.GetGet("DriverAssembly", DatabaseConfigSection); 
-			Logger.Debug("Driver Assembly=> [{0}]", DBDriverAssembly);
+			Logger.Debug("Driver Assembly=> [{0}]", DBDriverAssemblyName);
 			
 			DBAssemblyName = Properties.GetGet("DatabaseAssembly", DatabaseConfigSection); 
-			Logger.Debug("Database Assembly=> [{0}]", DBAssembly);
+			Logger.Debug("Database Assembly=> [{0}]", DBAssemblyName);
 			
 			DBDriverAssembly = AppDomain.CurrentDomain.GetAssemblies().Where(w => w.GetName().Name.Equals(DBDriverAssemblyName)).ToList().SingleOrDefault();
 			if (DBDriverAssembly == null) {
 			
-				DBDriverAssembly = Get.i.Assemblies.LoadAssembly(AssemblyPath + @"\" + DBDriverAssembly + ".dll");
+				DBDriverAssembly = assyStore.LoadAssembly(AssemblyPath + @"\" + DBDriverAssembly + ".dll");
 				Logger.Debug("Driver Assembly has been loaded successfully");
 			
 				DBDrivers[schema] = DBDriverAssembly.CreateInstance(DBDriverClassName) as IDBDriver;
@@ -136,7 +138,7 @@ namespace IOTStudio.Core.Database
 			
 			DBAssembly = AppDomain.CurrentDomain.GetAssemblies().Where(w => w.GetName().Name.Equals(DBAssemblyName)).ToList().SingleOrDefault();
 			if (DBAssembly == null) {
-				DBAssembly = Get.i.Assemblies.LoadAssembly(AssemblyPath + @"\" + DBAssemblyName + ".dll");
+				DBAssembly = assyStore.LoadAssembly(AssemblyPath + @"\" + DBAssemblyName + ".dll");
 				Logger.Debug("Database Assembly [{0}] has been loaded successfully", DBAssembly.GetName().Name);
 			} else {
 				Logger.Debug("Database assembly is already loaded");

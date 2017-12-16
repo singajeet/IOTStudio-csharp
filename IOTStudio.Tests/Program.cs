@@ -8,10 +8,7 @@
  */
 using System;
 using System.Reflection;
-using IOTStudio.Core.Providers.Logging;
-using IOTStudio.Tests.Layouts.Tests;
-using IOTStudio.Tests.Models.Tests;
-using IOTStudio.Tests.Providers.Tests;
+using IOTStudio.Tests.Database.Tests;
 
 namespace IOTStudio.Test
 {
@@ -29,6 +26,19 @@ namespace IOTStudio.Test
 				Console.WriteLine(name.FullName);
 				Console.WriteLine(name.Version.ToString());
 			}
+			
+			DatabaseTest dbTest = new DatabaseTest();
+			dbTest.TestDatabaseInit();
+			dbTest.TestLoadDatabase();
+			dbTest.TestDatabaseDeleteQuery();
+			dbTest.TestDatabaseInsertQuery();
+			dbTest.TestDatabaseFindOneQuery();
+			dbTest.TestDatabaseFindCount();
+			dbTest.TestDatabaseFindQuery();
+			//dbTest.DeleteAllItems();
+			dbTest.TestDatabaseParentChildInsertQuery();
+			dbTest.TestDatabaseParentChildFindOneQuery();
+			
 //			Logger.Debug("______________________________ Starting Testing Program __________________________");
 //			
 //			Logger.Debug("++++++++++++++++++++++++ Create Models Test Case +++++++++++++++++++++++++++");

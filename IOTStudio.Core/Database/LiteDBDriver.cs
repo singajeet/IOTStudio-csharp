@@ -12,7 +12,7 @@ using IOTStudio.Core.Stores.Config;
 using IOTStudio.Core.Types;
 using LiteDB;
 
-namespace IOTStudio.Core.Providers.Stores.Database
+namespace IOTStudio.Core.Database
 {
 	using Logger = IOTStudio.Core.Stores.Logs.Logger;
 	/// <summary>
