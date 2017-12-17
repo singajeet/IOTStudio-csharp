@@ -12,8 +12,10 @@ using System.Windows;
 using System.Windows.Controls;
 using IOTStudio.Core.Elements.UI;
 using IOTStudio.Core.Stores;
+using IOTStudio.Core.Stores.Config;
 using IOTStudio.Core.Stores.Logs;
 using Xceed.Wpf.AvalonDock;
+using Xceed.Wpf.AvalonDock.Layout.Serialization;
 
 namespace IOTStudio.Core.Models.Layouts
 {
@@ -94,11 +96,7 @@ namespace IOTStudio.Core.Models.Layouts
 		
 		public DefaultLayout()
 		{
-			Logger.Debug("Instance created successfully!");
-			
-			Id = Guid.NewGuid();
-			Name = Get.i.Names.GetName("DefaultLayout");
-			
+			Logger.Debug("Instance created successfully!");			
 			AssignDefaultValues();
 			SetupLayout();
 		}
@@ -156,6 +154,22 @@ namespace IOTStudio.Core.Models.Layouts
 			ContentSection.Children.Add(WindowsDockingManager);
 			
 			Logger.Debug("Layout setup completed successfully");
+			
+			SerializeToXml();
+		}
+		
+		public override void DeserializeFromXml()
+		{
+			XmlLayoutSerializer serializer = new XmlLayoutSerializer(WindowsDockingManager);
+			serializer.Deserialize(PathToXml);
+			Logger.Debug("layout will be deserialized from the following path: [{0}]", PathToXml);
+		}
+		
+		public override void SerializeToXml()
+		{
+			XmlLayoutSerializer serializer = new XmlLayoutSerializer(WindowsDockingManager);
+			serializer.Serialize(PathToXml);
+			Logger.Debug("Layout serialized to the following path: [{0}]", PathToXml);
 		}
 		
 		public override string ToString()

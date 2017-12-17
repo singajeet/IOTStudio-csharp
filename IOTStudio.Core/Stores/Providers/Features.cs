@@ -18,8 +18,13 @@ namespace IOTStudio.Core.Stores.Providers
 	
 	public class Feature
 	{
-		public string Key;
-		public IFeature Value;
+		public ObjectId Id { get; set; }
+		public string Key { get; set; }
+		public IFeature Value { get; set; }
+		
+		public Feature()
+		{
+		}
 		
 		public Feature(string key, IFeature value)
 		{
@@ -29,7 +34,7 @@ namespace IOTStudio.Core.Stores.Providers
 		
 		public override string ToString()
 		{
-			return string.Format("[Feature Key={0}, Value={1}]", Key, Value);
+			return string.Format("[Feature Id={0}, Key={1}, Value={2}]", Id, Key, Value);
 		}
 
 	}
@@ -57,34 +62,47 @@ namespace IOTStudio.Core.Stores.Providers
 				
 		public FeaturesStore()
 		{
-			dbDriver = Get.i.DBFactory.LoadDefaultDatabase(PROVIDERS_STORE);
-			dbDriver.Connect();	
+			
+		}
+		
+		private void CheckAndConnect()
+		{
+			if (dbDriver == null) {
+				dbDriver = Get.i.DBFactory.LoadDefaultDatabase(PROVIDERS_STORE_SCHEMA);
+				dbDriver.Connect();	
+			}
 		}
 		
 		private LiteCollection<Feature> AllFeatures{
 			get {
-				return dbDriver.DB.GetCollection<Feature>("features");
+				return dbDriver.DB.GetCollection<Feature>(FEATURES_COLLECTION);
 			}
 		}
 		
 		public void RegisterFeature(string key, IFeature feature)
 		{
+			CheckAndConnect();
+			
 			if (this.ContainsKey(key))
 				throw new Exception(string.Format("Feature with key {0} is already registered", key));
 			
-			Feature feat = new Feature(key, feature);
-			AllFeatures.Insert(feat);
+			Feature featureObject = new Feature(key, feature);
+			AllFeatures.Insert(featureObject);
 			
-			Logger.Debug("[{0}] has been registered successfully", feat);
+			Logger.Debug("[{0}] has been registered successfully", featureObject);
 		}
 		
 		public bool ContainsKey(string key)
 		{
+			CheckAndConnect();
+			
 			return AllFeatures.Exists(f => f.Key.Equals(key));
 		}
 		
 		public void UnregisterFeature(string key)
 		{
+			CheckAndConnect();
+			
 			if (!this.ContainsKey(key))
 				throw new Exception(string.Format("No such feature found {0}", key));
 			
@@ -94,6 +112,8 @@ namespace IOTStudio.Core.Stores.Providers
 		
 		public IFeature FindFeature(string key)
 		{
+			CheckAndConnect();
+			
 			return AllFeatures.FindOne(f => f.Key.Equals(key)).Value;
 		}	
 	}

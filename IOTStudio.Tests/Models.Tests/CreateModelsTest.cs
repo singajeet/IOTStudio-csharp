@@ -9,6 +9,7 @@
 using System;
 using System.Threading;
 using IOTStudio.Core.Models.Entites;
+using IOTStudio.Core.Stores;
 using NUnit.Framework;
 
 namespace IOTStudio.Tests.Models.Tests
@@ -23,10 +24,10 @@ namespace IOTStudio.Tests.Models.Tests
 		Workspace wks;
 		Project prj;
 		ProjectItem srcFolder;
-		ProjectItem cfile;
+		ProjectItem cfile;		
 		
 		public CreateModelsTest()
-		{
+		{			
 		}
 		
 		[Test(Description="Create basic models")]

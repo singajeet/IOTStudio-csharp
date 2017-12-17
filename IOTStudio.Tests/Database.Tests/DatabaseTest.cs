@@ -111,15 +111,24 @@ namespace IOTStudio.Tests.Database.Tests
 		{
 		}
 		
-		[Test, Order(1)]
+		public void Setup()
+		{
+			if(dbDriver.DB.CollectionExists("collection"))
+				dbDriver.DB.DropCollection("collection");
+			
+			if(dbDriver.DB.CollectionExists("ParentCollection"))
+				dbDriver.DB.DropCollection("ParentCollection");			
+		}
+		
+		[Test(Description="TestCase to check Database Initialization functionality"), Order(1)]
 		public void TestDatabaseInit()
 		{
 			factory = DatabaseFactory.Instance;
 			Assert.AreEqual("DatabaseFactory", factory.Name);
 		}
 		
-		[Test, Order(2)]
-		public void TestLoadDatabase()
+		[Test(Description="TestCase to check database loading & driver connection functionality"), Order(2)]
+		public void TestLoadDatabaseAndDriverConnect()
 		{
 			dbDriver = factory.LoadDefaultDatabase("Test.db");
 			Assert.AreEqual(ConnectionStatus.Disconnected, dbDriver.ConnectionStatus);
@@ -128,14 +137,11 @@ namespace IOTStudio.Tests.Database.Tests
 			Assert.AreEqual(ConnectionStatus.Connected, dbDriver.ConnectionStatus);
 			
 			Assert.AreEqual("Test.db", dbDriver.Schema);
-		}
+			
+			Setup();
+		}		
 		
-		[SetUp]
-		public void  Setup()
-		{
-		}
-		
-		[Test, Order(3)]
+		[Test(Description="TestCase to check item deletion from a collection"), Order(3)]
 		public void TestDatabaseDeleteQuery()
 		{
 			DbTestData testData = new DbTestData("MyFirstTestData");
@@ -146,10 +152,10 @@ namespace IOTStudio.Tests.Database.Tests
 			int deletedItems = dbDriver.DB.GetCollection<DbTestData>("collection")
 							.Delete(f => f.Name.StartsWith("My"));
 			
-			Assert.AreEqual(count, deletedItems);
+			Assert.AreEqual(count, deletedItems);			
 		}
 		
-		[Test, Order(4)]
+		[Test(Description="TestCase to check item insertion into a collection"), Order(4)]
 		public void TestDatabaseInsertQuery()
 		{
 			DbTestData testData = new DbTestData("MyFirstTestData");
@@ -162,7 +168,7 @@ namespace IOTStudio.Tests.Database.Tests
 			                .Count(f=>f.Name.StartsWith("My")));			
 		}
 		
-		[Test, Order(5)]
+		[Test(Description="TestCase to check FindOne functionality on a given collection"), Order(5)]
 		public void TestDatabaseFindOneQuery()
 		{
 			DbTestData testData = dbDriver.DB
@@ -173,7 +179,7 @@ namespace IOTStudio.Tests.Database.Tests
 			Assert.AreEqual("MyFirstTestData", testData.Name);
 		}
 		
-		[Test, Order(6)]
+		[Test(Description="TestCase to check Count functionality"), Order(6)]
 		public void TestDatabaseFindCount()
 		{
 			var count = dbDriver.DB
@@ -183,7 +189,7 @@ namespace IOTStudio.Tests.Database.Tests
 			Assert.AreEqual(2, count);
 		}
 		
-		[Test, Order(7)]
+		[Test(Description="TestCase to check Find() function on an collection"), Order(7)]
 		public void TestDatabaseFindQuery()
 		{
 			var testCollection = dbDriver.DB
@@ -202,7 +208,7 @@ namespace IOTStudio.Tests.Database.Tests
 				.Delete(f => f.Name.StartsWith("My"));
 		}
 		
-		[Test, Order(8)]
+		[Test(Description="TestCase to check relationship/joins between objects"), Order(8)]
 		public void TestDatabaseParentChildInsertQuery()
 		{
 			DeleteAllItems();
@@ -220,7 +226,7 @@ namespace IOTStudio.Tests.Database.Tests
 			                .Count(pc => pc.ParentName.Equals("Parent1")));
 		}
 		
-		[Test, Order(9)]
+		[Test(Description="TestCase to query Parent object and its associated child items"), Order(9)]
 		public void TestDatabaseParentChildFindOneQuery()
 		{
 			Parent p = dbDriver.DB.GetCollection<Parent>("ParentCollection")

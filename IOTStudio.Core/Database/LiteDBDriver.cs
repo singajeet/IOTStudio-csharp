@@ -46,35 +46,21 @@ namespace IOTStudio.Core.Database
 		{
 			ConnectionStatus = ConnectionStatus.Connecting;
 			
-			ConnectionString = Properties.DBLite.Get("ConnectionString");			
-			if (ConnectionString == null) {
-				Logger.Error("Unable to find connection string for Database Tyep => LiteDatabase");
-				throw new Exception("Unable to find connection string for Database Tyep => LiteDatabase");
+			if (database == null) {
+				ConnectionString = System.IO.Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, Properties.DBLite.Get("ConnectionString"));
+				if (ConnectionString == null) {
+					Logger.Error("Unable to find connection string for Database Tyep => LiteDatabase");
+					throw new Exception("Unable to find connection string for Database Tyep => LiteDatabase");
+				}
+			
+				Logger.Debug("Connection string loaded for LiteDatabase => [{0}]", ConnectionString);
+				database = new LiteDatabase(System.IO.Path.Combine(ConnectionString, Schema));
+				Logger.Debug("Connected to LiteDatabase Schema [{0}] using Connection String [{1}]", Schema, ConnectionString);
+			} else {
+				Logger.Debug("Connection to LiteDatabase with schema [{0}] already exists", Schema);
 			}
-			
-			Logger.Debug("Connection string loaded for LiteDatabase => [{0}]", ConnectionString);
-			database = new LiteDatabase(ConnectionString + @"\" + Schema);
-			Logger.Debug("Connected to LiteDatabase Schema [{0}] using Connection String [{1}]", Schema, ConnectionString);
-			
 			ConnectionStatus = ConnectionStatus.Connected;
 		}
-		
-//		public LiteCollection<T> GetCollection<T>(string collectionName)
-//		{
-//			if (database == null)
-//				Connect();
-//			
-//			return database.GetCollection<T>(collectionName);
-//		}
-//		
-//		public LiteStorage FileStore{
-//			get {
-//				if (database == null)
-//					Connect();
-//				
-//				return database.FileStorage; 
-//			}
-//		}
 		
 		public override string ToString()
 		{

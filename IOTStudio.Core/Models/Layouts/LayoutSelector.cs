@@ -17,6 +17,7 @@ using System.Linq;
 using IOTStudio.Core.Stores;
 using IOTStudio.Core.Stores.Config;
 using IOTStudio.Core.Stores.Logs;
+using IOTStudio.Core.Stores.Providers;
 
 namespace IOTStudio.Core.Models.Layouts
 {
@@ -59,9 +60,25 @@ namespace IOTStudio.Core.Models.Layouts
 			
 			Logger.Debug("{0} layouts loaded from the configured path", Layouts.Count);
 			
-			SelectedLayout = SelectedLayout ?? Layouts[0];
+			SelectedLayout = SelectedLayout ?? GetSelectedLayout();
 		}
 
+		BaseLayoutElement GetSelectedLayout()
+		{			
+			if (Layouts.Count(l => l.IsSelected == true) > 0) {
+				BaseLayoutElement selectedLayout = Layouts.Where(l => l.IsSelected == true)
+														.ToList().SingleOrDefault();
+				return selectedLayout;
+			} else {
+				Layouts[0].IsSelected = true;
+				if (Get.i.Layouts.ContainsKey(Layouts[0].Name))
+					Get.i.Layouts.SaveLayout(Layouts[0]);
+				else
+					Get.i.Layouts.InsertLayout(Layouts[0]);
+			}
+			return Layouts[0];
+		}
+		
 		public void SelectLayout(string layout)
 		{
 			Layouts.Where(w => w.IsSelected == true)
@@ -71,15 +88,33 @@ namespace IOTStudio.Core.Models.Layouts
 			SelectedLayout = Layouts.Where(w=> w.Name.Equals(layout)).ToList().Single();
 			SelectedLayout.IsSelected = true;
 			
+			if (Get.i.Layouts.ContainsKey(layout)) {
+				Get.i.Layouts.SaveLayout(SelectedLayout);
+			} else {
+				Get.i.Layouts.InsertLayout(SelectedLayout);
+			}
+			
+			SelectedLayout.SerializeToXml();
+			
 			Logger.Debug("Selected layout changed to: {0}", SelectedLayout.Name);
 		}
 		
 		public ObservableCollection<BaseLayoutElement> LoadLayouts()
 		{
-			string path = Properties.LayoutSelector.Get("LayoutsCollectionPath") as string;
+			string path = System.IO.Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, Properties.Layouts.Get("SavePath"));
 			Logger.Debug("Layouts will be loaded from the following path: {0}", path);
 			
-			return Get.i.Assemblies.GetCollectionOfObjects<BaseLayoutElement>(path);
+			ObservableCollection<BaseLayoutElement> layoutObjects = Get.i.Assemblies.GetCollectionOfObjects<BaseLayoutElement>(path);
+			
+			foreach (BaseLayoutElement layout in layoutObjects) {
+				if (Get.i.Layouts.ContainsKey(layout.Name)) {
+					Layout metadata = Get.i.Layouts.LoadLayout(layout.Name);
+					layout.IsSelected = metadata.IsSelected;				
+				} else {
+					Get.i.Layouts.InsertLayout(layout);
+				}
+			}
+			return layoutObjects;
 		}
 		#region INotifyPropertyChanged implementation
 

@@ -88,6 +88,9 @@
     <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010">
       <HintPath>..\packages\Extended.WPF.Toolkit.Binaries.NET.4.x\Extended WPF Toolkit Binaries .NET 4.x\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
     </Reference>
+    <Reference Include="YamlDotNet">
+      <HintPath>..\packages\YamlDotNet.Signed.4.2.2\lib\net35\YamlDotNet.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Elements\BaseElement.cs" />
@@ -141,6 +144,7 @@
     <Compile Include="Types\ConnectionStatus.cs" />
     <Compile Include="Types\EditorElementType.cs" />
     <Compile Include="Types\DataStoreType.cs" />
+    <Compile Include="Types\FileActionType.cs" />
     <Compile Include="Types\FlagType.cs" />
     <Compile Include="Types\LayoutElementType.cs" />
     <Compile Include="Types\NotificationType.cs" />

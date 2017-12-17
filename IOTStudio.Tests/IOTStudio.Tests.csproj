@@ -70,7 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Database.Tests\DatabaseTest.cs" />
-    <Compile Include="Layouts.Tests\LoadLayoutTest.cs" />
+    <Compile Include="Layouts.Tests\LayoutsStoreTest.cs" />
     <Compile Include="Layouts.Tests\MyCustomLayout1.cs" />
     <Compile Include="Layouts.Tests\MyCustomLayout2.cs" />
     <Compile Include="Models.Tests\CreateModelsTest.cs" />

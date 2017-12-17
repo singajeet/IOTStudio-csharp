@@ -8,7 +8,12 @@
  */
 using System;
 using System.Reflection;
+using IOTStudio.Core.Stores;
+using IOTStudio.Core.Stores.Logs;
 using IOTStudio.Tests.Database.Tests;
+using IOTStudio.Tests.Layouts.Tests;
+using IOTStudio.Tests.Models.Tests;
+using IOTStudio.Tests.Stores.Tests;
 
 namespace IOTStudio.Test
 {
@@ -27,36 +32,37 @@ namespace IOTStudio.Test
 				Console.WriteLine(name.Version.ToString());
 			}
 			
+			Logger.Debug("______________________________ Starting Testing Program __________________________");
+			
+			Logger.Debug("++++++++++++++++++++++++ Database Test Case +++++++++++++++++++++++++++");
 			DatabaseTest dbTest = new DatabaseTest();
 			dbTest.TestDatabaseInit();
-			dbTest.TestLoadDatabase();
+			dbTest.TestLoadDatabaseAndDriverConnect();
 			dbTest.TestDatabaseDeleteQuery();
 			dbTest.TestDatabaseInsertQuery();
 			dbTest.TestDatabaseFindOneQuery();
 			dbTest.TestDatabaseFindCount();
-			dbTest.TestDatabaseFindQuery();
-			//dbTest.DeleteAllItems();
+			dbTest.TestDatabaseFindQuery();			
 			dbTest.TestDatabaseParentChildInsertQuery();
 			dbTest.TestDatabaseParentChildFindOneQuery();
 			
-//			Logger.Debug("______________________________ Starting Testing Program __________________________");
-//			
-//			Logger.Debug("++++++++++++++++++++++++ Create Models Test Case +++++++++++++++++++++++++++");
-//			CreateModelsTest modelsTest = new CreateModelsTest();
-//			modelsTest.TestCreateModels();
-//			modelsTest.TestModelsRelationships();
-//			
-//			Logger.Debug("++++++++++++++++++++++++ Load Layouts Test Case +++++++++++++++++++++++++++");
-//			LoadLayoutTest layoutTest = new LoadLayoutTest();
-//			layoutTest.TestLoadLayouts();
-//			layoutTest.TestInstanceOfLayout();
-//			
-//			Logger.Debug("++++++++++++++++++++++++ Flag Provider Test Case +++++++++++++++++++++++++++");
-//			FlagProviderTest flagTest = new FlagProviderTest();
-//			flagTest.TestFlagProviderInitialize();
-//			flagTest.TestKeyRegistration();
-//			
-//			Logger.Debug("______________________________ End Testing Program __________________________");
+			Logger.Debug("++++++++++++++++++++++++ Create Models Test Case +++++++++++++++++++++++++++");
+			CreateModelsTest modelsTest = new CreateModelsTest();
+			modelsTest.TestCreateModels();
+			modelsTest.TestModelsRelationships();
+			
+			Logger.Debug("++++++++++++++++++++++++ Layouts Store Test Case +++++++++++++++++++++++++++");
+			LayoutsStoreTest layoutTest = new LayoutsStoreTest();
+			layoutTest.TestLoadLayouts();
+			layoutTest.TestInstanceOfLayout();
+			layoutTest.TestSelectLayout();
+			
+			Logger.Debug("++++++++++++++++++++++++ Flags Store Test Case +++++++++++++++++++++++++++");
+			FlagsStoreTest flagTest = new FlagsStoreTest();
+			flagTest.TestFlagProviderInitialize();
+			flagTest.TestKeyRegistration();			
+			
+			Logger.Debug("______________________________ End Testing Program __________________________");
 			Console.Write("Press any key to continue . . . ");
 			Console.ReadKey(true);
 		}

@@ -21,8 +21,13 @@ namespace IOTStudio.Core.Stores.Providers
 	/// </summary>
 	public class Name
 	{
-		public string Key;
-		public int Counter;
+		public ObjectId Id { get; set; }
+		public string Key { get; set; }
+		public int Counter { get; set; }
+		
+		public Name()
+		{
+		}
 		
 		public Name(string key, int counter)
 		{
@@ -32,7 +37,7 @@ namespace IOTStudio.Core.Stores.Providers
 		
 		public override string ToString()
 		{
-			return string.Format("[Name Key={0}, Counter={1}]", Key, Counter);
+			return string.Format("[Name Id={0}, Key={1}, Counter={2}]", Id, Key, Counter);
 		}
 
 	}
@@ -43,7 +48,7 @@ namespace IOTStudio.Core.Stores.Providers
 	[DataContract]
 	public class NamesStore : BaseStore, IProvider
 	{
-		readonly IDBDriver dbDriver;
+		IDBDriver dbDriver;
 		
 		#region IProvider implementation
 		public Guid Id {
@@ -60,13 +65,17 @@ namespace IOTStudio.Core.Stores.Providers
 		
 		public NamesStore()
 		{
-			dbDriver = Get.i.DBFactory.LoadDefaultDatabase(PROVIDERS_STORE);
-			dbDriver.Connect();			
+			
 		}
 		
 		public string GetName(string key)
 		{
-			var names = dbDriver.DB.GetCollection<Name>("names");
+			if (dbDriver == null) {
+				dbDriver = Get.i.DBFactory.LoadDefaultDatabase(PROVIDERS_STORE_SCHEMA);
+				dbDriver.Connect();		
+			}			
+			
+			var names = dbDriver.DB.GetCollection<Name>(NAMES_COLLECTION);
 			
 			if (names.Exists(n => n.Key.Equals(key))) {				
 				Name name = names.FindOne(n => n.Key.Equals(key));

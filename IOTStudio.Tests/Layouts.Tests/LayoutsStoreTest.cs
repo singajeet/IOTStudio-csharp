@@ -19,11 +19,11 @@ namespace IOTStudio.Tests.Layouts.Tests
 	/// </summary>
 	[TestFixture]
 	[Apartment(ApartmentState.STA)]
-	public class LoadLayoutTest
+	public class LayoutsStoreTest
 	{
 		LayoutSelector layouts = new LayoutSelector();
 		
-		public LoadLayoutTest()
+		public LayoutsStoreTest()
 		{
 		}
 		
@@ -37,6 +37,13 @@ namespace IOTStudio.Tests.Layouts.Tests
 		public void TestInstanceOfLayout()
 		{
 			Assert.IsInstanceOf(typeof(ILayoutElement), layouts.Layouts[0]);
+		}
+		
+		[Test(Description = "TestCase to check saving of Layouts")]
+		public void TestSelectLayout()
+		{
+			layouts.SelectLayout(layouts.Layouts[1].Name);
+			Assert.AreEqual(true, layouts.Layouts[1].IsSelected);
 		}
 	}
 }

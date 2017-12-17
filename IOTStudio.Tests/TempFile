@@ -1,0 +1,34 @@
+﻿<Layouts>
+		<SelectorSettings>
+			<add key="LayoutsStorageClass" value="IOTStudio.Core.Stores.Providers.LayoutsStore" />
+		</SelectorSettings>		
+		<LayoutSettings>
+			<add key="SelectedLayoutStorageClass" value="IOTStudio.Core.Stores.Providers.SelectedLayoutStore" />
+		</LayoutSettings>
+	</Layouts>
+	<Features>
+		<Settings>
+			<add key="FeaturesStorageClass" value="IOTStudio.Core.Stores.Providers.FeaturesStore"/>
+		</Settings>
+	</Features>
+	<Providers>
+		<NameTableSettings>
+			<add key="NamesStorageClass" value="IOTStudio.Core.Stores.Providers.NamesStore" />
+		</NameTableSettings>
+		<FlagProviderSettings>
+			<add key="FlagsStorageClass" value="IOTStudio.Core.Stores.Providers.FlagsStore" />
+		</FlagProviderSettings>
+	</Providers>
+	
+	<sectionGroup name="Providers">
+			<section name="NameTableSettings" type="System.Configuration.NameValueSectionHandler" />
+			<section name="FlagProviderSettings" type="System.Configuration.NameValueSectionHandler" />
+		</sectionGroup>
+		<sectionGroup name="Features">
+			<section name="Settings" type="System.Configuration.NameValueSectionHandler"/>
+		</sectionGroup>
+		
+		<sectionGroup name="Layouts">
+			<section name="SelectorSettings" type="System.Configuration.NameValueSectionHandler" />
+			<section name="LayoutSettings" type="System.Configuration.NameValueSectionHandler" />
+		</sectionGroup>

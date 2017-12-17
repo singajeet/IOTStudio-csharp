@@ -18,8 +18,17 @@ namespace IOTStudio.Core.Providers.Stores
 	/// </summary>
 	public abstract class BaseStore : IDataStore
 	{
-		protected const string PROVIDERS_STORE = "Providers.db";
-		protected const string OBJECTS_STORE = "Objects.db";
+		protected const string PROVIDERS_STORE_SCHEMA = "Providers.db";
+		protected const string OBJECTS_STORE_SCHEMA = "Objects.db";
+		protected const string PROPERTIES_STORE_SCHEMA = "Properties.db";
+		protected const string FILE_STORE_SCHEMA = "Files.db";
+		
+		protected const string LAYOUTS_COLLECTION = "LayoutsCollection";
+		protected const string FLAGS_COLLECTION = "FlagsCollection";
+		protected const string NAMES_COLLECTION = "NamesCollection";
+		protected const string FEATURES_COLLECTION = "FeaturesCollection";
+		
+		protected const string OBJECTS_COLLECTION = "ObjectsCollection";
 	}
 	
 //	public class DataStoreEntry

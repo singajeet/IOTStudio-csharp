@@ -35,13 +35,13 @@ namespace IOTStudio.Core.Stores.Objects
 
 		public DefaultObjectsStore()
 		{
-			dbDriver = Get.i.DBFactory.LoadDefaultDatabase(OBJECTS_STORE);
+			dbDriver = Get.i.DBFactory.LoadDefaultDatabase(OBJECTS_STORE_SCHEMA);
 			dbDriver.Connect();
 		}
 		
 		public T Load<T>(string key)
 		{
-			object instance = dbDriver.DB.GetCollection<T>("collection").FindOne(Query.EQ("Name", key));
+			object instance = dbDriver.DB.GetCollection<T>(OBJECTS_COLLECTION).FindOne(Query.EQ("Name", key));
 			
 			if (instance != null) {
 				Logger.Debug("Object [{0}] found and same will be returned", (T)instance);

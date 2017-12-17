@@ -31,28 +31,7 @@ namespace IOTStudio.Core.Stores
 		
 		private Get()
 		{
-			Logger.Debug("Initiating Core Services...");
-			
-			nameProvider = new NamesStore();
-			Logger.Debug("[{0}] has been initiated", nameProvider);
-			
-			flagProvider = new FlagsStore();
-			Logger.Debug("[{0}] has been initiated", flagProvider);
-			
-			assemblyLoader = new AssembliesStore();
-			Logger.Debug("[{0}] has been initiated", assemblyLoader);
-			
-			featureManager = new FeaturesStore();
-			Logger.Debug("[{0}] has been initiated", featureManager);	
-
-			layoutsStore = new LayoutsStore();
-			Logger.Debug("[{0}] has been initiated", layoutsStore);
-			
-			dbFactory = DatabaseFactory.Instance;
-			Logger.Debug("[{0}] has been initiated", dbFactory);		
-			
-			defaultObjectsStore = new DefaultObjectsStore();
-			Logger.Debug("[{0}] has been initiated", defaultObjectsStore);
+			Logger.Debug("Service Manager instance created");
 		}
 		
 		public static Get i
@@ -66,31 +45,74 @@ namespace IOTStudio.Core.Stores
 		}
 		
 		public DatabaseFactory DBFactory{
-			get { return dbFactory; }
+			get {
+				if (dbFactory == null) {
+					dbFactory = DatabaseFactory.Instance;
+					Logger.Debug("[{0}] has been initiated", dbFactory);		
+				}
+				return dbFactory; 
+			}
 		}
 		
 		public NamesStore Names{
-			get { return nameProvider; }
+			get { 
+				if (nameProvider == null) {
+					nameProvider = new NamesStore();
+					Logger.Debug("[{0}] has been initiated", nameProvider);
+				}
+				
+				return nameProvider; 
+			}
 		}
 		
 		public FlagsStore Flags{
-			get{ return flagProvider; }
+			get{
+				if (flagProvider == null) {
+					flagProvider = new FlagsStore();
+					Logger.Debug("[{0}] has been initiated", flagProvider);				
+				}
+				return flagProvider; 
+			}
 		}
 		
 		public AssembliesStore Assemblies{
-			get { return assemblyLoader; }
+			get {
+				if (assemblyLoader == null) {
+					assemblyLoader = new AssembliesStore();
+					Logger.Debug("[{0}] has been initiated", assemblyLoader);
+				}
+				return assemblyLoader; 
+			}
 		}
 		
 		public FeaturesStore Features{
-			get { return featureManager; }
+			get { 
+				if (featureManager == null) {
+					featureManager = new FeaturesStore();
+					Logger.Debug("[{0}] has been initiated", featureManager);	
+				}
+				return featureManager; 
+			}
 		}
 		
 		public LayoutsStore Layouts{
-			get{ return layoutsStore; }
+			get{ 
+				if (layoutsStore == null) {
+					layoutsStore = new LayoutsStore();
+					Logger.Debug("[{0}] has been initiated", layoutsStore);
+				}
+				return layoutsStore; 
+			}
 		}
 		
 		public DefaultObjectsStore Objects{
-			get { return defaultObjectsStore; }
+			get {
+				if (defaultObjectsStore == null) {
+					defaultObjectsStore = new DefaultObjectsStore();
+					Logger.Debug("[{0}] has been initiated", defaultObjectsStore);
+				}
+				return defaultObjectsStore; 
+			}
 		}
 	}
 }

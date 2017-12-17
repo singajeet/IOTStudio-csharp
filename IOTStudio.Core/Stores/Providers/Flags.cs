@@ -19,8 +19,13 @@ namespace IOTStudio.Core.Stores.Providers
 	using Logger = IOTStudio.Core.Stores.Logs.Logger;
 	
 	public class Flag{
-		public string Key;
-		public bool Value;
+		public ObjectId Id { get; set; }
+		public string Key { get; set; }
+		public bool Value { get; set; }
+		
+		public Flag()
+		{
+		}
 		
 		public Flag(string key, bool value){
 			Key= key;
@@ -29,7 +34,7 @@ namespace IOTStudio.Core.Stores.Providers
 		
 		public override string ToString()
 		{
-			return string.Format("[Flag Key={0}, Value={1}]", Key, Value);
+			return string.Format("[Flag Id={0}, Key={1}, Value={2}]", Id, Key, Value);
 		}
 
 	}
@@ -60,13 +65,13 @@ namespace IOTStudio.Core.Stores.Providers
 
 		public FlagsStore()
 		{
-			dbDriver = Get.i.DBFactory.LoadDefaultDatabase(PROVIDERS_STORE);
-			dbDriver.Connect();	
+			
 		}	
 		
 		private LiteCollection<Flag> _allFlags{
 			get { 
-				return dbDriver.DB.GetCollection<Flag>("flags");
+				CheckAndConnect();
+				return dbDriver.DB.GetCollection<Flag>(FLAGS_COLLECTION);
 			}
 		}
 		
@@ -82,31 +87,46 @@ namespace IOTStudio.Core.Stores.Providers
 			}
 		}
 		
+		private void CheckAndConnect()
+		{
+			if (dbDriver == null) {
+				dbDriver = Get.i.DBFactory.LoadDefaultDatabase(PROVIDERS_STORE_SCHEMA);
+				dbDriver.Connect();	
+			}
+		}
+		
 		public void RegisterFlag(string key, bool value)
 		{
+			CheckAndConnect();
+			
 			if (this.ContainsKey(key)) {
 				throw new Exception("Key provided is already registered for another object");
 			}
 			
 			Flag flag = new Flag(key, value);
-			var flags = dbDriver.DB.GetCollection<Flag>("flags");
-			flags.Insert(flag);
+			_allFlags.Insert(flag);
 			
 			Logger.Debug("New Flag {0} registered with default value as {1}", flag.Key, flag.Value);
 		}
 		
 		public bool ContainsKey(string key)
 		{
+			CheckAndConnect();
+			
 			return _allFlags.Exists(f => f.Key.Equals(key));
 		}
 		
 		public bool GetFlagStatus(string key)
 		{
+			CheckAndConnect();
+			
 			return _allFlags.FindOne(f => f.Key.Equals(key)).Value;
 		}
 		
 		public void SetFlagStatus(string key, bool value)
 		{
+			CheckAndConnect();
+			
 			Flag flag = _allFlags.FindOne(f => f.Key.Equals(key));
 			flag.Value = value;
 			_allFlags.Update(flag);
@@ -116,6 +136,8 @@ namespace IOTStudio.Core.Stores.Providers
 		
 		public void UnregisterFlag(string key)
 		{
+			CheckAndConnect();
+			
 			if (!this.ContainsKey(key)) {
 				throw new Exception("No such key is registered");
 			}				

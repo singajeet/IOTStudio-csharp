@@ -8,7 +8,9 @@
  */
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
+using System.Windows;
 using IOTStudio.Core.Interfaces;
 using System.Linq;
 using IOTStudio.Core.Stores;
@@ -74,6 +76,11 @@ namespace IOTStudio.Core.Database
 			set;
 		}
 		
+		public string AppBasePath{
+			get;
+			set;
+		}
+		
 		public Dictionary<string, IDBDriver> DBDrivers{
 			get { return drivers; }
 			private set { drivers = value; }
@@ -106,13 +113,16 @@ namespace IOTStudio.Core.Database
 			if (DBDrivers.ContainsKey(schema))
 				return DBDrivers[schema];
 			
+			AppBasePath = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
+			Logger.Debug("Application's Base Path from Setup Information => [{0}]", AppBasePath);
+			
 			DatabaseConfigSection = Properties.DB.Get(database);
 			if (DatabaseConfigSection == null) {
 				Logger.Error("Unable to find database configuration => [{0}]", database);
 				throw new Exception(string.Format("Unable to find database configuration => [{0}]", database));
 			}
 			
-			AssemblyPath = Properties.GetGet("AssemblyPath", DatabaseConfigSection);
+			AssemblyPath = Path.Combine(AppBasePath, Properties.GetGet("AssemblyPath", DatabaseConfigSection));
 			Logger.Debug("Path to Database & Driver Assemblies => [{0}]", AssemblyPath);
 			
 			DBDriverClassName = Properties.GetGet("LiteDatabaseDriver", DatabaseConfigSection);			
