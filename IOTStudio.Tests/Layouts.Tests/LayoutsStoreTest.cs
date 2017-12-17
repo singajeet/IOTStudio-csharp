@@ -42,7 +42,7 @@ namespace IOTStudio.Tests.Layouts.Tests
 		[Test(Description = "TestCase to check saving of Layouts")]
 		public void TestSelectLayout()
 		{
-			layouts.SelectLayout(layouts.Layouts[1].Name);
+			layouts.SelectLayout(layouts.Layouts[1].Id);
 			Assert.AreEqual(true, layouts.Layouts[1].IsSelected);
 		}
 	}

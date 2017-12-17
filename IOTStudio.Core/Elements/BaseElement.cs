@@ -7,7 +7,6 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -15,7 +14,6 @@ using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Interactivity;
 using IOTStudio.Core.Elements.Interfaces;
-using Newtonsoft.Json;
 
 namespace IOTStudio.Core.Elements
 {
@@ -76,7 +74,7 @@ namespace IOTStudio.Core.Elements
 		}
 		
 		public BaseElement()
-		{
+		{			
 			Behaviors = Behaviors ?? new ObservableCollection<Behavior<UIElement>>();
 			EventTriggers = EventTriggers ?? new ObservableCollection<TriggerAction<UIElement>>();
 		}

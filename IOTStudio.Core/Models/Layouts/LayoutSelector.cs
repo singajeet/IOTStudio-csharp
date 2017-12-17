@@ -71,7 +71,7 @@ namespace IOTStudio.Core.Models.Layouts
 				return selectedLayout;
 			} else {
 				Layouts[0].IsSelected = true;
-				if (Get.i.Layouts.ContainsKey(Layouts[0].Name))
+				if (Get.i.Layouts.ContainsKey(Layouts[0].Id))
 					Get.i.Layouts.SaveLayout(Layouts[0]);
 				else
 					Get.i.Layouts.InsertLayout(Layouts[0]);
@@ -79,16 +79,18 @@ namespace IOTStudio.Core.Models.Layouts
 			return Layouts[0];
 		}
 		
-		public void SelectLayout(string layout)
+		public void SelectLayout(Guid key)
 		{
 			Layouts.Where(w => w.IsSelected == true)
 							.ToList()
 							.ForEach(f => f.IsSelected = false);
 			
-			SelectedLayout = Layouts.Where(w=> w.Name.Equals(layout)).ToList().Single();
+			Get.i.Layouts.UnselectAll();
+			
+			SelectedLayout = Layouts.Where(w=> w.Id == key).ToList().Single();
 			SelectedLayout.IsSelected = true;
 			
-			if (Get.i.Layouts.ContainsKey(layout)) {
+			if (Get.i.Layouts.ContainsKey(key)) {
 				Get.i.Layouts.SaveLayout(SelectedLayout);
 			} else {
 				Get.i.Layouts.InsertLayout(SelectedLayout);
@@ -107,8 +109,8 @@ namespace IOTStudio.Core.Models.Layouts
 			ObservableCollection<BaseLayoutElement> layoutObjects = Get.i.Assemblies.GetCollectionOfObjects<BaseLayoutElement>(path);
 			
 			foreach (BaseLayoutElement layout in layoutObjects) {
-				if (Get.i.Layouts.ContainsKey(layout.Name)) {
-					Layout metadata = Get.i.Layouts.LoadLayout(layout.Name);
+				if (Get.i.Layouts.ContainsKey(layout.Id)) {
+					Layout metadata = Get.i.Layouts.LoadLayout(layout.Id);					
 					layout.IsSelected = metadata.IsSelected;				
 				} else {
 					Get.i.Layouts.InsertLayout(layout);

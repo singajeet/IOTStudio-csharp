@@ -9,8 +9,6 @@
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Configuration;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Windows;
@@ -34,9 +32,10 @@ namespace IOTStudio.Core.Elements.UI
 		public string Version { get; set; }
 		public DateTime ReleasedDate { get; set; }
 		public string URL { get; set; }
+		public string PathToXml { get; set; }
 		
 		public LayoutInformation(){
-			Id = new Guid("9D973ECC-6A67-42E6-8F22-8455F861AFCA");
+			//Id = new Guid("9D973ECC-6A67-42E6-8F22-8455F861AFCA");
 			Name = "ProvideNameForLayout";
 			Description = "Enter description of the layout";
 			Author = "Ajeet Singh";
@@ -78,26 +77,25 @@ namespace IOTStudio.Core.Elements.UI
 		}
 		
 		public BaseLayoutElement()
-		{
+		{			
 			_ClassNameAsFolder = this.GetType().Name;
 			Logger.Debug("Layouts sub folder name => [{0}]", _ClassNameAsFolder);
 			
-			UpdateLayoutInfo(FileActionType.Read);		
-			
-			_LayoutXmlFileName = this.Name + "_Layout" + _LayoutFileExtension;
-			Logger.Debug("Layout's Xml file name => [{0}]", _LayoutXmlFileName);
-			
-			PathToXml = System.IO.Path.Combine(
-								System.IO.Path.Combine(
-									System.IO.Path.Combine(_AssemblyBasePath,
-										_ConfiguredPathForLayouts),
-									_ClassNameAsFolder),
-								_LayoutXmlFileName);
+			UpdateLayoutInfo(FileActionType.Read);	
 			
 			Logger.Debug("Path to Xml layout file => [{0}]", PathToXml);
-			UpdateLayoutXmlFile(Name);
+			UpdateLayoutXmlFile();
 			
 			IsSelected = false;
+			
+			//Update or Insert record in database
+			if (Get.i.Layouts.ContainsKey(Id)) {
+				Get.i.Layouts.SaveLayout(this);
+				Logger.Debug("Layout's information with Id [{0}] is saved successfully in database", Id);
+			} else {
+				Get.i.Layouts.InsertLayout(this);
+				Logger.Debug("New record has been created in database for layout with Id [{0}]", Id);
+			}
 			
 		}
 		#region INotifyPropertyChanged implementation
@@ -138,22 +136,41 @@ namespace IOTStudio.Core.Elements.UI
 						
 						baseElement.Id = LayoutInfo.Id;
 						baseElement.Name = LayoutInfo.Name;
+						PathToXml = LayoutInfo.PathToXml;					
 					
 					} else if (action == FileActionType.Write || action == FileActionType.Save) {
-						Logger.Debug("Layout's information update started...");
+						Logger.Debug("Layout's information update started...");						
+						
+						//Let's make sure that "LayoutInfo" field has all the updated info
+						//before we store it back to database
+						_LayoutXmlFileName = Id + "_Layout" + _LayoutFileExtension;
+						LayoutInfo.Id = Id;
+						LayoutInfo.Name = Name;
+						LayoutInfo.PathToXml = PathToXml = System.IO.Path.Combine(
+															System.IO.Path.Combine(
+																System.IO.Path.Combine(_AssemblyBasePath,
+																	_ConfiguredPathForLayouts),
+																_ClassNameAsFolder),
+															_LayoutXmlFileName);
 						
 						//Save the info in YAML format
 						YamlDotNet.Serialization.Serializer serializer = new YamlDotNet.Serialization.Serializer();
 						System.IO.StringWriter strWriter = new System.IO.StringWriter();
 						serializer.Serialize(strWriter, LayoutInfo);
 						
+						//Delete old info file, recalculate info file name (might have changed if layout Name
+						// is changed) and save the file back with latest information
 						System.IO.File.Delete(files[0]);
+						Logger.Debug("Existing info file has been deleted => [{0}]", files[0]);
 						
-						using (System.IO.TextWriter writer = System.IO.File.CreateText(files[0])) {
+						_InfoFileName = this.Name.Replace(' ', '_') + "_Info" + _InfoFileExtension;
+						Logger.Debug("Layout information save file path => [{0}]", _InfoFileName);					
+						
+						using (System.IO.TextWriter writer = System.IO.File.CreateText(System.IO.Path.Combine(baseDirForInfoFile, _InfoFileName))) {
 							writer.Write(strWriter.ToString());
 						}
 						
-						Logger.Debug("Layout's information updated successfully to [{0}]", files[0]);
+						Logger.Debug("Layout's information updated successfully to [{0}]", System.IO.Path.Combine(baseDirForInfoFile, _InfoFileName));
 					} else {
 						Logger.Debug("Invalid action specified for this operation => [{0}]", action);
 					}
@@ -162,12 +179,22 @@ namespace IOTStudio.Core.Elements.UI
 					Logger.Debug("Unable to find layout info file; New file will be created...");
 					
 					//Since no info file found, assign a new Name to the layout
-					if (Name == null) {
+					if (Id == Guid.Empty) {
 						baseElement.Id = LayoutInfo.Id = new Guid();
 						baseElement.Name = LayoutInfo.Name = Get.i.Names.GetName("Layout");
 						Logger.Debug("Assigned Id={0}, Name={1}", Id, Name);
 					}
 					
+					_LayoutXmlFileName = this.Id + "_Layout" + _LayoutFileExtension;
+					Logger.Debug("Layout's Xml file name => [{0}]", _LayoutXmlFileName);
+			
+					PathToXml = LayoutInfo.PathToXml = System.IO.Path.Combine(
+														System.IO.Path.Combine(
+															System.IO.Path.Combine(_AssemblyBasePath,
+																_ConfiguredPathForLayouts),
+															_ClassNameAsFolder),
+														_LayoutXmlFileName);
+				
 					_InfoFileName = this.Name.Replace(' ', '_') + "_Info" + _InfoFileExtension;
 					Logger.Debug("Layout information save file path => [{0}]", _InfoFileName);
 					
@@ -188,11 +215,21 @@ namespace IOTStudio.Core.Elements.UI
 				System.IO.DirectoryInfo dirInfo = System.IO.Directory.CreateDirectory(baseDirForInfoFile);
 				
 				//Since no dir and info files exists, assign a new Name to layout
-				if (Name == null) {
+				if (baseElement.Id == Guid.Empty) {
 					baseElement.Id = LayoutInfo.Id = new Guid();
 					baseElement.Name = LayoutInfo.Name = Get.i.Names.GetName("Layout");
 					Logger.Debug("Assigned Id={0}, Name={1}", Id, Name);
 				}
+				
+				_LayoutXmlFileName = this.Id + "_Layout" + _LayoutFileExtension;
+				Logger.Debug("Layout's Xml file name => [{0}]", _LayoutXmlFileName);
+			
+				PathToXml = LayoutInfo.PathToXml = System.IO.Path.Combine(
+													System.IO.Path.Combine(
+														System.IO.Path.Combine(_AssemblyBasePath,
+															_ConfiguredPathForLayouts),
+														_ClassNameAsFolder),
+													_LayoutXmlFileName);
 				
 				_InfoFileName = this.Name.Replace(' ', '_') + "_Info" + _InfoFileExtension;
 				Logger.Debug("Layout information save file path => [{0}]", _InfoFileName);
@@ -222,12 +259,6 @@ namespace IOTStudio.Core.Elements.UI
 			get {
 				return baseElement.Id;
 			}
-			set {
-				baseElement.Id = value;
-				LayoutInfo.Id = value;
-				UpdateLayoutInfo(FileActionType.Save);
-				OnPropertyChanged();
-			}
 		}
 		
 		[DataMember]
@@ -236,8 +267,7 @@ namespace IOTStudio.Core.Elements.UI
 			set {
 				baseElement.Name = value; 
 				LayoutInfo.Name = value;
-				UpdateLayoutInfo(FileActionType.Save);
-				UpdateLayoutXmlFile(value);
+				UpdateLayoutInfo(FileActionType.Save);				
 				OnPropertyChanged();
 			}
 		}
@@ -295,104 +325,15 @@ namespace IOTStudio.Core.Elements.UI
 		/// <summary>
 		/// Function will be called whenever Name property of layout changes
 		/// </summary>
-		/// <param name="name">New value of Name Property</param>
-		protected void UpdateLayoutXmlFile(string name)
+		protected void UpdateLayoutXmlFile()
 		{
 			Logger.Debug("Layout's Xml file update started...");
-			//If file already exists with old name, rename file to new name using move command
-			if (System.IO.File.Exists(PathToXml)) {
-				Logger.Debug("Provided path is a path to file");
-				
-				_LayoutXmlFileName = this.Name.Replace(' ', '_') + "_Layout" + _LayoutFileExtension;
-				
-				string newPath = System.IO.Path.Combine(
-									System.IO.Path.Combine(
-										System.IO.Path.Combine(_AssemblyBasePath,
-				                                               _ConfiguredPathForLayouts),
-										_ClassNameAsFolder), 
-									_LayoutXmlFileName);
-				
-				Logger.Debug("Found an existing layout's Xml file => [{0}]", PathToXml);
-				
-				if (!System.IO.File.Exists(newPath)) {
-					System.IO.File.Move(PathToXml, newPath);
-					PathToXml = newPath;
-					
-					Logger.Debug("Successfully renamed existing layout's Xml to => [{0}]", newPath);
-				} else {
-					//If an another file already exists with the new Name, get number of files 
-					//starting with "Name*" and rename this file with name as "Name_<FileCount>.xml"
-					int count = System.IO.Directory.GetFiles(
-									System.IO.Path.Combine(
-										System.IO.Path.Combine(_AssemblyBasePath,
-						                      					 _ConfiguredPathForLayouts), 
-											_ClassNameAsFolder), 
-									name.Replace(' ', '_') + "*" + _LayoutFileExtension).Length;
-					
-					Logger.Debug("Multiple layout's Xml files found => [{0}] file(s)", count);
-					
-					_LayoutXmlFileName = this.Name.Replace(' ', '_') + "_Layout_" + count + _LayoutFileExtension;
-					
-					newPath = System.IO.Path.Combine(
-								System.IO.Path.Combine(
-									System.IO.Path.Combine(_AssemblyBasePath,
-							                       _ConfiguredPathForLayouts),
-										_ClassNameAsFolder), 
-								_LayoutXmlFileName);
-					
-					System.IO.File.Move(PathToXml, newPath);
-					PathToXml = newPath;
-					
-					Logger.Debug("Successfully renamed existing layout's Xml to => [{0}]", newPath);
-				}
-			} else {
+			
+			if (!System.IO.File.Exists(PathToXml)) {				
 				Logger.Debug("Layout's Xml file don't exist; Creating new Xml file");
-				
-//				if (!System.IO.File.GetAttributes(PathToXml).HasFlag(System.IO.FileAttributes.Directory)) {
-					System.IO.File.Create(PathToXml).Close();
-//				} else {
-//					if (System.IO.File.GetAttributes(PathToXml).HasFlag(System.IO.FileAttributes.Directory)) {
-//						//If path provided is a path to directory, create new layout file
-//						if (System.IO.Directory.Exists(PathToXml)) {
-//								_LayoutXmlFileName = this.Name.Replace(' ', '_') + "_Layout" + _LayoutFileExtension;
-//								
-//								PathToXml = System.IO.Path.Combine(
-//													System.IO.Path.Combine(
-//														System.IO.Path.Combine(_AssemblyBasePath,
-//															_ConfiguredPathForLayouts),
-//														_ClassNameAsFolder),
-//													_LayoutXmlFileName);
-//								
-//							string newPath = PathToXml;
-//							if (!System.IO.File.Exists(newPath)) {
-//								PathToXml = newPath;
-//								System.IO.File.CreateText(newPath).Close();						
-//							} else {
-//								int count = System.IO.Directory.GetFiles(System.IO.Path.Combine(
-//																	System.IO.Path.Combine(_AssemblyBasePath,
-//								                      									 _ConfiguredPathForLayouts), 
-//																					_ClassNameAsFolder), 
-//																					name.Replace(' ', '_') + "*" + _LayoutFileExtension).Length;
-//								
-//								_LayoutXmlFileName = this.Name.Replace(' ', '_') + "_Layout_" + count + _LayoutFileExtension;
-//							
-//								newPath = System.IO.Path.Combine(
-//											System.IO.Path.Combine(
-//												System.IO.Path.Combine(_AssemblyBasePath,
-//										                       _ConfiguredPathForLayouts),
-//													_ClassNameAsFolder), 
-//											_LayoutXmlFileName);
-//								
-//								PathToXml = newPath;
-//								System.IO.File.CreateText(newPath).Close();
-//							}
-//						} else {
-//							throw new Exception(string.Format("Invalid path provided for saving layout's XML files => [{0}]", PathToXml));
-//						}
-//					}
-//				}
-				
-				
+				System.IO.File.Create(PathToXml).Close();
+			} else {
+				Logger.Debug("Layout's Xml file already exist; No further actions are required");
 			}
 		}
 		

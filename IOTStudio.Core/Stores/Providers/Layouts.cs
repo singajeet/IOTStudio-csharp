@@ -19,8 +19,8 @@ using Logger=IOTStudio.Core.Stores.Logs.Logger;
 	public class Layout
 	{
 		public ObjectId Id { get; set; }
-		public string Key { get; set; }
-		//public BaseLayoutElement LayoutElement { get; set; }
+		public Guid LayoutKey { get; set; }
+		public string Name { get; set; }		
 		public string PathToXml { get; set; }
 		public bool IsSelected { get; set; }
 		
@@ -28,17 +28,17 @@ using Logger=IOTStudio.Core.Stores.Logs.Logger;
 		{
 		}
 		
-		public Layout(string key, bool isSelected, string path)
+		public Layout(Guid layoutKey, string name, bool isSelected, string path)
 		{
-			Key = key;
-			//LayoutElement = element;
+			LayoutKey = layoutKey;
+			Name = name;			
 			PathToXml = path;
 			IsSelected = isSelected;
 		}
 		
 		public override string ToString()
 		{
-			return string.Format("[Layout Id={0}, Key={1}, IsSelected={2}, PathToXml={3}]", Id, Key, IsSelected, PathToXml);
+			return string.Format("[Layout Id={0}, LayoutKey={1}, Name={2}, IsSelected={3}, PathToXml={4}]", Id, LayoutKey, Name, IsSelected, PathToXml);
 		}
 
 	}
@@ -81,20 +81,27 @@ using Logger=IOTStudio.Core.Stores.Logs.Logger;
 		}
 		#endregion
 		
-		public bool ContainsKey(string key)
+		public bool ContainsKey(Guid layoutKey)
 		{
 			CheckAndConnect();
 			
-			return AllLayouts.Exists(l => l.Key.Equals(key));
+			return AllLayouts.Exists(l => l.LayoutKey == layoutKey);
+		}
+		
+		public bool ContainsName(string name)
+		{
+			CheckAndConnect();
+			return AllLayouts.Exists(l => l.Name.Equals(name));
 		}
 		
 		public void InsertLayout(BaseLayoutElement layout)
 		{
 			CheckAndConnect();
 			
-			if (ContainsKey(layout.Name))
-				throw new Exception(string.Format("Layout with key [{0}] already exists", layout.Name));
-			Layout layoutObject = new Layout(layout.Name, layout.IsSelected, null);
+			if (ContainsKey(layout.Id))
+				throw new Exception(string.Format("Layout [{0}] with key [{1}] already exists", layout.Name, layout.Id));
+			
+			Layout layoutObject = new Layout(layout.Id, layout.Name, layout.IsSelected, layout.PathToXml);
 			AllLayouts.Insert(layoutObject);
 			
 			Logger.Debug("Layout [{0}] has been inserted successfully", layoutObject);
@@ -102,22 +109,23 @@ using Logger=IOTStudio.Core.Stores.Logs.Logger;
 		
 		public void SaveLayout(BaseLayoutElement layout)
 		{
-			if (ContainsKey(layout.Name)) {
-				Layout layoutObject = AllLayouts.FindOne(l => l.Key.Equals(layout.Name));
+			if (ContainsKey(layout.Id)) {
+				Layout layoutObject = AllLayouts.FindOne(l => l.LayoutKey == layout.Id);
+				layoutObject.Name = layout.Name;
 				layoutObject.IsSelected = layout.IsSelected;
-				layoutObject.PathToXml = null;
+				layoutObject.PathToXml = layout.PathToXml;
 				
 				AllLayouts.Update(layoutObject);
 				Logger.Debug("Layout [{0}] has been updated successfully", layoutObject);
 			} else {
-				Layout layoutObject = new Layout(layout.Name, layout.IsSelected, null);
+				Layout layoutObject = new Layout(layout.Id, layout.Name, layout.IsSelected, layout.PathToXml);
 				AllLayouts.Insert(layoutObject);
 				
 				Logger.Debug("Layout [{0}] has been inserted successfully", layoutObject);
 			}
 		}
 		
-		public Layout LoadLayout(string key)
+		public Layout LoadLayout(Guid key)
 		{
 			CheckAndConnect();
 			
@@ -126,18 +134,38 @@ using Logger=IOTStudio.Core.Stores.Logs.Logger;
 			
 			Logger.Debug("Loading layout with key [{0}]", key);
 			
-			return AllLayouts.FindOne(f => f.Key.Equals(key));
+			return AllLayouts.FindOne(f => f.LayoutKey == key);
+		}
+		
+		public Layout LoadLayout(string name)
+		{
+			CheckAndConnect();
+			
+			if (!ContainsName(name))
+				throw new Exception(string.Format("No layout exists with Name = [{0}]", name));
+			
+			Logger.Debug("Loading layout with Name = [{0}]", name);
+			
+			return AllLayouts.FindOne(f => f.Name.Equals(name));
 		}
 		
 		public void DeleteLayout(BaseLayoutElement layout)
 		{
 			CheckAndConnect();
 			
-			if (!ContainsKey(layout.Name))
-				throw new Exception(string.Format("No layout exists with key [{0}]", layout.Name));
+			if (!ContainsKey(layout.Id))
+				throw new Exception(string.Format("No layout exists with key [{0}]", layout.Id));
 			
-			AllLayouts.Delete(l => l.Key.Equals(layout.Name));
+			AllLayouts.Delete(l => l.LayoutKey == layout.Id);
 			Logger.Debug("Layout [{0}] has been deleted successfully", layout);
+		}
+		
+		public void UnselectAll()
+		{
+			foreach (Layout layout in AllLayouts.FindAll()) {
+				layout.IsSelected = false;
+				AllLayouts.Update(layout);
+			}
 		}
 		
 		public override string ToString()

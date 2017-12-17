@@ -18,7 +18,7 @@ namespace IOTStudio.Core.Elements.Interfaces
 	/// </summary>
 	public interface IBaseElement
 	{
-		Guid Id { get; set; }
+		Guid Id { get; }
 		string Name { get; set; }
 		ObservableCollection<Behavior<UIElement>> Behaviors { get; set; }
 		ObservableCollection<TriggerAction<UIElement>> EventTriggers { get; set; }
