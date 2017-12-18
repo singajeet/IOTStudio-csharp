@@ -77,7 +77,7 @@ namespace IOTStudio.Core.Elements.UI
 		}
 		
 		public BaseLayoutElement()
-		{			
+		{	
 			_ClassNameAsFolder = this.GetType().Name;
 			Logger.Debug("Layouts sub folder name => [{0}]", _ClassNameAsFolder);
 			
@@ -85,18 +85,6 @@ namespace IOTStudio.Core.Elements.UI
 			
 			Logger.Debug("Path to Xml layout file => [{0}]", PathToXml);
 			UpdateLayoutXmlFile();
-			
-			IsSelected = false;
-			
-			//Update or Insert record in database
-			if (Get.i.Layouts.ContainsKey(Id)) {
-				Get.i.Layouts.SaveLayout(this);
-				Logger.Debug("Layout's information with Id [{0}] is saved successfully in database", Id);
-			} else {
-				Get.i.Layouts.InsertLayout(this);
-				Logger.Debug("New record has been created in database for layout with Id [{0}]", Id);
-			}
-			
 		}
 		#region INotifyPropertyChanged implementation
 
@@ -180,7 +168,7 @@ namespace IOTStudio.Core.Elements.UI
 					
 					//Since no info file found, assign a new Name to the layout
 					if (Id == Guid.Empty) {
-						baseElement.Id = LayoutInfo.Id = new Guid();
+						baseElement.Id = LayoutInfo.Id = Guid.NewGuid();
 						baseElement.Name = LayoutInfo.Name = Get.i.Names.GetName("Layout");
 						Logger.Debug("Assigned Id={0}, Name={1}", Id, Name);
 					}
@@ -216,7 +204,7 @@ namespace IOTStudio.Core.Elements.UI
 				
 				//Since no dir and info files exists, assign a new Name to layout
 				if (baseElement.Id == Guid.Empty) {
-					baseElement.Id = LayoutInfo.Id = new Guid();
+					baseElement.Id = LayoutInfo.Id = Guid.NewGuid();
 					baseElement.Name = LayoutInfo.Name = Get.i.Names.GetName("Layout");
 					Logger.Debug("Assigned Id={0}, Name={1}", Id, Name);
 				}

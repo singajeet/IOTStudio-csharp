@@ -19,22 +19,27 @@ namespace IOTStudio.Core.Stores.Providers
 	public class Feature
 	{
 		public ObjectId Id { get; set; }
-		public string Key { get; set; }
-		public IFeature Value { get; set; }
+		public Guid FeatureKey { get; set; }
+		public string Name { get; set; }		
 		
 		public Feature()
 		{
 		}
 		
-		public Feature(string key, IFeature value)
+		public Feature(IFeature feature)
 		{
-			Key = key;
-			Value = value;
+			FeatureKey = feature.Key;
+			Name = feature.Name;
+		}
+		
+		public Feature(Guid featureId)
+		{
+			FeatureKey = featureId;
 		}
 		
 		public override string ToString()
 		{
-			return string.Format("[Feature Id={0}, Key={1}, Value={2}]", Id, Key, Value);
+			return string.Format("[Feature Id={0}, Name={1}, FeatureKey={2}]", Id, Name, FeatureKey);
 		}
 
 	}
@@ -79,42 +84,56 @@ namespace IOTStudio.Core.Stores.Providers
 			}
 		}
 		
-		public void RegisterFeature(string key, IFeature feature)
+		public void RegisterFeature(IFeature feature)
 		{
 			CheckAndConnect();
 			
-			if (this.ContainsKey(key))
-				throw new Exception(string.Format("Feature with key {0} is already registered", key));
+			if (this.ContainsKey(feature.Key))
+				throw new Exception(string.Format("Feature with key {0} is already registered", feature.Key));
 			
-			Feature featureObject = new Feature(key, feature);
+			Feature featureObject = new Feature(feature);
 			AllFeatures.Insert(featureObject);
 			
 			Logger.Debug("[{0}] has been registered successfully", featureObject);
 		}
 		
-		public bool ContainsKey(string key)
+		public bool ContainsName(string name)
 		{
 			CheckAndConnect();
 			
-			return AllFeatures.Exists(f => f.Key.Equals(key));
+			return AllFeatures.Exists(f => f.Name.Equals(name));
 		}
 		
-		public void UnregisterFeature(string key)
+		public bool ContainsKey(Guid key)
 		{
 			CheckAndConnect();
 			
-			if (!this.ContainsKey(key))
-				throw new Exception(string.Format("No such feature found {0}", key));
+			return AllFeatures.Exists(f => f.FeatureKey == key);
+		}
+		
+		public void UnregisterFeature(IFeature feature)
+		{
+			CheckAndConnect();
 			
-			AllFeatures.Delete(f => f.Key.Equals(key));
+			if (!this.ContainsKey(feature.Key))
+				throw new Exception(string.Format("No such feature found {0}", feature.Key));
+			
+			AllFeatures.Delete(f => f.FeatureKey == feature.Key);
 			Logger.Debug("Feature [{0}] unregistered successfully");
 		}
 		
-		public IFeature FindFeature(string key)
+		public string FindFeature(Guid key)
 		{
 			CheckAndConnect();
 			
-			return AllFeatures.FindOne(f => f.Key.Equals(key)).Value;
+			return AllFeatures.FindOne(f => f.FeatureKey == key).Name;
 		}	
+		
+		public Guid FindFeature(string name)
+		{
+			CheckAndConnect();
+			
+			return AllFeatures.FindOne(f => f.Name.Equals(name)).FeatureKey;
+		}
 	}
 }

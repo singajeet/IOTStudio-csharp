@@ -31,7 +31,7 @@ namespace IOTStudio.Core.Stores
 		
 		private Get()
 		{
-			Logger.Debug("Service Manager instance created");
+			Logger.Debug("ProviderManager [Get()] instance created");
 		}
 		
 		public static Get i

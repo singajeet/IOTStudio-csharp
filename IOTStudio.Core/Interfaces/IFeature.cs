@@ -19,7 +19,7 @@ namespace IOTStudio.Core.Interfaces
 	/// </summary>
 	public interface IFeature
 	{
-		Guid Id { get; set; }
+		Guid Key { get; set; }
 		string Name { get; set; }
 		bool IsEnabled { get; set; }
 		

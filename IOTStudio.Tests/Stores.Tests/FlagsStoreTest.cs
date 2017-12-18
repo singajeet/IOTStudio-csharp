@@ -36,5 +36,12 @@ namespace IOTStudio.Tests.Stores.Tests
 			Assert.AreEqual(1, Get.i.Flags.AllFlags.Count);
 			Assert.AreEqual(false, Get.i.Flags.GetFlagStatus("TestFlag"));
 		}
+		
+		[Test]
+		public void TestKeyUnregister()
+		{
+			Get.i.Flags.UnregisterFlag("TestFlag");
+			Assert.AreEqual(0, Get.i.Flags.AllFlags.Count);
+		}
 	}
 }

@@ -25,45 +25,12 @@ namespace IOTStudio.Core.Features
 	{
 		public FeatureInfo()
 		{
-			Logger.Debug("Trying to load feature info");
-			string codeBasePath = typeof(FeatureInfo).Assembly.GetName().CodeBase;
 			
-			if (Directory.Exists(codeBasePath)) {
-				string[] files = Directory.GetFiles(codeBasePath, "*.finfo");
-				if (files.Count() == 1) {
-					Logger.Debug("Feature info file found [{0}]", files[0]);
-					UpdateInfo(null);
-				} else {
-					UpdateInfo(null);
-					Logger.Debug("Feature info not found; Assigning default values => [Id: {0}], [Name: {1}]", this.Id, this.Name);
-				}
-			}
-		}
-
-		private void UpdateInfo(IFeatureInfo info)
-		{
-			if (info != null) {
-				Id = info.Id;
-				Name = info.Name;
-				Description = info.Description;
-				Author = info.Author;
-				Company = info.Company;
-				URL = info.URL;
-				Version = info.Version;
-				ReleasedDate = info.ReleasedDate;
-			} else {
-				Id = Guid.NewGuid();
-				Name = Get.i.Names.GetName("Feature");
-				Version = "1.0.0.0";
-				ReleasedDate = DateTime.Now;
-				//Get.i.JSONSerializer.Serialize(this, FILENAME);
-				Logger.Debug("Default Feature info stored to {0}", Name);
-			}
 		}
 		#region IFeatureInfo implementation
 
 		[DataMember]
-		public Guid Id {
+		public Guid Key {
 			get ;
 			internal set ;
 		}
@@ -113,7 +80,7 @@ namespace IOTStudio.Core.Features
 		
 		public override string ToString()
 		{
-			return string.Format("[FeatureInfo Id={0}, Name={1}, Company={2}, Version={3}, ReleasedDate={4}]", Id, Name, Company, Version, ReleasedDate);
+			return string.Format("[FeatureInfo Key={0}, Name={1}, Company={2}, Version={3}, ReleasedDate={4}]", Key, Name, Company, Version, ReleasedDate);
 		}
 
 		#endregion

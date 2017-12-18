@@ -11,8 +11,6 @@ using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Controls;
 using IOTStudio.Core.Elements.UI;
-using IOTStudio.Core.Stores;
-using IOTStudio.Core.Stores.Config;
 using IOTStudio.Core.Stores.Logs;
 using Xceed.Wpf.AvalonDock;
 using Xceed.Wpf.AvalonDock.Layout.Serialization;

@@ -110,8 +110,12 @@ namespace IOTStudio.Core.Models.Layouts
 			
 			foreach (BaseLayoutElement layout in layoutObjects) {
 				if (Get.i.Layouts.ContainsKey(layout.Id)) {
+					//restore the selection status for each item from DB
 					Layout metadata = Get.i.Layouts.LoadLayout(layout.Id);					
-					layout.IsSelected = metadata.IsSelected;				
+					layout.IsSelected = metadata.IsSelected;	
+	
+					//store back all other attributes to db
+					
 				} else {
 					Get.i.Layouts.InsertLayout(layout);
 				}

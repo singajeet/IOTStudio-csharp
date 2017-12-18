@@ -25,7 +25,7 @@ namespace IOTStudio.Core.Features
 	[DataContract]
 	public class Feature : IFeature, INotifyPropertyChanged
 	{
-		private Guid id;
+		private Guid key;
 		private string name;
 		private bool isEnabled;
 		private IFeature parentFeature;
@@ -41,7 +41,7 @@ namespace IOTStudio.Core.Features
 
 		public Feature()
 		{
-			Id = info.Id;
+			Key = info.Key;
 			Name = info.Name;
 		}
 
@@ -63,12 +63,12 @@ namespace IOTStudio.Core.Features
 		}
 
 		[DataMember]
-		public Guid Id {
+		public Guid Key {
 			get {
-				return id;
+				return key;
 			}
 			set {
-				id = value;
+				key = value;
 				OnPropertyChanged();
 			}
 		}
@@ -235,7 +235,7 @@ namespace IOTStudio.Core.Features
 		
 		public override string ToString()
 		{
-			return string.Format("[Feature Id={0}, Name={1}, IsEnabled={2}, InputFlagName={3}, OutputFlagName={4}]", id, name, isEnabled, inputFlagName, outputFlagName);
+			return string.Format("[Feature Key={0}, Name={1}, IsEnabled={2}, InputFlagName={3}, OutputFlagName={4}]", key, name, isEnabled, inputFlagName, outputFlagName);
 		}
 
 	}

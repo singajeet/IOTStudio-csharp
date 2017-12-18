@@ -22,6 +22,7 @@ namespace IOTStudio.Core.Stores.Config
 		private const string STORES_LAYOUTS_SECTION_NAME = "Stores/Layouts";		
 		private const string DB_SECTION_NAME = "Database/Settings";
 		private const string DB_LITE_SECTION_NAME = "Database/DBLiteSettings";
+		private const string PKG_MANAGER_SETTINGS_SECTION_NAME = "PackageManager/Settings";
 		
 		public static class Serializer{
 			public static string Get(string key)
@@ -56,6 +57,19 @@ namespace IOTStudio.Core.Stores.Config
 			public static void Set(string key, string value)
 			{
 				SetSet(key, value, DB_LITE_SECTION_NAME);
+			}
+		}
+		
+		public static class PackageManager
+		{
+			public static string Get(string key)
+			{
+				return GetGet(key, PKG_MANAGER_SETTINGS_SECTION_NAME);
+			}
+			
+			public static void Set(string key, string value)
+			{
+				SetSet(key, value, PKG_MANAGER_SETTINGS_SECTION_NAME);
 			}
 		}
 		

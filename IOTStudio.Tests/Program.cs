@@ -8,6 +8,7 @@
  */
 using System;
 using System.Reflection;
+using IOTStudio.Core;
 using IOTStudio.Core.Stores;
 using IOTStudio.Core.Stores.Logs;
 using IOTStudio.Tests.Database.Tests;
@@ -22,15 +23,20 @@ namespace IOTStudio.Test
 		[STAThread()]
 		public static void Main(string[] args)
 		{
-			foreach (Assembly assy in AppDomain.CurrentDomain.GetAssemblies()) {
-				Console.WriteLine("---------------Assembly------------------");
-				//Console.WriteLine(assy.FullName);
-				AssemblyName name = assy.GetName();
-				Console.WriteLine(name.Name);
-				Console.WriteLine(name.CodeBase);
-				Console.WriteLine(name.FullName);
-				Console.WriteLine(name.Version.ToString());
-			}
+//			foreach (Assembly assy in AppDomain.CurrentDomain.GetAssemblies()) {
+//				Console.WriteLine("---------------Assembly------------------");
+//				//Console.WriteLine(assy.FullName);
+//				AssemblyName name = assy.GetName();
+//				Console.WriteLine(name.Name);
+//				Console.WriteLine(name.CodeBase);
+//				Console.WriteLine(name.FullName);
+//				Console.WriteLine(name.Version.ToString());
+//			}
+			
+			Logger.Debug("______________________________ Starting BootManager __________________________");
+			BootManager boot = BootManager.Instance;
+			boot.StartServices();
+			Logger.Debug("______________________________ BootManager startup completed __________________________");
 			
 			Logger.Debug("______________________________ Starting Testing Program __________________________");
 			
@@ -60,7 +66,8 @@ namespace IOTStudio.Test
 			Logger.Debug("++++++++++++++++++++++++ Flags Store Test Case +++++++++++++++++++++++++++");
 			FlagsStoreTest flagTest = new FlagsStoreTest();
 			flagTest.TestFlagProviderInitialize();
-			flagTest.TestKeyRegistration();			
+			flagTest.TestKeyRegistration();	
+			flagTest.TestKeyUnregister();
 			
 			Logger.Debug("______________________________ End Testing Program __________________________");
 			Console.Write("Press any key to continue . . . ");
