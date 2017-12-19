@@ -30,9 +30,9 @@ namespace IOTStudio.Core.Stores.Providers
 		public bool IsActive { get; set; }
 		public bool IsInstalled { get; set; }
 		public string InstalledPackageLocation { get; set; }
-		public IList<FileInfo> Files { get; set; }
-		public IList<DirectoryInfo> Directories { get; set; }
-		public ObservableCollection<DirectoryInfo> Features { get; set; }
+		public string[] Files { get; set; }
+		public string[] Directories { get; set; }
+		public string[] Features { get; set; }
 		public bool IsUpdateAvailable { get; set; }
 		public DateTime InstalledOn { get; set; }
 		
