@@ -116,6 +116,8 @@
     <Compile Include="Interfaces\IFeatureInfo.cs" />
     <Compile Include="Interfaces\IDataStore.cs" />
     <Compile Include="Interfaces\IDataStoreManager.cs" />
+    <Compile Include="Interfaces\IPackage.cs" />
+    <Compile Include="Interfaces\IPackageDetails.cs" />
     <Compile Include="Interfaces\IProvider.cs" />
     <Compile Include="Interfaces\ITask.cs" />
     <Compile Include="Models\Entites\Project.cs" />
@@ -124,6 +126,7 @@
     <Compile Include="Models\Layouts\DefaultLayout.cs" />
     <Compile Include="Models\Layouts\LayoutCollection.cs" />
     <Compile Include="Models\Layouts\LayoutSelector.cs" />
+    <Compile Include="Packages\Package.cs" />
     <Compile Include="Packages\PackageManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Stores\BaseStore.cs" />

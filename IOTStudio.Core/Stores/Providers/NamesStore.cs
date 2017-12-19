@@ -19,17 +19,17 @@ namespace IOTStudio.Core.Stores.Providers
 	/// <summary>
 	/// Name object representing an entry in Names collection
 	/// </summary>
-	public class Name
+	public class NameRecord
 	{
 		public ObjectId Id { get; set; }
 		public string Key { get; set; }
 		public int Counter { get; set; }
 		
-		public Name()
+		public NameRecord()
 		{
 		}
 		
-		public Name(string key, int counter)
+		public NameRecord(string key, int counter)
 		{
 			Key = key;
 			Counter = counter;
@@ -37,7 +37,7 @@ namespace IOTStudio.Core.Stores.Providers
 		
 		public override string ToString()
 		{
-			return string.Format("[Name Id={0}, Key={1}, Counter={2}]", Id, Key, Counter);
+			return string.Format("[NameRecord Id={0}, Key={1}, Counter={2}]", Id, Key, Counter);
 		}
 
 	}
@@ -75,10 +75,10 @@ namespace IOTStudio.Core.Stores.Providers
 				dbDriver.Connect();		
 			}			
 			
-			var names = dbDriver.DB.GetCollection<Name>(NAMES_COLLECTION);
+			var names = dbDriver.DB.GetCollection<NameRecord>(NAMES_COLLECTION);
 			
 			if (names.Exists(n => n.Key.Equals(key))) {				
-				Name name = names.FindOne(n => n.Key.Equals(key));
+				NameRecord name = names.FindOne(n => n.Key.Equals(key));
 				name.Counter++;				
 				names.Update(name);
 				
@@ -86,7 +86,7 @@ namespace IOTStudio.Core.Stores.Providers
 				
 				return name.Key + "_" + name.Counter;
 			} else {				
-				Name name = new Name(key, 1);
+				NameRecord name = new NameRecord(key, 1);
 				names.Insert(name);
 				
 				Logger.Debug("Key [{0}] doesn't exists in collection; Creating new entry with counter value [{1}]", name.Key, name.Counter);

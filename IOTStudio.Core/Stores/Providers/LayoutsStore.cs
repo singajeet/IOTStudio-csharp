@@ -16,7 +16,7 @@ namespace IOTStudio.Core.Stores.Providers
 {
 using Logger=IOTStudio.Core.Stores.Logs.Logger;
 	
-	public class Layout
+	public class LayoutRecord
 	{
 		public ObjectId Id { get; set; }
 		public Guid LayoutKey { get; set; }
@@ -24,11 +24,11 @@ using Logger=IOTStudio.Core.Stores.Logs.Logger;
 		public string PathToXml { get; set; }
 		public bool IsSelected { get; set; }
 		
-		public Layout()
+		public LayoutRecord()
 		{
 		}
 		
-		public Layout(Guid layoutKey, string name, bool isSelected, string path)
+		public LayoutRecord(Guid layoutKey, string name, bool isSelected, string path)
 		{
 			LayoutKey = layoutKey;
 			Name = name;			
@@ -38,7 +38,7 @@ using Logger=IOTStudio.Core.Stores.Logs.Logger;
 		
 		public override string ToString()
 		{
-			return string.Format("[Layout Id={0}, LayoutKey={1}, Name={2}, IsSelected={3}, PathToXml={4}]", Id, LayoutKey, Name, IsSelected, PathToXml);
+			return string.Format("[LayoutRecord Id={0}, LayoutKey={1}, Name={2}, IsSelected={3}, PathToXml={4}]", Id, LayoutKey, Name, IsSelected, PathToXml);
 		}
 
 	}
@@ -76,8 +76,8 @@ using Logger=IOTStudio.Core.Stores.Logs.Logger;
 			}
 		}
 
-		public LiteCollection<Layout> AllLayouts{
-			get { return dbDriver.DB.GetCollection<Layout>(LAYOUTS_COLLECTION); }
+		public LiteCollection<LayoutRecord> AllLayouts{
+			get { return dbDriver.DB.GetCollection<LayoutRecord>(LAYOUTS_COLLECTION); }
 		}
 		#endregion
 		
@@ -101,7 +101,7 @@ using Logger=IOTStudio.Core.Stores.Logs.Logger;
 			if (ContainsKey(layout.Id))
 				throw new Exception(string.Format("Layout [{0}] with key [{1}] already exists", layout.Name, layout.Id));
 			
-			Layout layoutObject = new Layout(layout.Id, layout.Name, layout.IsSelected, layout.PathToXml);
+			LayoutRecord layoutObject = new LayoutRecord(layout.Id, layout.Name, layout.IsSelected, layout.PathToXml);
 			AllLayouts.Insert(layoutObject);
 			
 			Logger.Debug("Layout [{0}] has been inserted successfully", layoutObject);
@@ -110,7 +110,7 @@ using Logger=IOTStudio.Core.Stores.Logs.Logger;
 		public void SaveLayout(BaseLayoutElement layout)
 		{
 			if (ContainsKey(layout.Id)) {
-				Layout layoutObject = AllLayouts.FindOne(l => l.LayoutKey == layout.Id);
+				LayoutRecord layoutObject = AllLayouts.FindOne(l => l.LayoutKey == layout.Id);
 				layoutObject.Name = layout.Name;
 				layoutObject.IsSelected = layout.IsSelected;
 				layoutObject.PathToXml = layout.PathToXml;
@@ -118,14 +118,14 @@ using Logger=IOTStudio.Core.Stores.Logs.Logger;
 				AllLayouts.Update(layoutObject);
 				Logger.Debug("Layout [{0}] has been updated successfully", layoutObject);
 			} else {
-				Layout layoutObject = new Layout(layout.Id, layout.Name, layout.IsSelected, layout.PathToXml);
+				LayoutRecord layoutObject = new LayoutRecord(layout.Id, layout.Name, layout.IsSelected, layout.PathToXml);
 				AllLayouts.Insert(layoutObject);
 				
 				Logger.Debug("Layout [{0}] has been inserted successfully", layoutObject);
 			}
 		}
 		
-		public Layout LoadLayout(Guid key)
+		public LayoutRecord LoadLayout(Guid key)
 		{
 			CheckAndConnect();
 			
@@ -137,7 +137,7 @@ using Logger=IOTStudio.Core.Stores.Logs.Logger;
 			return AllLayouts.FindOne(f => f.LayoutKey == key);
 		}
 		
-		public Layout LoadLayout(string name)
+		public LayoutRecord LoadLayout(string name)
 		{
 			CheckAndConnect();
 			
@@ -162,7 +162,7 @@ using Logger=IOTStudio.Core.Stores.Logs.Logger;
 		
 		public void UnselectAll()
 		{
-			foreach (Layout layout in AllLayouts.FindAll()) {
+			foreach (LayoutRecord layout in AllLayouts.FindAll()) {
 				layout.IsSelected = false;
 				AllLayouts.Update(layout);
 			}

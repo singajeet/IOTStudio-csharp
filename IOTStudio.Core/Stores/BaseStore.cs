@@ -27,6 +27,7 @@ namespace IOTStudio.Core.Providers.Stores
 		protected const string FLAGS_COLLECTION = "FlagsCollection";
 		protected const string NAMES_COLLECTION = "NamesCollection";
 		protected const string FEATURES_COLLECTION = "FeaturesCollection";
+		protected const string PACKAGES_INFO_COLLECTION = "PackagesInfoCollection";
 		
 		protected const string OBJECTS_COLLECTION = "ObjectsCollection";
 	}

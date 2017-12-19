@@ -18,23 +18,23 @@ namespace IOTStudio.Core.Stores.Providers
 {
 	using Logger = IOTStudio.Core.Stores.Logs.Logger;
 	
-	public class Flag{
+	public class FlagRecord{
 		public ObjectId Id { get; set; }
 		public string Key { get; set; }
 		public bool Value { get; set; }
 		
-		public Flag()
+		public FlagRecord()
 		{
 		}
 		
-		public Flag(string key, bool value){
+		public FlagRecord(string key, bool value){
 			Key= key;
 			Value= value;
 		}
 		
 		public override string ToString()
 		{
-			return string.Format("[Flag Id={0}, Key={1}, Value={2}]", Id, Key, Value);
+			return string.Format("[FlagRecord Id={0}, Key={1}, Value={2}]", Id, Key, Value);
 		}
 
 	}
@@ -45,7 +45,7 @@ namespace IOTStudio.Core.Stores.Providers
 	public class FlagsStore : BaseStore, IProvider
 	{
 		IDBDriver dbDriver;
-		ObservableCollection<Flag> flags;
+		ObservableCollection<FlagRecord> flags;
 		
 		#region IProvider implementation
 
@@ -68,18 +68,18 @@ namespace IOTStudio.Core.Stores.Providers
 			
 		}	
 		
-		private LiteCollection<Flag> _allFlags{
+		private LiteCollection<FlagRecord> _allFlags{
 			get { 
 				CheckAndConnect();
-				return dbDriver.DB.GetCollection<Flag>(FLAGS_COLLECTION);
+				return dbDriver.DB.GetCollection<FlagRecord>(FLAGS_COLLECTION);
 			}
 		}
 		
-		public ObservableCollection<Flag> AllFlags{
+		public ObservableCollection<FlagRecord> AllFlags{
 			get{ 
 				if (flags == null || flags.Count != _allFlags.Count()) {
-					flags = new ObservableCollection<Flag>();
-					foreach (Flag flag in _allFlags.FindAll()) {
+					flags = new ObservableCollection<FlagRecord>();
+					foreach (FlagRecord flag in _allFlags.FindAll()) {
 						flags.Add(flag);
 					}
 				}
@@ -103,7 +103,7 @@ namespace IOTStudio.Core.Stores.Providers
 				throw new Exception("Key provided is already registered for another object");
 			}
 			
-			Flag flag = new Flag(key, value);
+			FlagRecord flag = new FlagRecord(key, value);
 			_allFlags.Insert(flag);
 			
 			Logger.Debug("New Flag {0} registered with default value as {1}", flag.Key, flag.Value);
@@ -127,7 +127,7 @@ namespace IOTStudio.Core.Stores.Providers
 		{
 			CheckAndConnect();
 			
-			Flag flag = _allFlags.FindOne(f => f.Key.Equals(key));
+			FlagRecord flag = _allFlags.FindOne(f => f.Key.Equals(key));
 			flag.Value = value;
 			_allFlags.Update(flag);
 			

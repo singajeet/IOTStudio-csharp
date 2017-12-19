@@ -16,30 +16,30 @@ namespace IOTStudio.Core.Stores.Providers
 {
 	using Logger = IOTStudio.Core.Stores.Logs.Logger;	
 	
-	public class Feature
+	public class FeatureRecord
 	{
 		public ObjectId Id { get; set; }
 		public Guid FeatureKey { get; set; }
 		public string Name { get; set; }		
 		
-		public Feature()
+		public FeatureRecord()
 		{
 		}
 		
-		public Feature(IFeature feature)
+		public FeatureRecord(IFeature feature)
 		{
 			FeatureKey = feature.Key;
 			Name = feature.Name;
 		}
 		
-		public Feature(Guid featureId)
+		public FeatureRecord(Guid featureId)
 		{
 			FeatureKey = featureId;
 		}
 		
 		public override string ToString()
 		{
-			return string.Format("[Feature Id={0}, Name={1}, FeatureKey={2}]", Id, Name, FeatureKey);
+			return string.Format("[FeatureRecord Id={0}, Name={1}, FeatureKey={2}]", Id, Name, FeatureKey);
 		}
 
 	}
@@ -78,9 +78,9 @@ namespace IOTStudio.Core.Stores.Providers
 			}
 		}
 		
-		private LiteCollection<Feature> AllFeatures{
+		private LiteCollection<FeatureRecord> AllFeatures{
 			get {
-				return dbDriver.DB.GetCollection<Feature>(FEATURES_COLLECTION);
+				return dbDriver.DB.GetCollection<FeatureRecord>(FEATURES_COLLECTION);
 			}
 		}
 		
@@ -91,7 +91,7 @@ namespace IOTStudio.Core.Stores.Providers
 			if (this.ContainsKey(feature.Key))
 				throw new Exception(string.Format("Feature with key {0} is already registered", feature.Key));
 			
-			Feature featureObject = new Feature(feature);
+			FeatureRecord featureObject = new FeatureRecord(feature);
 			AllFeatures.Insert(featureObject);
 			
 			Logger.Debug("[{0}] has been registered successfully", featureObject);
