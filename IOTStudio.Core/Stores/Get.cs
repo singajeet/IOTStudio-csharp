@@ -28,6 +28,7 @@ namespace IOTStudio.Core.Stores
 		private LayoutsStore layoutsStore;
 		private DatabaseFactory dbFactory;
 		private DefaultObjectsStore defaultObjectsStore;
+		private PackagesStore pkgStore;
 		
 		private Get()
 		{
@@ -102,6 +103,16 @@ namespace IOTStudio.Core.Stores
 					Logger.Debug("[{0}] has been initiated", layoutsStore);
 				}
 				return layoutsStore; 
+			}
+		}
+		
+		public PackagesStore PackagesStore{
+			get { 
+				if (pkgStore == null) {
+					pkgStore = new PackagesStore();
+					Logger.Debug("[{0}] has been initiated", pkgStore);
+				}
+				return pkgStore;
 			}
 		}
 		

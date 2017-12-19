@@ -26,13 +26,13 @@ namespace IOTStudio.Core.Stores.Providers
 		public string Name { get; set; }
 		public string PackageFilePath { get; set; }
 		public string PackageFileName { get; set; }
-		public int PackageFileSize { get; set; }
+		public long PackageFileSize { get; set; }
 		public bool IsActive { get; set; }
 		public bool IsInstalled { get; set; }
-		public string InstallationBasePath { get; set; }
+		public string InstalledPackageLocation { get; set; }
 		public IList<FileInfo> Files { get; set; }
 		public IList<DirectoryInfo> Directories { get; set; }
-		public ObservableCollection<Guid> Features { get; set; }
+		public ObservableCollection<DirectoryInfo> Features { get; set; }
 		public bool IsUpdateAvailable { get; set; }
 		public DateTime InstalledOn { get; set; }
 		
@@ -104,22 +104,7 @@ namespace IOTStudio.Core.Stores.Providers
 		public void InsertPackage(Package pkg)
 		{
 			if (!ContainsKey(pkg.Id)) {
-				PackageRecord info = new PackageRecord {
-					PackageKey = pkg.Id,
-					Name = pkg.Name,
-					PackageFilePath = pkg.Info.PackageFilePath,
-					PackageFileName = pkg.Info.PackageFileName,
-					PackageFileSize = pkg.Info.PackageFileSize,
-					IsActive = pkg.Info.IsActive,
-					IsInstalled = pkg.Info.IsInstalled,
-					InstallationBasePath = pkg.Info.InstallationBasePath,
-					Files = pkg.Info.Files,
-					Directories = pkg.Info.Directories,
-					Features = pkg.Info.Features,
-					IsUpdateAvailable = pkg.Info.IsUpdateAvailable,
-					InstalledOn = pkg.Info.InstalledOn
-				};
-				
+				PackageRecord info = pkg.Info;
 				AllPackages.Insert(info);
 			} else {
 				throw new Exception(string.Format("Package with key [{0}] already exists", pkg.Id));
@@ -129,28 +114,7 @@ namespace IOTStudio.Core.Stores.Providers
 		public void SavePackage(Package pkg)
 		{
 			Logger.Debug("Trying to save information for the following Package => [{0}]", pkg);
-			PackageRecord pkgInfo = AllPackages.FindOne(p => p.PackageKey == pkg.Id);
-			
-			if (pkgInfo == null) {
-				Logger.Debug("No record exists for Package => [{0}]; New record will be created for same", pkg);
-				pkgInfo = new PackageRecord();
-				pkgInfo.PackageKey = pkg.Id;
-			}
-			pkgInfo.Name = pkg.Name;
-			pkgInfo.PackageFilePath = pkg.Info.PackageFilePath;
-			pkgInfo.PackageFileName = pkg.Info.PackageFileName;
-			pkgInfo.PackageFileSize = pkg.Info.PackageFileSize;
-			pkgInfo.IsActive = pkg.Info.IsActive;
-			pkgInfo.IsInstalled = pkg.Info.IsInstalled;
-			pkgInfo.InstallationBasePath = pkg.Info.InstallationBasePath;
-			pkgInfo.Files = pkg.Info.Files;
-			pkgInfo.Directories = pkg.Info.Directories;
-			pkgInfo.Features = pkg.Info.Features;
-			pkgInfo.IsUpdateAvailable = pkg.Info.IsUpdateAvailable;
-			pkgInfo.InstalledOn = pkg.Info.InstalledOn;
-			
-			
-			AllPackages.Upsert(pkgInfo);
+			AllPackages.Upsert(pkg.Info);
 			Logger.Debug("Package information have been Updated/Inserted successfully");
 		}
 		

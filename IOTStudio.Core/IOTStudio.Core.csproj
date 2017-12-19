@@ -58,6 +58,8 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Runtime.Serialization">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
@@ -127,6 +129,7 @@
     <Compile Include="Models\Layouts\LayoutCollection.cs" />
     <Compile Include="Models\Layouts\LayoutSelector.cs" />
     <Compile Include="Packages\Package.cs" />
+    <Compile Include="Packages\PackageDetails.cs" />
     <Compile Include="Packages\PackageManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Stores\BaseStore.cs" />
