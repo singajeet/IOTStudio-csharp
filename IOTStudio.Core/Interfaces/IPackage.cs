@@ -28,5 +28,19 @@ namespace IOTStudio.Core.Interfaces
 		void Uninstall();
 		void Activate();
 		void Deactivate();		
+		
+		event EventHandler InstallationStarted;
+		event EventHandler InstallationCompleted;
+		event EventHandler PackageDetailsLoaded;
+		event EventHandler FeaturesDetailsLoaded;
+		event EventHandler PackageRegistered;
+		event EventHandler FeaturesInstalled;
+		event EventHandler CleanupCompleted;
+		event EventHandler CheckUpdatesCompleted;
+		event EventHandler PackageActivated;
+		event EventHandler PackageDeactivated;
+		event EventHandler UninstallationStarted;
+		event EventHandler UninstallationCompleted;
+		event EventHandler PackageFileValidated;
 	}
 }

@@ -10,12 +10,20 @@ using System;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
+using System.IO.Compression;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using IOTStudio.Core.Elements.Interfaces;
 using IOTStudio.Core.Interfaces;
+using IOTStudio.Core.Packages;
+using IOTStudio.Core.Stores;
+using IOTStudio.Core.Stores.Config;
+using IOTStudio.Core.Stores.Logs;
 using IOTStudio.Core.Stores.Pipes;
+using IOTStudio.Core.Stores.Providers;
 using IOTStudio.Core.Types;
+using NAppUpdate.Framework;
 
 namespace IOTStudio.Core.Features
 {
@@ -25,193 +33,246 @@ namespace IOTStudio.Core.Features
 	[DataContract]
 	public class Feature : IFeature, INotifyPropertyChanged
 	{
-		private Guid key;
-		private string name;
-		private bool isEnabled;
-		private IFeature parentFeature;
-		private FeatureCollection childFeatures = new FeatureCollection();
-		private InputPipe inPipe = new InputPipe();
-		private OutputPipe outPipe = new OutputPipe();
-		private string inputFlagName;
-		private string outputFlagName;
-		private IUIFeatureOptionsElement uiOptionsElement;
-		private IUIRootElement rootElement;
-		private ObservableCollection<INavigationElement> navigationElements = new ObservableCollection<INavigationElement>();
-		private IFeatureInfo info = new FeatureInfo();
-
+		public Guid Id { get; set; }
+		public string Name { get; set; }
+		public Package ParentPackage { get; set; }
+		public IFeatureDetails DetailsFromFile { get; set; }
+		public FeatureRecord Info { get; set; }
+		public FileInfo RawFeatureInfFile { get; set; }
+		
+		public IFeature ParentFeature { get; set; }
+		public FeatureCollection ChildFeatures { get; set; }
+		
+		public InputPipe InPipe { get; set; }
+		public OutputPipe OutPipe { get; set; }	
+		
+		public IUIFeatureOptionsElement UIOptionsElement { get; set; }
+		public IUIRootElement RootElement { get; set; }
+		public ObservableCollection<INavigationElement> NavigationElements { get; set; }
+		
+		private bool _ThrowExceptionOnInvalidFeature;
+		private string _AppBasePath = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
+		private string _TempPath;		
+		private string _FeatureBasePath;	
+		private string _FeatureInfPath;
+		
 		public Feature()
 		{
-			Key = info.Key;
-			Name = info.Name;
+			Logger.Info("[Feature]: Feature instance has been created");
 		}
 
-		#region IFeature implementation		
+		public Feature(Package parentPackage, DirectoryInfo featureFolder): this()
+		{
+			ParentPackage = parentPackage;
+			_FeatureBasePath = featureFolder.FullName;
+			
+			RawFeatureInfFile = new FileInfo(Path.Combine(_FeatureBasePath, featureFolder.Name +".inf"));
+			_FeatureInfPath = RawFeatureInfFile.FullName;
+			_TempPath = Path.Combine(_AppBasePath, "Temp");
+			
+			if (!Directory.Exists(_TempPath))
+				Directory.CreateDirectory(_TempPath);
+			
+			if (!Boolean.TryParse(Properties.Features.Get("ThrowExceptionOnInvalidFeature"), out _ThrowExceptionOnInvalidFeature)) {
+				_ThrowExceptionOnInvalidFeature = false;
+			}
+		}
+		
+		public bool ValidateFile()
+		{
+			if(!RawFeatureInfFile.Exists || string.IsNullOrEmpty(RawFeatureInfFile.FullName)){
+				Logger.Error("[Feature]: Unable to find feature file => [{0}]", RawFeatureInfFile.Name);
+				
+				if(_ThrowExceptionOnInvalidFeature)
+					throw new FileNotFoundException(string.Format("[Feature]: Unable to find Feature file => [{0}]", RawFeatureInfFile.Name));
+				else
+					return false;
+			}
+			   
+			if (RawFeatureInfFile.Length <= 0) {
+				Logger.Error("[Feature]: Input file is invalid; File size is equal to Zero or less then Zero => [{0}]", RawFeatureInfFile.Name);
+				if(_ThrowExceptionOnInvalidFeature)
+					throw new FileFormatException(string.Format("[Feature]: Input file is invalid; File size is equal to Zero or less then Zero => [{0}]", RawFeatureInfFile.Name));
+				else
+					return false;
+			}
+			
+			if (RawFeatureInfFile.IsReadOnly) {
+				Logger.Error("[Feature]: Input file is readonly and can't be processed further => [{0}]", RawFeatureInfFile.Name);
+				if(_ThrowExceptionOnInvalidFeature)
+					throw new FileFormatException(string.Format("[Feature]: Input file is readonly and can't be processed further => [{0}]", RawFeatureInfFile.Name));
+				else
+					return false;
+			}
+			
+			this.Info = new FeatureRecord();
+			
+			this.Info.Name = RawFeatureInfFile.Name.Substring(0, RawFeatureInfFile.Name.Length - RawFeatureInfFile.Extension.Length);
+			this.Info.FeatureInfFileName = RawFeatureInfFile.Name;
+			this.Info.FeatureInfFilePath = RawFeatureInfFile.Directory.FullName;
+			this.Info.FeatureInfFileSize = RawFeatureInfFile.Length;
+			this.Info.FeatureBasePath = _FeatureBasePath;
+			
+			#if DEBUG
+			Logger.Debug("[Feature]: Feature file has been validated succesfully");
+			Logger.Debug("[Feature.Info Name={0}, FeatureFileName={1}, FeatureFilePath={2}, FeatureFileSize={3}, InstalledFeatureLocation={4}]", Info.Name, Info.FeatureInfFileName, Info.FeatureInfFilePath, Info.FeatureInfFileSize, Info.FeatureBasePath);
+			#endif
+			
+			if(FeatureFileValidated!=null)
+				FeatureFileValidated(this, new FeatureInstallEventArgs{
+					FeatureInfFileName = RawFeatureInfFile.Name,
+					Info = this.Info,
+					DetailsFromFile = this.DetailsFromFile
+				});
+			
+			return true;
+		}
+		
+		public void Install()
+		{
+			#if DEBUG
+			Logger.Debug("[Feature]: Trying to install feature => [{0}]", RawFeatureInfFile.Name);
+			#endif
+			if(InstallationStarted!= null)
+				InstallationStarted(this, 
+				                    new FeatureInstallEventArgs{
+						FeatureInfFileName = RawFeatureInfFile.Name,
+						Info=this.Info,
+						DetailsFromFile=this.DetailsFromFile
+					});
+			
+			string zippedFeatureFile = Path.Combine(_FeatureBasePath, this.Info.Name + ".fea");
+			if (File.Exists(zippedFeatureFile)) {
+				#if DEBUG
+					Logger.Debug("[Feature]: Compressed feature file found => [{0}]", zippedFeatureFile);
+				#endif
+				
+				ZipFile.ExtractToDirectory(zippedFeatureFile, _FeatureBasePath);
+				
+				#if DEBUG
+					Logger.Debug("[Feature]: [{0}] has been extracted to temp folder => [{1}]", this.Info.Name + ".fea", _FeatureBasePath);
+				#endif
+			} else {
+				#if DEBUG
+					Logger.Debug("[Feature]: No compressed feature file exists!");
+				#endif
+			}
+						
+			LoadFeatureDetails();						
+			RegisterAsActiveFeature();					
+			
+			if(InstallationCompleted!=null)
+				InstallationCompleted(this, new FeatureInstallEventArgs{
+					FeatureInfFileName = RawFeatureInfFile.Name,
+					Info = this.Info,
+					DetailsFromFile = this.DetailsFromFile
+				});
+		}
+		
+		public void Uninstall()
+		{
+			if(UninstallationStarted!=null)
+				UninstallationStarted(this, new FeatureInstallEventArgs{
+					FeatureInfFileName = RawFeatureInfFile.Name,
+					Info = this.Info,
+					DetailsFromFile = this.DetailsFromFile
+				});
+			
+			
+			
+			if(UninstallationCompleted!=null)
+				UninstallationCompleted(this, new FeatureInstallEventArgs{
+					FeatureInfFileName = RawFeatureInfFile.Name,
+					Info = this.Info,
+					DetailsFromFile = this.DetailsFromFile
+				});
+		}
+		
+		public void Activate()
+		{
+			this.Info.IsActive = true;
+			Get.i.Features.SaveFeature(this);
+			
+			#if DEBUG
+				Logger.Debug("[Feature]: Feature [{0}] activated", this);
+			#endif
+			if(FeatureActivated!=null)
+				FeatureActivated(this, new FeatureInstallEventArgs{
+					FeatureInfFileName = RawFeatureInfFile.Name,
+					Info = this.Info,
+					DetailsFromFile = this.DetailsFromFile
+				});
+		}
+		public void Deactivate()
+		{
+			this.Info.IsActive = false;
+			Get.i.Features.SaveFeature(this);
+			
+			#if DEBUG
+				Logger.Debug("[Feature]: Feature [{0}] deactivated", this);
+			#endif
+			if(FeatureDeactivated!=null)
+				FeatureDeactivated(this, new FeatureInstallEventArgs{
+					FeatureInfFileName = RawFeatureInfFile.Name,
+					Info = this.Info,
+					DetailsFromFile = this.DetailsFromFile
+				});
+		}
+		
+		private void LoadFeatureDetails()
+		{			
+			RawFeatureInfFile = new FileInfo(_FeatureInfPath);		
+			this.Info.Directories = Directory.GetDirectories(_FeatureBasePath);
+			this.Info.Files = Directory.GetFiles(_FeatureBasePath);
+			
+			YamlDotNet.Serialization.Deserializer deserializer = new YamlDotNet.Serialization.Deserializer();
+			using (TextReader reader = File.OpenText(RawFeatureInfFile.FullName)) {
+				this.DetailsFromFile = deserializer.Deserialize<FeatureDetails>(reader);
+			}
+			
+			#if DEBUG
+			Logger.Debug("[Feature]: Feature details loaded successfully => [{0}]", this.DetailsFromFile);
+			#endif
+			if(FeatureDetailsLoaded!=null)
+				FeatureDetailsLoaded(this, new FeatureInstallEventArgs{
+					FeatureInfFileName = RawFeatureInfFile.Name,
+					Info = this.Info,
+					DetailsFromFile = this.DetailsFromFile
+				});
+		}
+		
+		private void RegisterAsActiveFeature()
+		{
+			this.Id = this.DetailsFromFile.Id;
+			this.Name = this.DetailsFromFile.Name;
+			this.Info.FeatureInfFilePath = RawFeatureInfFile.Directory.FullName;
+			Info.FeatureKey = this.Id;
+			Info.Name = this.Name;
+			Info.IsActive = false;
+			Info.IsInstalled = false;
+			this.Info.InstalledOn = DateTime.Now;
+			
+			if (Get.i.Features.ContainsKey(this.Id)) {
+				Get.i.Features.SaveFeature(this);
+			} else {
+				Get.i.Features.RegisterFeature(this);
+			}
+			#if DEBUG
+			Logger.Debug("[Feature]: Feature registered successfully in the system => [{0}]", this);
+			#endif
+			if(FeatureRegistered!=null)
+				FeatureRegistered(this, new FeatureInstallEventArgs{
+					FeatureInfFileName = RawFeatureInfFile.Name,
+					Info = this.Info,
+					DetailsFromFile = this.DetailsFromFile
+				});
+		}
 
 		public object Run(object parameter)
 		{
 			return null;
 		}
 		
-		public void Enable()
-		{
-			IsEnabled = true;
-		}
-		
-		public void Disable()
-		{
-			IsEnabled = false;
-		}
-
-		[DataMember]
-		public Guid Key {
-			get {
-				return key;
-			}
-			set {
-				key = value;
-				OnPropertyChanged();
-			}
-		}
-
-		[DataMember]
-		public string Name {
-			get {
-				return name;
-			}
-			set {
-				name = value;
-				OnPropertyChanged();
-			}
-		}
-		
-		[DataMember]
-		public bool IsEnabled{
-			get { return isEnabled; }
-			set { isEnabled = value;
-				OnPropertyChanged();
-			}
-		}
-		
-		[IgnoreDataMember]
-		public IFeatureInfo Info{
-			get { return info; }
-			set { info = value; 
-				OnPropertyChanged();
-			}
-		}
-
-		[DataMember]
-		public IFeature ParentFeature {
-			get {
-				return parentFeature;
-			}
-			set {
-				parentFeature = value;
-				OnPropertyChanged();
-			}
-		}
-
-		[DataMember]
-		public FeatureCollection ChildFeatures {
-			get {
-				return childFeatures;
-			}
-			set {
-				childFeatures = value;
-				OnPropertyChanged();
-			}
-		}
-
-		[IgnoreDataMember]
-		public InputPipe InPipe {
-			get {
-				return inPipe;
-			}
-			set {
-				inPipe = value;
-				OnPropertyChanged();
-			}
-		}
-
-		[IgnoreDataMember]
-		public OutputPipe OutPipe {
-			get {
-				return outPipe;
-			}
-			set {
-				outPipe = value;
-				OnPropertyChanged();
-			}
-		}
-
-		[DataMember]
-		public string InputFlagName {
-			get {
-				return inputFlagName;
-			}
-			set {
-				inputFlagName = value;
-				OnPropertyChanged();
-				
-				if (FlagNameChanged != null) {
-					FlagNameChanged(this, new FlagNameChangedEventArgs(FlagType.InputFlag, value));
-				}
-			}
-		}
-
-		[DataMember]
-		public string OutputFlagName {
-			get {
-				return outputFlagName;
-			}
-			set {
-				outputFlagName = value;
-				OnPropertyChanged();
-				
-				if (FlagNameChanged != null) {
-					FlagNameChanged(this, new FlagNameChangedEventArgs(FlagType.OutputFlag, value));
-				}
-			}
-		}
-
-		[IgnoreDataMember]
-		public IUIFeatureOptionsElement UIOptionsElement {
-			get {
-				return uiOptionsElement;
-			}
-			set {
-				uiOptionsElement = value;
-				OnPropertyChanged();
-			}
-		}
-
-		[IgnoreDataMember]
-		public IUIRootElement RootElement {
-			get {
-				return rootElement;
-			}
-			set {
-				rootElement = value;
-				OnPropertyChanged();
-				
-				if (UIRootElementChanged != null)
-					UIRootElementChanged(this, new UIRootElementChangedEventArgs(value));
-			}
-		}
-
-		[IgnoreDataMember]
-		public ObservableCollection<INavigationElement> NavigationElements {
-			get {
-				return navigationElements;
-			}
-			set {
-				navigationElements = value;
-				OnPropertyChanged();
-				
-				if (NavigationElementChanged != null)
-					NavigationElementChanged(this, new NavigationElementChangedEventArgs(value));
-			}
-		}
 		
 		protected void OnPropertyChanged([CallerMemberName]string memberName = null)
 		{
@@ -219,23 +280,33 @@ namespace IOTStudio.Core.Features
 				PropertyChanged(this, new PropertyChangedEventArgs(memberName));
 		}
 
-		#region INotifyPropertyChanged implementation
-		public event PropertyChangedEventHandler PropertyChanged;
-		#endregion
 		
-		public event EventHandler UIRootElementChanged;
-		public event EventHandler NavigationElementChanged;
+		public event PropertyChangedEventHandler PropertyChanged;	
+		
+		public event EventHandler UIOptionsElementLoaded;
+		public event EventHandler UIRootElementLoaded;
+		public event EventHandler NavigationElementLoaded;
 		public event EventHandler OutputProducing;
 		public event EventHandler OutputProduced;
 		public event EventHandler InputConsuming;
 		public event EventHandler InputConsumed;
-		public event EventHandler FlagNameChanged;
+		public event EventHandler FlagDetailsLoaded;
 		
-		#endregion
+		public event EventHandler InstallationStarted;
+		public event EventHandler InstallationCompleted;
+		public event EventHandler FeatureDetailsLoaded;
+		public event EventHandler ChildFeaturesDetailsLoaded;
+		public event EventHandler ParentFeatureDetailsLoaded;
+		public event EventHandler FeatureRegistered;
+		public event EventHandler FeatureActivated;
+		public event EventHandler FeatureDeactivated;
+		public event EventHandler UninstallationStarted;
+		public event EventHandler UninstallationCompleted;
+		public event EventHandler FeatureFileValidated;
 		
 		public override string ToString()
 		{
-			return string.Format("[Feature Key={0}, Name={1}, IsEnabled={2}, InputFlagName={3}, OutputFlagName={4}]", key, name, isEnabled, inputFlagName, outputFlagName);
+			return string.Format("[Feature Id={0}, Name={1}, IsActive={2}, InputFlagName={3}, OutputFlagName={4}]", Id, Name, Info.IsActive, Info.InputFlagName, Info.OutputFlagName);
 		}
 
 	}
@@ -254,35 +325,42 @@ namespace IOTStudio.Core.Features
 		}
 	}
 	
-	public class UIRootElementChangedEventArgs : EventArgs
+	public class UIRootElementLoadedEventArgs : EventArgs
 	{
 		public IUIRootElement RootElement;
 		
-		public UIRootElementChangedEventArgs(IUIRootElement root)
+		public UIRootElementLoadedEventArgs(IUIRootElement root)
 		{
 			RootElement = root;
 		}
 	}
 	
-	public class NavigationElementChangedEventArgs : EventArgs
+	public class NavigationElementLoadedEventArgs : EventArgs
 	{
 		public ObservableCollection<INavigationElement> NavigationElements;
 		
-		public NavigationElementChangedEventArgs(ObservableCollection<INavigationElement> elements)
+		public NavigationElementLoadedEventArgs(ObservableCollection<INavigationElement> elements)
 		{
 			NavigationElements = elements;
 		}
 	}
 	
-	public class FlagNameChangedEventArgs : EventArgs
+	public class FlagDetailsLoadedEventArgs : EventArgs
 	{
 		public FlagType FlagType;
 		public string FlagName;
 		
-		public FlagNameChangedEventArgs(FlagType type, string name)
+		public FlagDetailsLoadedEventArgs(FlagType type, string name)
 		{
 			FlagType = type;
 			FlagName = name;
 		}
+	}
+	
+	public class FeatureInstallEventArgs: EventArgs
+	{
+		public string FeatureInfFileName { get; set; }
+		public FeatureRecord Info { get; set; }
+		public IFeatureDetails DetailsFromFile { get; set; }
 	}
 }

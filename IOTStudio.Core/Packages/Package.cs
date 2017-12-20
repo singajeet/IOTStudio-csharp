@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using IOTStudio.Core.Interfaces;
@@ -17,6 +18,8 @@ using IOTStudio.Core.Stores.Config;
 using IOTStudio.Core.Stores.Logs;
 using IOTStudio.Core.Stores.Providers;
 using System.Linq;
+using NAppUpdate.Framework;
+using NAppUpdate.Framework.Sources;
 
 namespace IOTStudio.Core.Packages
 {
@@ -27,6 +30,8 @@ namespace IOTStudio.Core.Packages
 	{
 		private const string PACKAGE_DETAILS_FILE = "PackageDetails.inf";
 		private const string FEATURES_WILDCARD_FILTER = "Feature*";
+		
+		private UpdateManager updManager;
 		
 		public Guid Id { get; set; }
 		public string Name { get; set; }
@@ -45,7 +50,7 @@ namespace IOTStudio.Core.Packages
 		
 		public Package()
 		{
-			Logger.Debug("Package instance has been created");
+			Logger.Info("[Package]: Package instance has been created");
 		}
 		
 		public Package(FileInfo pkgFile) : this()
@@ -79,10 +84,10 @@ namespace IOTStudio.Core.Packages
 		public bool ValidateFile()
 		{
 			if(!RawPackageFile.Exists || string.IsNullOrEmpty(RawPackageFile.FullName)){
-				Logger.Error("Unable to find Package file => [{0}]", RawPackageFile.Name);
+				Logger.Error("[Package]: Unable to find Package file => [{0}]", RawPackageFile.Name);
 				
 				if(_ThrowExceptionOnInvalidPackage)
-					throw new FileNotFoundException(string.Format("Unable to find Package file => [{0}]", RawPackageFile.Name));
+					throw new FileNotFoundException(string.Format("[Package]: Unable to find Package file => [{0}]", RawPackageFile.Name));
 				else
 					return false;
 			}
@@ -90,15 +95,15 @@ namespace IOTStudio.Core.Packages
 			if (RawPackageFile.Length <= 0) {
 				Logger.Error("Input file is invalid; File size is equal to Zero or less then Zero => [{0}]", RawPackageFile.Name);
 				if(_ThrowExceptionOnInvalidPackage)
-					throw new FileFormatException(string.Format("Input file is invalid; File size is equal to Zero or less then Zero => [{0}]", RawPackageFile.Name));
+					throw new FileFormatException(string.Format("[Package]: Input file is invalid; File size is equal to Zero or less then Zero => [{0}]", RawPackageFile.Name));
 				else
 					return false;
 			}
 			
 			if (RawPackageFile.IsReadOnly) {
-				Logger.Error("Input file is readonly and can't be processed further => [{0}]", RawPackageFile.Name);
+				Logger.Error("[Package]: Input file is readonly and can't be processed further => [{0}]", RawPackageFile.Name);
 				if(_ThrowExceptionOnInvalidPackage)
-					throw new FileFormatException(string.Format("Input file is readonly and can't be processed further => [{0}]", RawPackageFile.Name));
+					throw new FileFormatException(string.Format("[Package]: Input file is readonly and can't be processed further => [{0}]", RawPackageFile.Name));
 				else
 					return false;
 			}
@@ -111,8 +116,10 @@ namespace IOTStudio.Core.Packages
 			this.Info.PackageFileSize = RawPackageFile.Length;
 			this.Info.InstalledPackageLocation = Path.Combine(_InstalledPackagesLocation, RawPackageFile.Name.Substring(0, RawPackageFile.Name.Length - RawPackageFile.Extension.Length));
 			
-			Logger.Debug("Package file has been validated succesfully");
+			#if DEBUG
+			Logger.Debug("[Package]: Package file has been validated succesfully");
 			Logger.Debug("[Package.Info Name={0}, PackageFileName={1}, PackageFilePath={2}, PackageFileSize={3}, InstalledPackageLocation={4}]", Info.Name, Info.PackageFileName, Info.PackageFilePath, Info.PackageFileSize, Info.InstalledPackageLocation);
+			#endif
 			
 			if(PackageFileValidated!=null)
 				PackageFileValidated(this, new PackageInstallEventArgs{
@@ -126,7 +133,9 @@ namespace IOTStudio.Core.Packages
 		
 		public void Install()
 		{
-			Logger.Debug("Trying to install Package => [{0}]", RawPackageFile.Name);
+			#if DEBUG
+			Logger.Debug("[Package]: Trying to install Package => [{0}]", RawPackageFile.Name);
+			#endif
 			if(InstallationStarted!= null)
 				InstallationStarted(this, 
 				                    new PackageInstallEventArgs{
@@ -137,13 +146,19 @@ namespace IOTStudio.Core.Packages
 			
 			
 			RawPackageFile.MoveTo(Path.Combine(_InActivePackagesLocation, RawPackageFile.Name));
-			Logger.Debug("Package file moved to InActivePackages location => [{0}]", _InActivePackagesLocation);
+			#if DEBUG
+			Logger.Debug("[Package]: Package file moved to InActivePackages location => [{0}]", _InActivePackagesLocation);
+			#endif
 			
 			RawPackageFile.CopyTo(Path.Combine(_PackageTempDirectory, RawPackageFile.Name));
-			Logger.Debug("A copy of the PackageFile has been created in Temp folder => [{0}]", _TempPath);
+			#if DEBUG
+			Logger.Debug("[Package]: Copy of PackageFile has been created in Temp folder => [{0}]", _TempPath);
+			#endif
 			
 			ZipFile.ExtractToDirectory(Path.Combine(_PackageTempDirectory, RawPackageFile.Name), _PackageTempDirectory);
-			Logger.Debug("Package [{0}] has been extracted to temp folder => [{1}]", RawPackageFile.Name, _PackageTempDirectory);
+			#if DEBUG
+			Logger.Debug("[Package]: [{0}] has been extracted to temp folder => [{1}]", RawPackageFile.Name, _PackageTempDirectory);
+			#endif
 			
 			LoadPackageDetails();
 			LoadFeatureDetails();						
@@ -182,6 +197,9 @@ namespace IOTStudio.Core.Packages
 			this.Info.IsActive = true;
 			Get.i.PackagesStore.SavePackage(this);
 			
+			#if DEBUG
+				Logger.Debug("[Package]: Package [{0}] activated", this);
+			#endif
 			if(PackageActivated!=null)
 				PackageActivated(this, new PackageInstallEventArgs{
 					PackageFileName = RawPackageFile.Name,
@@ -194,6 +212,9 @@ namespace IOTStudio.Core.Packages
 			this.Info.IsActive = false;
 			Get.i.PackagesStore.SavePackage(this);
 			
+			#if DEBUG
+				Logger.Debug("[Package]: Package [{0}] deactivated", this);
+			#endif
 			if(PackageDeactivated!=null)
 				PackageDeactivated(this, new PackageInstallEventArgs{
 					PackageFileName = RawPackageFile.Name,
@@ -227,7 +248,9 @@ namespace IOTStudio.Core.Packages
 				this.DetailsFromFile = deserializer.Deserialize<PackageDetails>(reader);
 			}
 			
-			Logger.Debug("Package details loaded successfully => [{0}]", this.DetailsFromFile);
+			#if DEBUG
+			Logger.Debug("[Package]: Package details loaded successfully => [{0}]", this.DetailsFromFile);
+			#endif
 			if(PackageDetailsLoaded!=null)
 				PackageDetailsLoaded(this, new PackageInstallEventArgs{
 					PackageFileName = RawPackageFile.Name,
@@ -239,8 +262,9 @@ namespace IOTStudio.Core.Packages
 		private void LoadFeatureDetails()
 		{
 			this.Info.Features = Directory.GetDirectories(_CurrentPackageInstalledLocation.FullName, FEATURES_WILDCARD_FILTER);
-			
-			Logger.Debug("Details of [{0}] features under [{1}] Package have been loaded successfully", this.Info.Features.Length, RawPackageFile.Name);
+			#if DEBUG
+			Logger.Debug("[Package]: Details of [{0}] features under [{1}] Package have been loaded successfully", this.Info.Features.Length, RawPackageFile.Name);
+			#endif
 			if(FeaturesDetailsLoaded!= null)
 				FeaturesDetailsLoaded(this, new PackageInstallEventArgs{
 					PackageFileName = RawPackageFile.Name,
@@ -263,9 +287,11 @@ namespace IOTStudio.Core.Packages
 			if (Get.i.PackagesStore.ContainsKey(this.Id)) {
 				Get.i.PackagesStore.SavePackage(this);
 			} else {
-				Get.i.PackagesStore.InsertPackage(this);
+				Get.i.PackagesStore.RegisterPackage(this);
 			}
-			Logger.Debug("Package registered successfully in the system => [{0}]", this);
+			#if DEBUG
+			Logger.Debug("[Package]: Package registered successfully in the system => [{0}]", this);
+			#endif
 			if(PackageRegistered!=null)
 				PackageRegistered(this, new PackageInstallEventArgs{
 					PackageFileName = RawPackageFile.Name,
@@ -287,7 +313,10 @@ namespace IOTStudio.Core.Packages
 		private void Cleanup()
 		{
 			Directory.Delete(_PackageTempDirectory, true);
-			Logger.Debug("Temp directory for package cleaned successfully");
+			#if DEBUG
+			Logger.Debug("[Package]: Temp directory for package cleaned successfully");
+			#endif
+			
 			if(CleanupCompleted!=null)
 				CleanupCompleted(this, new PackageInstallEventArgs{
 					PackageFileName = RawPackageFile.Name,
@@ -298,6 +327,50 @@ namespace IOTStudio.Core.Packages
 		
 		private void CheckForUpdates()
 		{
+			updManager = UpdateManager.Instance;
+			
+			updManager.ReinstateIfRestarted();
+			UpdateManager.Instance.CleanUp();
+			
+			if (!Directory.Exists(Path.Combine(_TempPath, "UpdateService")))
+				Directory.CreateDirectory(Path.Combine(_TempPath, "UpdateService"));
+			updManager.Config.TempFolder = Path.Combine(_TempPath, "UpdateService");
+			
+			#if DEBUG
+				Logger.Debug("[Package]: Temporary folder to be used by UpdateService: {0}", updManager.Config.TempFolder);
+			#endif
+			
+			updManager.UpdateSource = new SimpleWebSource(Properties.UpdateServiceFromWeb.Get("URL" + "?PkgId=" + Id));
+			
+			#if DEBUG
+				if(Debugger.IsAttached){
+					//For testing purpose only; This will not be included in the release mode code
+					string feedxml = File.ReadAllText(Path.Combine(_AppBasePath, Properties.UpdateServiceFromWeb.Get("Test_SampleUpdateFeed")));
+					updManager.UpdateSource = new MemorySource(feedxml);
+				}
+			#endif
+			
+			try{
+				updManager.CheckForUpdates();
+				#if DEBUG
+					Logger.Debug("[Package]: check updates completed successfully");
+				#endif
+			} catch (Exception ex) {
+				if (ex is NAppUpdateException) {
+					Logger.Error("[Package]: Error in app updater due to NAppUpdate=>[{0}]", ex.Message, ex);
+				} else {
+				Logger.Error("[Package]: Error in app updater due to=> [{0}]", ex.Message, ex);
+				}
+			}
+			
+			if (updManager.UpdatesAvailable > 0) {
+				Logger.Info("[Package]: Updates are available for this package");
+				this.Info.IsUpdateAvailable = true;
+			} else {
+				Logger.Info("[Package]: No updates available for this package");
+				this.Info.IsUpdateAvailable = false;
+			}
+			
 			if(CheckUpdatesCompleted!=null)
 				CheckUpdatesCompleted(this, new PackageInstallEventArgs{
 					PackageFileName = RawPackageFile.Name,

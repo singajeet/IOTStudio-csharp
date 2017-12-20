@@ -21,66 +21,65 @@ namespace IOTStudio.Core.Features
 	/// Description of FeatureInfo.
 	/// </summary>
 	[DataContract]
-	public class FeatureInfo : IFeatureInfo
+	public class FeatureDetails : IFeatureDetails
 	{
-		public FeatureInfo()
+		public FeatureDetails()
 		{
 			
 		}
 		#region IFeatureInfo implementation
 
 		[DataMember]
-		public Guid Key {
-			get ;
-			internal set ;
+		public Guid Id { get; set;
 		}
 
 		[DataMember]
 		public string Name {
 			get ;
-			internal set ;
+			set ;
 		}
 
 		[DataMember]
 		public string Description {
 			get ;
-			internal set ;
+			set ;
 		}
 
 		[DataMember]
 		public string Author {
 			get ;
-			internal set ;
+			set ;
 		}
 
 		[DataMember]
 		public string Company {
 			get ;
-			internal set ;
+			set ;
 		}
 
 		[DataMember]
 		public string URL {
 			get ;
-			internal set ;
+			set ;
 		}
 
 		[DataMember]
 		public string Version {
 			get ;
-			internal set ;
+			set ;
 		}
 
 		[DataMember]
 		public DateTime ReleasedDate {
 			get ;
-			internal set ;
+			set ;
 		}
 
 		
+		
 		public override string ToString()
 		{
-			return string.Format("[FeatureInfo Key={0}, Name={1}, Company={2}, Version={3}, ReleasedDate={4}]", Key, Name, Company, Version, ReleasedDate);
+			return string.Format("[FeatureInfo Id={0}, Name={1}, Company={2}, Version={3}, ReleasedDate={4}]", Id, Name, Company, Version, ReleasedDate);
 		}
 
 		#endregion

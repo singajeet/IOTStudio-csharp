@@ -13,9 +13,9 @@ namespace IOTStudio.Core.Interfaces
 	/// <summary>
 	/// Description of IFeatureInfo.
 	/// </summary>
-	public interface IFeatureInfo
+	public interface IFeatureDetails
 	{
-		Guid Key { get; }
+		Guid Id { get; }
 		string Name { get; }
 		string Description { get; }
 		string Author { get; }

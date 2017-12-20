@@ -101,21 +101,29 @@ namespace IOTStudio.Core.Stores.Providers
 			return AllPackages.Exists(p => p.Name.Equals(name));
 		}
 		
-		public void InsertPackage(Package pkg)
+		public void RegisterPackage(Package pkg)
 		{
 			if (!ContainsKey(pkg.Id)) {
 				PackageRecord info = pkg.Info;
 				AllPackages.Insert(info);
 			} else {
-				throw new Exception(string.Format("Package with key [{0}] already exists", pkg.Id));
+				throw new Exception(string.Format("[PackagesStore]: Package with key [{0}] already exists", pkg.Id));
 			}
+			
+			Logger.Info("[PackagesStore]: Package registration has been completed successfully => [{0}]", pkg);
 		}
 		
 		public void SavePackage(Package pkg)
 		{
-			Logger.Debug("Trying to save information for the following Package => [{0}]", pkg);
+			#if DEBUG
+			Logger.Debug("[PackagesStore]: Trying to save Package => [{0}]", pkg);
+			#endif
+			
 			AllPackages.Upsert(pkg.Info);
-			Logger.Debug("Package information have been Updated/Inserted successfully");
+			
+			#if DEBUG
+			Logger.Debug("[PackagesStore]: Package has been updated/inserted successfully");
+			#endif
 		}
 		
 		public PackageRecord LoadPackage(Guid key)
@@ -123,7 +131,7 @@ namespace IOTStudio.Core.Stores.Providers
 			if (ContainsKey(key)) {
 				return AllPackages.FindOne(p => p.PackageKey == key);
 			} else {
-				throw new Exception(string.Format("No information found for Package with key => [{0}]", key));
+				throw new Exception(string.Format("[PackagesStore]: No information found for Package with key => [{0}]", key));
 			}
 		}
 		
@@ -132,17 +140,19 @@ namespace IOTStudio.Core.Stores.Providers
 			if (ContainsName(name)) {
 				return AllPackages.FindOne(p => p.Name.Equals(name));
 			} else {
-				throw new Exception(string.Format("No information found for Package with Name => [{0}]", name));
+				throw new Exception(string.Format("[PackagesStore]: No information found for Package with Name => [{0}]", name));
 			}
 		}
 		
-		public void DeletePackage(Package pkg)
+		public void UnregisterPackage(Package pkg)
 		{
 			if (ContainsKey(pkg.Id)) {
 				AllPackages.Delete(p => p.PackageKey == pkg.Id);
 			} else {
-				throw new Exception(string.Format("Can't Delete! No such Package found => [{0}]", pkg));
+				throw new Exception(string.Format("[PackagesStore]: Can't unregister package! No such Package found => [{0}]", pkg));
 			}
+			
+			Logger.Info("[PackagesStore]: Package has been unregistered successfully => [{0}]", pkg);
 		}
 		
 		public override string ToString()

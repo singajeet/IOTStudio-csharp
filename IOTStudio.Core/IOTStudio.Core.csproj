@@ -44,6 +44,9 @@
     <Reference Include="Microsoft.Expression.Interactions">
       <HintPath>..\packages\System.Windows.Interactivity.WPF.2.0.20525\lib\net40\Microsoft.Expression.Interactions.dll</HintPath>
     </Reference>
+    <Reference Include="NAppUpdate.Framework">
+      <HintPath>..\packages\NAppUpdate.Framework.0.5.1.0\lib\net40\NAppUpdate.Framework.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -112,10 +115,10 @@
     <Compile Include="Elements\Interfaces\IWorkspaceElement.cs" />
     <Compile Include="Features\Feature.cs" />
     <Compile Include="Features\FeatureCollection.cs" />
-    <Compile Include="Features\FeatureInfo.cs" />
+    <Compile Include="Features\FeatureDetails.cs" />
     <Compile Include="Interfaces\IDBDriver.cs" />
     <Compile Include="Interfaces\IFeature.cs" />
-    <Compile Include="Interfaces\IFeatureInfo.cs" />
+    <Compile Include="Interfaces\IFeatureDetails.cs" />
     <Compile Include="Interfaces\IDataStore.cs" />
     <Compile Include="Interfaces\IDataStoreManager.cs" />
     <Compile Include="Interfaces\IPackage.cs" />
@@ -185,6 +188,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Packages\SampleUpdateFeed.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
