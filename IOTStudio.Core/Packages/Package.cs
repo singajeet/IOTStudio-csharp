@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using IOTStudio.Core.Features;
 using IOTStudio.Core.Interfaces;
 using IOTStudio.Core.Stores;
 using IOTStudio.Core.Stores.Config;
@@ -36,8 +37,9 @@ namespace IOTStudio.Core.Packages
 		public Guid Id { get; set; }
 		public string Name { get; set; }
 		public IPackageDetails DetailsFromFile { get; set; }		
-		public PackageRecord Info { get; set; }
+		public PackageRecord Record { get; set; }
 		public FileInfo RawPackageFile { get; set; }
+		public FeatureCollection Features { get; set; }
 		
 		private bool _ThrowExceptionOnInvalidPackage;
 		private string _AppBasePath = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
@@ -82,7 +84,7 @@ namespace IOTStudio.Core.Packages
 		}
 		
 		public bool ValidateFile()
-		{
+		{			
 			if(!RawPackageFile.Exists || string.IsNullOrEmpty(RawPackageFile.FullName)){
 				Logger.Error("[Package]: Unable to find Package file => [{0}]", RawPackageFile.Name);
 				
@@ -108,78 +110,86 @@ namespace IOTStudio.Core.Packages
 					return false;
 			}
 			
-			this.Info = new PackageRecord();
+			this.Record = new PackageRecord();
 			
-			this.Info.Name = RawPackageFile.Name.Substring(0, RawPackageFile.Name.Length - RawPackageFile.Extension.Length);
-			this.Info.PackageFileName = RawPackageFile.Name;
-			this.Info.PackageFilePath = _InActivePackagesLocation;
-			this.Info.PackageFileSize = RawPackageFile.Length;
-			this.Info.InstalledPackageLocation = Path.Combine(_InstalledPackagesLocation, RawPackageFile.Name.Substring(0, RawPackageFile.Name.Length - RawPackageFile.Extension.Length));
+			this.Record.Name = RawPackageFile.Name.Substring(0, RawPackageFile.Name.Length - RawPackageFile.Extension.Length);
+			this.Record.PackageFileName = RawPackageFile.Name;
+			this.Record.PackageFilePath = _InActivePackagesLocation;
+			this.Record.PackageFileSize = RawPackageFile.Length;
+			this.Record.InstalledPackageLocation = Path.Combine(_InstalledPackagesLocation, RawPackageFile.Name.Substring(0, RawPackageFile.Name.Length - RawPackageFile.Extension.Length));
 			
 			#if DEBUG
 			Logger.Debug("[Package]: Package file has been validated succesfully");
-			Logger.Debug("[Package.Info Name={0}, PackageFileName={1}, PackageFilePath={2}, PackageFileSize={3}, InstalledPackageLocation={4}]", Info.Name, Info.PackageFileName, Info.PackageFilePath, Info.PackageFileSize, Info.InstalledPackageLocation);
+			Logger.Debug("[Package.Record Name={0}, PackageFileName={1}, PackageFilePath={2}, PackageFileSize={3}, InstalledPackageLocation={4}]", Record.Name, Record.PackageFileName, Record.PackageFilePath, Record.PackageFileSize, Record.InstalledPackageLocation);
 			#endif
 			
 			if(PackageFileValidated!=null)
 				PackageFileValidated(this, new PackageInstallEventArgs{
 					PackageFileName = RawPackageFile.Name,
-					Info = this.Info,
+					Record = this.Record,
 					DetailsFromFile = this.DetailsFromFile
 				});
 			
-			return true;
+			return true;			
 		}
 		
 		public void Install()
 		{
-			#if DEBUG
-			Logger.Debug("[Package]: Trying to install Package => [{0}]", RawPackageFile.Name);
-			#endif
-			if(InstallationStarted!= null)
-				InstallationStarted(this, 
-				                    new PackageInstallEventArgs{
-						PackageFileName = RawPackageFile.Name,
-						Info=this.Info,
-						DetailsFromFile=this.DetailsFromFile
-					});
+			try{
+				#if DEBUG
+				Logger.Debug("[Package]: Trying to install Package => [{0}]", RawPackageFile.Name);
+				#endif
+				if(InstallationStarted!= null)
+					InstallationStarted(this, 
+					                    new PackageInstallEventArgs{
+							PackageFileName = RawPackageFile.Name,
+							Record=this.Record,
+							DetailsFromFile=this.DetailsFromFile
+						});
 			
-			
-			RawPackageFile.MoveTo(Path.Combine(_InActivePackagesLocation, RawPackageFile.Name));
-			#if DEBUG
-			Logger.Debug("[Package]: Package file moved to InActivePackages location => [{0}]", _InActivePackagesLocation);
-			#endif
-			
-			RawPackageFile.CopyTo(Path.Combine(_PackageTempDirectory, RawPackageFile.Name));
-			#if DEBUG
-			Logger.Debug("[Package]: Copy of PackageFile has been created in Temp folder => [{0}]", _TempPath);
-			#endif
-			
-			ZipFile.ExtractToDirectory(Path.Combine(_PackageTempDirectory, RawPackageFile.Name), _PackageTempDirectory);
-			#if DEBUG
-			Logger.Debug("[Package]: [{0}] has been extracted to temp folder => [{1}]", RawPackageFile.Name, _PackageTempDirectory);
-			#endif
-			
-			LoadPackageDetails();
-			LoadFeatureDetails();						
-			RegisterAsActivePackage();
-			InstallFeatures();
-			Cleanup();
-			CheckForUpdates();
-			
-			if(InstallationCompleted!=null)
+				RawPackageFile.MoveTo(Path.Combine(_InActivePackagesLocation, RawPackageFile.Name));
+				#if DEBUG
+				Logger.Debug("[Package]: Package file moved to InActivePackages location => [{0}]", _InActivePackagesLocation);
+				#endif
+				
+				RawPackageFile.CopyTo(Path.Combine(_PackageTempDirectory, RawPackageFile.Name));
+				#if DEBUG
+				Logger.Debug("[Package]: Copy of PackageFile has been created in Temp folder => [{0}]", _TempPath);
+				#endif
+				
+				ZipFile.ExtractToDirectory(Path.Combine(_PackageTempDirectory, RawPackageFile.Name), _PackageTempDirectory);
+				#if DEBUG
+				Logger.Debug("[Package]: [{0}] has been extracted to temp folder => [{1}]", RawPackageFile.Name, _PackageTempDirectory);
+				#endif
+				
+				LoadPackageDetails();
+				LoadFeatureDetails();						
+				RegisterAsActivePackage();
+				InstallFeatures();
+				Cleanup();
+				CheckForUpdates();
+				
+				if(InstallationCompleted!=null)
 				InstallationCompleted(this, new PackageInstallEventArgs{
 					PackageFileName = RawPackageFile.Name,
-					Info = this.Info,
+					Record = this.Record,
 					DetailsFromFile = this.DetailsFromFile
 				});
+				
+			} catch (Exception ex) {
+				if (_ThrowExceptionOnInvalidPackage) {
+					Logger.Error("[Package]: Error while installing package => [{0}] => [{1}]", RawPackageFile.Name, ex.Message, ex);
+					throw new Exception(string.Format("Error while installing package => [{0}] => [{1}]", RawPackageFile.Name, ex.Message), ex);
+				} else
+					Logger.Error("[Package]: Error while installing package => [{0}] => [{1]]", RawPackageFile.Name, ex.Message, ex);
+			}
 		}
 		public void Uninstall()
 		{
 			if(UninstallationStarted!=null)
 				UninstallationStarted(this, new PackageInstallEventArgs{
 					PackageFileName = RawPackageFile.Name,
-					Info = this.Info,
+					Record = this.Record,
 					DetailsFromFile = this.DetailsFromFile
 				});
 			
@@ -188,13 +198,13 @@ namespace IOTStudio.Core.Packages
 			if(UninstallationCompleted!=null)
 				UninstallationCompleted(this, new PackageInstallEventArgs{
 					PackageFileName = RawPackageFile.Name,
-					Info = this.Info,
+					Record = this.Record,
 					DetailsFromFile = this.DetailsFromFile
 				});
 		}
 		public void Activate()
 		{
-			this.Info.IsActive = true;
+			this.Record.IsActive = true;
 			Get.i.PackagesStore.SavePackage(this);
 			
 			#if DEBUG
@@ -203,13 +213,13 @@ namespace IOTStudio.Core.Packages
 			if(PackageActivated!=null)
 				PackageActivated(this, new PackageInstallEventArgs{
 					PackageFileName = RawPackageFile.Name,
-					Info = this.Info,
+					Record = this.Record,
 					DetailsFromFile = this.DetailsFromFile
 				});
 		}
 		public void Deactivate()
 		{
-			this.Info.IsActive = false;
+			this.Record.IsActive = false;
 			Get.i.PackagesStore.SavePackage(this);
 			
 			#if DEBUG
@@ -218,7 +228,7 @@ namespace IOTStudio.Core.Packages
 			if(PackageDeactivated!=null)
 				PackageDeactivated(this, new PackageInstallEventArgs{
 					PackageFileName = RawPackageFile.Name,
-					Info = this.Info,
+					Record = this.Record,
 					DetailsFromFile = this.DetailsFromFile
 				});
 		}
@@ -228,20 +238,20 @@ namespace IOTStudio.Core.Packages
 			RawPackageFile = new FileInfo(Path.Combine(_InActivePackagesLocation, RawPackageFile.Name));
 			RawPackageFile.MoveTo(Path.Combine(_ActivePackagesLocation, RawPackageFile.Name));
 			
-			if (!Directory.Exists(this.Info.InstalledPackageLocation))
-				Directory.CreateDirectory(this.Info.InstalledPackageLocation);
+			if (!Directory.Exists(this.Record.InstalledPackageLocation))
+				Directory.CreateDirectory(this.Record.InstalledPackageLocation);
 			
-			RawPackageFile.CopyTo(Path.Combine(this.Info.InstalledPackageLocation, RawPackageFile.Name));		
+			RawPackageFile.CopyTo(Path.Combine(this.Record.InstalledPackageLocation, RawPackageFile.Name));		
 			
-			ZipFile.ExtractToDirectory(RawPackageFile.FullName, this.Info.InstalledPackageLocation);
+			ZipFile.ExtractToDirectory(RawPackageFile.FullName, this.Record.InstalledPackageLocation);
 			
-			_CurrentPackageInstalledLocation = new DirectoryInfo(this.Info.InstalledPackageLocation);
+			_CurrentPackageInstalledLocation = new DirectoryInfo(this.Record.InstalledPackageLocation);
 			
-			this.Info.Directories = Directory.GetDirectories(_CurrentPackageInstalledLocation.FullName);
-			this.Info.Files = Directory.GetFiles(_CurrentPackageInstalledLocation.FullName);
+			this.Record.Directories = Directory.GetDirectories(_CurrentPackageInstalledLocation.FullName);
+			this.Record.Files = Directory.GetFiles(_CurrentPackageInstalledLocation.FullName);
 			
 			//Find and read the PackageDetails.inf files for more metadata info
-			FileInfo pkgDetailsFile = new FileInfo(this.Info.Files.ToList().Where(f => f.EndsWith(PACKAGE_DETAILS_FILE, StringComparison.CurrentCulture)).ToList().Single());
+			FileInfo pkgDetailsFile = new FileInfo(this.Record.Files.ToList().Where(f => f.EndsWith(PACKAGE_DETAILS_FILE, StringComparison.CurrentCulture)).ToList().Single());
 			
 			YamlDotNet.Serialization.Deserializer deserializer = new YamlDotNet.Serialization.Deserializer();
 			using (TextReader reader = File.OpenText(pkgDetailsFile.FullName)) {
@@ -254,21 +264,21 @@ namespace IOTStudio.Core.Packages
 			if(PackageDetailsLoaded!=null)
 				PackageDetailsLoaded(this, new PackageInstallEventArgs{
 					PackageFileName = RawPackageFile.Name,
-					Info = this.Info,
+					Record = this.Record,
 					DetailsFromFile = this.DetailsFromFile
 				});
 		}
 		
 		private void LoadFeatureDetails()
 		{
-			this.Info.Features = Directory.GetDirectories(_CurrentPackageInstalledLocation.FullName, FEATURES_WILDCARD_FILTER);
+			this.Record.Features = Directory.GetDirectories(_CurrentPackageInstalledLocation.FullName, FEATURES_WILDCARD_FILTER);
 			#if DEBUG
-			Logger.Debug("[Package]: Details of [{0}] features under [{1}] Package have been loaded successfully", this.Info.Features.Length, RawPackageFile.Name);
+			Logger.Debug("[Package]: Details of [{0}] features under [{1}] Package have been loaded successfully", this.Record.Features.Length, RawPackageFile.Name);
 			#endif
 			if(FeaturesDetailsLoaded!= null)
 				FeaturesDetailsLoaded(this, new PackageInstallEventArgs{
 					PackageFileName = RawPackageFile.Name,
-					Info = this.Info,
+					Record = this.Record,
 					DetailsFromFile = this.DetailsFromFile
 				});
 		}
@@ -277,12 +287,12 @@ namespace IOTStudio.Core.Packages
 		{
 			this.Id = this.DetailsFromFile.Id;
 			this.Name = this.DetailsFromFile.Name;
-			this.Info.PackageFilePath = _ActivePackagesLocation;
-			Info.PackageKey = this.Id;
-			Info.Name = this.Name;
-			Info.IsActive = false;
-			Info.IsInstalled = false;
-			this.Info.InstalledOn = DateTime.Now;
+			this.Record.PackageFilePath = _ActivePackagesLocation;
+			Record.PackageKey = this.Id;
+			Record.Name = this.Name;
+			Record.IsActive = false;
+			Record.IsInstalled = false;
+			this.Record.InstalledOn = DateTime.Now;
 			
 			if (Get.i.PackagesStore.ContainsKey(this.Id)) {
 				Get.i.PackagesStore.SavePackage(this);
@@ -295,17 +305,38 @@ namespace IOTStudio.Core.Packages
 			if(PackageRegistered!=null)
 				PackageRegistered(this, new PackageInstallEventArgs{
 					PackageFileName = RawPackageFile.Name,
-					Info = this.Info,
+					Record = this.Record,
 					DetailsFromFile = this.DetailsFromFile
 				});
 		}
 		
 		private void InstallFeatures()
 		{
+			#if DEBUG
+				Logger.Debug("[Package]: Trying to install all features under this package: Total[{0}]", Record.Features.Length);
+			#endif
+			
+			Features = new FeatureCollection();
+			
+			foreach (string feature in this.Record.Features) {
+				#if DEBUG
+					Logger.Debug("[Package]: Trying to install feature on path => [{0}]", feature);
+				#endif
+				DirectoryInfo featureDir = new DirectoryInfo(feature);
+				IFeature featureObject = new Feature(this, featureDir);
+				featureObject.ValidateFile();
+				featureObject.Install();
+				Features.Add(featureObject);
+			}
+			
+			#if DEBUG
+				Logger.Debug("[Package]: All features have been installed successfully");
+			#endif
+			
 			if(FeaturesInstalled!=null)
 				FeaturesInstalled(this, new PackageInstallEventArgs{
 					PackageFileName = RawPackageFile.Name,
-					Info = this.Info,
+					Record = this.Record,
 					DetailsFromFile = this.DetailsFromFile
 				});
 		}
@@ -320,7 +351,7 @@ namespace IOTStudio.Core.Packages
 			if(CleanupCompleted!=null)
 				CleanupCompleted(this, new PackageInstallEventArgs{
 					PackageFileName = RawPackageFile.Name,
-					Info = this.Info,
+					Record = this.Record,
 					DetailsFromFile = this.DetailsFromFile
 				});
 		}
@@ -365,23 +396,23 @@ namespace IOTStudio.Core.Packages
 			
 			if (updManager.UpdatesAvailable > 0) {
 				Logger.Info("[Package]: Updates are available for this package");
-				this.Info.IsUpdateAvailable = true;
+				this.Record.IsUpdateAvailable = true;
 			} else {
 				Logger.Info("[Package]: No updates available for this package");
-				this.Info.IsUpdateAvailable = false;
+				this.Record.IsUpdateAvailable = false;
 			}
 			
 			if(CheckUpdatesCompleted!=null)
 				CheckUpdatesCompleted(this, new PackageInstallEventArgs{
 					PackageFileName = RawPackageFile.Name,
-					Info = this.Info,
+					Record = this.Record,
 					DetailsFromFile = this.DetailsFromFile
 				});
 		}
 		
 		public override string ToString()
 		{
-			return string.Format("[Package Id={0}, Name={1}, IsActive={2}, IsInstalled={3}]", Id, Name, Info.IsActive, Info.IsInstalled);
+			return string.Format("[Package Id={0}, Name={1}, IsActive={2}, IsInstalled={3}]", Id, Name, Record.IsActive, Record.IsInstalled);
 		}
 		
 		public event EventHandler InstallationStarted;
@@ -402,7 +433,7 @@ namespace IOTStudio.Core.Packages
 	public class PackageInstallEventArgs: EventArgs
 	{
 		public string PackageFileName { get; set; }
-		public PackageRecord Info { get; set; }
+		public PackageRecord Record { get; set; }
 		public IPackageDetails DetailsFromFile { get; set; }
 	}
 }

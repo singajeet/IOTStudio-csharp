@@ -37,7 +37,7 @@ namespace IOTStudio.Core.Features
 		public string Name { get; set; }
 		public Package ParentPackage { get; set; }
 		public IFeatureDetails DetailsFromFile { get; set; }
-		public FeatureRecord Info { get; set; }
+		public FeatureRecord Record { get; set; }
 		public FileInfo RawFeatureInfFile { get; set; }
 		
 		public IFeature ParentFeature { get; set; }
@@ -105,23 +105,23 @@ namespace IOTStudio.Core.Features
 					return false;
 			}
 			
-			this.Info = new FeatureRecord();
+			this.Record = new FeatureRecord();
 			
-			this.Info.Name = RawFeatureInfFile.Name.Substring(0, RawFeatureInfFile.Name.Length - RawFeatureInfFile.Extension.Length);
-			this.Info.FeatureInfFileName = RawFeatureInfFile.Name;
-			this.Info.FeatureInfFilePath = RawFeatureInfFile.Directory.FullName;
-			this.Info.FeatureInfFileSize = RawFeatureInfFile.Length;
-			this.Info.FeatureBasePath = _FeatureBasePath;
+			this.Record.Name = RawFeatureInfFile.Name.Substring(0, RawFeatureInfFile.Name.Length - RawFeatureInfFile.Extension.Length);
+			this.Record.FeatureInfFileName = RawFeatureInfFile.Name;
+			this.Record.FeatureInfFilePath = RawFeatureInfFile.Directory.FullName;
+			this.Record.FeatureInfFileSize = RawFeatureInfFile.Length;
+			this.Record.FeatureBasePath = _FeatureBasePath;
 			
 			#if DEBUG
 			Logger.Debug("[Feature]: Feature file has been validated succesfully");
-			Logger.Debug("[Feature.Info Name={0}, FeatureFileName={1}, FeatureFilePath={2}, FeatureFileSize={3}, InstalledFeatureLocation={4}]", Info.Name, Info.FeatureInfFileName, Info.FeatureInfFilePath, Info.FeatureInfFileSize, Info.FeatureBasePath);
+			Logger.Debug("[Feature.Info Name={0}, FeatureFileName={1}, FeatureFilePath={2}, FeatureFileSize={3}, InstalledFeatureLocation={4}]", Record.Name, Record.FeatureInfFileName, Record.FeatureInfFilePath, Record.FeatureInfFileSize, Record.FeatureBasePath);
 			#endif
 			
 			if(FeatureFileValidated!=null)
 				FeatureFileValidated(this, new FeatureInstallEventArgs{
 					FeatureInfFileName = RawFeatureInfFile.Name,
-					Info = this.Info,
+					Record = this.Record,
 					DetailsFromFile = this.DetailsFromFile
 				});
 			
@@ -130,6 +130,7 @@ namespace IOTStudio.Core.Features
 		
 		public void Install()
 		{
+			try{
 			#if DEBUG
 			Logger.Debug("[Feature]: Trying to install feature => [{0}]", RawFeatureInfFile.Name);
 			#endif
@@ -137,11 +138,11 @@ namespace IOTStudio.Core.Features
 				InstallationStarted(this, 
 				                    new FeatureInstallEventArgs{
 						FeatureInfFileName = RawFeatureInfFile.Name,
-						Info=this.Info,
+						Record=this.Record,
 						DetailsFromFile=this.DetailsFromFile
 					});
 			
-			string zippedFeatureFile = Path.Combine(_FeatureBasePath, this.Info.Name + ".fea");
+			string zippedFeatureFile = Path.Combine(_FeatureBasePath, this.Record.Name + ".fea");
 			if (File.Exists(zippedFeatureFile)) {
 				#if DEBUG
 					Logger.Debug("[Feature]: Compressed feature file found => [{0}]", zippedFeatureFile);
@@ -150,7 +151,7 @@ namespace IOTStudio.Core.Features
 				ZipFile.ExtractToDirectory(zippedFeatureFile, _FeatureBasePath);
 				
 				#if DEBUG
-					Logger.Debug("[Feature]: [{0}] has been extracted to temp folder => [{1}]", this.Info.Name + ".fea", _FeatureBasePath);
+					Logger.Debug("[Feature]: [{0}] has been extracted to temp folder => [{1}]", this.Record.Name + ".fea", _FeatureBasePath);
 				#endif
 			} else {
 				#if DEBUG
@@ -164,9 +165,17 @@ namespace IOTStudio.Core.Features
 			if(InstallationCompleted!=null)
 				InstallationCompleted(this, new FeatureInstallEventArgs{
 					FeatureInfFileName = RawFeatureInfFile.Name,
-					Info = this.Info,
+					Record = this.Record,
 					DetailsFromFile = this.DetailsFromFile
 				});
+			} catch (Exception ex) {
+				if (_ThrowExceptionOnInvalidFeature) {
+					Logger.Error("[Feature]: Error while installing feature => [{0}] => [{1}]", RawFeatureInfFile.Name, ex.Message, ex);
+					throw new Exception(string.Format("[Feature]: Error while installing feature => [{0}] => [{1}]", RawFeatureInfFile.Name, ex.Message), ex);
+				} else {
+					Logger.Error("[Feature]: Error while installing feature => [{0}] => [{1}]", RawFeatureInfFile.Name, ex.Message, ex);
+				}
+			}
 		}
 		
 		public void Uninstall()
@@ -174,7 +183,7 @@ namespace IOTStudio.Core.Features
 			if(UninstallationStarted!=null)
 				UninstallationStarted(this, new FeatureInstallEventArgs{
 					FeatureInfFileName = RawFeatureInfFile.Name,
-					Info = this.Info,
+					Record = this.Record,
 					DetailsFromFile = this.DetailsFromFile
 				});
 			
@@ -183,14 +192,14 @@ namespace IOTStudio.Core.Features
 			if(UninstallationCompleted!=null)
 				UninstallationCompleted(this, new FeatureInstallEventArgs{
 					FeatureInfFileName = RawFeatureInfFile.Name,
-					Info = this.Info,
+					Record = this.Record,
 					DetailsFromFile = this.DetailsFromFile
 				});
 		}
 		
 		public void Activate()
 		{
-			this.Info.IsActive = true;
+			this.Record.IsActive = true;
 			Get.i.Features.SaveFeature(this);
 			
 			#if DEBUG
@@ -199,13 +208,13 @@ namespace IOTStudio.Core.Features
 			if(FeatureActivated!=null)
 				FeatureActivated(this, new FeatureInstallEventArgs{
 					FeatureInfFileName = RawFeatureInfFile.Name,
-					Info = this.Info,
+					Record = this.Record,
 					DetailsFromFile = this.DetailsFromFile
 				});
 		}
 		public void Deactivate()
 		{
-			this.Info.IsActive = false;
+			this.Record.IsActive = false;
 			Get.i.Features.SaveFeature(this);
 			
 			#if DEBUG
@@ -214,7 +223,7 @@ namespace IOTStudio.Core.Features
 			if(FeatureDeactivated!=null)
 				FeatureDeactivated(this, new FeatureInstallEventArgs{
 					FeatureInfFileName = RawFeatureInfFile.Name,
-					Info = this.Info,
+					Record = this.Record,
 					DetailsFromFile = this.DetailsFromFile
 				});
 		}
@@ -222,8 +231,8 @@ namespace IOTStudio.Core.Features
 		private void LoadFeatureDetails()
 		{			
 			RawFeatureInfFile = new FileInfo(_FeatureInfPath);		
-			this.Info.Directories = Directory.GetDirectories(_FeatureBasePath);
-			this.Info.Files = Directory.GetFiles(_FeatureBasePath);
+			this.Record.Directories = Directory.GetDirectories(_FeatureBasePath);
+			this.Record.Files = Directory.GetFiles(_FeatureBasePath);
 			
 			YamlDotNet.Serialization.Deserializer deserializer = new YamlDotNet.Serialization.Deserializer();
 			using (TextReader reader = File.OpenText(RawFeatureInfFile.FullName)) {
@@ -236,7 +245,7 @@ namespace IOTStudio.Core.Features
 			if(FeatureDetailsLoaded!=null)
 				FeatureDetailsLoaded(this, new FeatureInstallEventArgs{
 					FeatureInfFileName = RawFeatureInfFile.Name,
-					Info = this.Info,
+					Record = this.Record,
 					DetailsFromFile = this.DetailsFromFile
 				});
 		}
@@ -245,12 +254,12 @@ namespace IOTStudio.Core.Features
 		{
 			this.Id = this.DetailsFromFile.Id;
 			this.Name = this.DetailsFromFile.Name;
-			this.Info.FeatureInfFilePath = RawFeatureInfFile.Directory.FullName;
-			Info.FeatureKey = this.Id;
-			Info.Name = this.Name;
-			Info.IsActive = false;
-			Info.IsInstalled = false;
-			this.Info.InstalledOn = DateTime.Now;
+			this.Record.FeatureInfFilePath = RawFeatureInfFile.Directory.FullName;
+			Record.FeatureKey = this.Id;
+			Record.Name = this.Name;
+			Record.IsActive = false;
+			Record.IsInstalled = false;
+			this.Record.InstalledOn = DateTime.Now;
 			
 			if (Get.i.Features.ContainsKey(this.Id)) {
 				Get.i.Features.SaveFeature(this);
@@ -263,7 +272,7 @@ namespace IOTStudio.Core.Features
 			if(FeatureRegistered!=null)
 				FeatureRegistered(this, new FeatureInstallEventArgs{
 					FeatureInfFileName = RawFeatureInfFile.Name,
-					Info = this.Info,
+					Record = this.Record,
 					DetailsFromFile = this.DetailsFromFile
 				});
 		}
@@ -306,7 +315,7 @@ namespace IOTStudio.Core.Features
 		
 		public override string ToString()
 		{
-			return string.Format("[Feature Id={0}, Name={1}, IsActive={2}, InputFlagName={3}, OutputFlagName={4}]", Id, Name, Info.IsActive, Info.InputFlagName, Info.OutputFlagName);
+			return string.Format("[Feature Id={0}, Name={1}, IsActive={2}, InputFlagName={3}, OutputFlagName={4}]", Id, Name, Record.IsActive, Record.InputFlagName, Record.OutputFlagName);
 		}
 
 	}
@@ -360,7 +369,7 @@ namespace IOTStudio.Core.Features
 	public class FeatureInstallEventArgs: EventArgs
 	{
 		public string FeatureInfFileName { get; set; }
-		public FeatureRecord Info { get; set; }
+		public FeatureRecord Record { get; set; }
 		public IFeatureDetails DetailsFromFile { get; set; }
 	}
 }

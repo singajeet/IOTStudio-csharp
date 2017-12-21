@@ -16,6 +16,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IOTStudio.Tests", "IOTStudi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IOTStudio.Tests", "IOTStudio.Tests\IOTStudio.Tests.csproj", "{1290231C-EAE4-467C-B381-3EE0DCF60B6C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BluePrint", "BluePrint", "{25477B8E-9F0A-4714-8A98-0F5CD307A985}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BluePrintEditor", "BluePrintEditor\BluePrintEditor.csproj", "{5DCDB159-9FFA-4C65-866F-9C1E4D57DADC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,8 +46,13 @@ Global
 		{1290231C-EAE4-467C-B381-3EE0DCF60B6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1290231C-EAE4-467C-B381-3EE0DCF60B6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1290231C-EAE4-467C-B381-3EE0DCF60B6C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DCDB159-9FFA-4C65-866F-9C1E4D57DADC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DCDB159-9FFA-4C65-866F-9C1E4D57DADC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DCDB159-9FFA-4C65-866F-9C1E4D57DADC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DCDB159-9FFA-4C65-866F-9C1E4D57DADC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{1290231C-EAE4-467C-B381-3EE0DCF60B6C} = {EDD794E3-B796-4C31-AA5C-4CEF87351808}
+		{5DCDB159-9FFA-4C65-866F-9C1E4D57DADC} = {25477B8E-9F0A-4714-8A98-0F5CD307A985}
 	EndGlobalSection
 EndGlobal

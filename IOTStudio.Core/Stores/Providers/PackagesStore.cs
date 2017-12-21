@@ -104,8 +104,8 @@ namespace IOTStudio.Core.Stores.Providers
 		public void RegisterPackage(Package pkg)
 		{
 			if (!ContainsKey(pkg.Id)) {
-				PackageRecord info = pkg.Info;
-				AllPackages.Insert(info);
+				PackageRecord Record = pkg.Record;
+				AllPackages.Insert(Record);
 			} else {
 				throw new Exception(string.Format("[PackagesStore]: Package with key [{0}] already exists", pkg.Id));
 			}
@@ -118,8 +118,13 @@ namespace IOTStudio.Core.Stores.Providers
 			#if DEBUG
 			Logger.Debug("[PackagesStore]: Trying to save Package => [{0}]", pkg);
 			#endif
-			
-			AllPackages.Upsert(pkg.Info);
+			if (ContainsKey(pkg.Id)) {
+				PackageRecord record = AllPackages.FindOne(p => p.PackageKey == pkg.Id);
+				pkg.Record.Id = record.Id;
+				AllPackages.Update(pkg.Record);
+			} else {
+				AllPackages.Insert(pkg.Record);
+			}
 			
 			#if DEBUG
 			Logger.Debug("[PackagesStore]: Package has been updated/inserted successfully");

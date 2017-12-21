@@ -132,7 +132,13 @@ namespace IOTStudio.Core.Stores.Providers
 			#if DEBUG
 				Logger.Debug("[FeaturesStore]: Trying to save feature => [{0}]", feature);
 			#endif
-			AllFeatures.Upsert(feature.Info);
+			if (ContainsKey(feature.Id)) {
+				FeatureRecord record = AllFeatures.FindOne(f => f.FeatureKey == feature.Id);
+				feature.Record.Id = record.Id;
+				AllFeatures.Update(feature.Record);
+			} else {
+				AllFeatures.Insert(feature.Record);
+			}
 			
 			#if DEBUG
 				Logger.Debug("[FeaturesStore]: Feature has been updated/inserted successfully");

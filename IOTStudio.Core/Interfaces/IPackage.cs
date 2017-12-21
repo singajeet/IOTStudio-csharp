@@ -8,6 +8,7 @@
  */
 using System;
 using System.IO;
+using IOTStudio.Core.Features;
 using IOTStudio.Core.Stores.Providers;
 
 namespace IOTStudio.Core.Interfaces
@@ -20,8 +21,9 @@ namespace IOTStudio.Core.Interfaces
 		Guid Id { get; set; }
 		string Name { get; set; }
 		IPackageDetails DetailsFromFile { get;set; }
-		PackageRecord Info { get; set; }
-		FileInfo RawPackageFile { get; set; }
+		PackageRecord Record { get; set; }
+		FileInfo RawPackageFile { get; set; }		
+		FeatureCollection Features { get; set; }
 		
 		bool ValidateFile();
 		void Install();

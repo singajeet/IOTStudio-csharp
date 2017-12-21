@@ -25,7 +25,7 @@ namespace IOTStudio.Core.Interfaces
 		Guid Id { get; set; }
 		string Name { get; set; }		
 		Package ParentPackage { get; set; }
-		FeatureRecord Info { get; set; }
+		FeatureRecord Record { get; set; }
 		IFeatureDetails DetailsFromFile { get; set; }
 		FileInfo RawFeatureInfFile { get; set; }
 		
