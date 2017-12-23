@@ -24,9 +24,11 @@ namespace BluePrintEditor
 	/// </summary>
 	public partial class MainWindow : MetroWindow
 	{
-		MainWindowViewModel viewModel = new MainWindowViewModel();
+		MainWindowViewModel viewModel;
 		public MainWindow()
 		{
+			viewModel = MainWindowViewModel.Instance;
+			
 			InitializeComponent();
 			this.DataContext = viewModel;
 		}

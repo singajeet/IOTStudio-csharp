@@ -83,6 +83,9 @@
     <Reference Include="WindowsBase">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="Xceed.Wpf.Toolkit">
+      <HintPath>..\..\..\..\..\..\Ajeet\Softwares\Visual Studio - Extras\Extended.WPF.Toolkit.Binaries.NET.4.x\Extended WPF Toolkit Binaries .NET 4.x\Xceed.Wpf.Toolkit.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
@@ -95,6 +98,21 @@
     <Compile Include="Commands\AboutCommand.cs" />
     <Compile Include="Commands\HelpCommand.cs" />
     <Compile Include="Commands\SettingsCommand.cs" />
+    <Compile Include="Designer\Actions\MoveThumb.cs" />
+    <Compile Include="Designer\Actions\ResizeThumb.cs" />
+    <Compile Include="Designer\Adorners\ResizeAdorner.cs" />
+    <Compile Include="Designer\Adorners\ResizeChrome.cs" />
+    <Compile Include="Designer\Adorners\SizeAdorner.cs" />
+    <Compile Include="Designer\Adorners\SizeChrome.cs" />
+    <Compile Include="Designer\Controls\CanvasBaseItem.xaml.cs">
+      <DependentUpon>CanvasBaseItem.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Designer\Decorators\CanvasBaseItemDecorator.cs" />
+    <Compile Include="Designer\DesignerHost.xaml.cs">
+      <DependentUpon>DesignerHost.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Items\Editor\HamburgerMenuEditorItemViewModel.cs" />
     <Compile Include="Items\Editor\HamburgerMenuEditorView.xaml.cs">
       <DependentUpon>HamburgerMenuEditorView.xaml</DependentUpon>
@@ -114,8 +132,19 @@
       <SubType>Code</SubType>
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Services\ApplicationServicesProvider.cs" />
+    <Compile Include="Services\Contracts\IMessageBoxService.cs" />
+    <Compile Include="Services\Contracts\IUIVisualizerService.cs" />
+    <Compile Include="Services\Implentation\WPFMessageBoxService.cs" />
+    <Compile Include="Services\Implentation\WPFUIVisualizerService.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Designer\Controls\CanvasBaseItem.xaml" />
+    <Page Include="Designer\Controls\Resources\BrushResources.xaml" />
+    <Page Include="Designer\Controls\Resources\CanvasBaseItemStyles.xaml" />
+    <Page Include="Designer\Controls\Resources\ResizeChrome.xaml" />
+    <Page Include="Designer\Controls\Resources\SizeChrome.xaml" />
+    <Page Include="Designer\DesignerHost.xaml" />
     <Page Include="Items\Editor\HamburgerMenuEditorView.xaml" />
     <Page Include="Items\Start\HamburgerMenuStartView.xaml" />
     <Page Include="Resources\Icons.xaml" />
@@ -124,6 +153,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="Designer\Controls\Media\cross.png" />
+    <None Include="Designer\Controls\Media\paint.png" />
     <None Include="packages.config" />
     <None Include="Resources\Entypo-license.txt" />
     <None Include="Resources\Entypo.ttf" />
@@ -131,9 +162,34 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Commands" />
+    <Folder Include="Designer\Controls" />
+    <Folder Include="Designer\Actions" />
+    <Folder Include="Designer\Controls\Media" />
+    <Folder Include="Designer\Controls\Resources" />
+    <Folder Include="Designer\Decorators" />
+    <Folder Include="Designer\Adorners" />
+    <Folder Include="Designer\ViewModels" />
     <Folder Include="Items" />
     <Folder Include="Items\Editor" />
     <Folder Include="Items\Start" />
+    <Folder Include="Designer" />
+    <Folder Include="Services" />
+    <Folder Include="Services\Contracts" />
+    <Folder Include="Services\Implentation" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DiagramDesigner\DiagramDesigner.csproj">
+      <Project>{74872a86-6809-476b-95ab-6f3512317059}</Project>
+      <Name>DiagramDesigner</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Persistence.Common\Persistence.Common.csproj">
+      <Project>{91ad5a26-30a4-438c-b4f0-d0dcf92140a9}</Project>
+      <Name>Persistence.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Persistence.LiteDB\Persistence.LiteDB.csproj">
+      <Project>{790ddd3e-ea24-4156-b342-bf8395d86fb1}</Project>
+      <Name>Persistence.LiteDB</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

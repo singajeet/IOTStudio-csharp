@@ -49,40 +49,16 @@
 	</Controls:MetroWindow.RightWindowCommands>
 	<Controls:MetroWindow.Flyouts>
 		<Controls:FlyoutsControl x:Name="FlyoutControls">
-			<Controls:Flyout x:Name="ToolsFlyout"
+			<Controls:Flyout x:Name="ToolsBoxFlyout"
 								Margin="200,30,0,0"
 								Controls:ControlsHelper.ContentCharacterCasing="Upper"
 								AreAnimationsEnabled="True"
+			                 	IsOpen="{Binding ToolsBoxFlyoutIsOpen}"
 								Header="Tools"
 								Position="Right">
 				<Expander Margin="10" ExpandDirection="Down"
 							Header="Editing Tools" x:Name="ExpanderControl">
-					<ListBox x:Name="EditingToolsBox">
-						<ListBoxItem>
-							<StackPanel>
-								<icons:PackIconModern Kind="CursorDefault" Width="22" Height="22" />
-								<TextBlock FontSize="16" Foreground="{StaticResource Foreground}">
-									Selection Tool
-								</TextBlock>
-							</StackPanel>
-						</ListBoxItem>
-						<ListBoxItem>
-							<StackPanel>
-								<icons:PackIconModern Kind="EditBox" Width="22" Height="22" />
-								<TextBlock FontSize="16" Foreground="{StaticResource Foreground}">
-									Edit Layout
-								</TextBlock>
-							</StackPanel>
-						</ListBoxItem>
-						<ListBoxItem>
-							<StackPanel>
-								<icons:PackIconModern Kind="PuzzleRound" Width="22" Height="22" />
-								<TextBlock FontSize="16" Foreground="{StaticResource Foreground}">
-									Add Features
-								</TextBlock>
-							</StackPanel>
-						</ListBoxItem>
-					</ListBox>
+					
 				</Expander>
 			</Controls:Flyout>
 		</Controls:FlyoutsControl>

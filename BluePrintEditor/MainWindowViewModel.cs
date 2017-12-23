@@ -18,14 +18,27 @@ namespace BluePrintEditor
 	/// </summary>
 	public class MainWindowViewModel: INotifyPropertyChanged, IDataErrorInfo, IDisposable
 	{
+		private static MainWindowViewModel _Instance;
 		private HamburgerMenuItem _HamburgerMenuSelectedItem;
+		private bool _ToolsBoxFlyoutIsOpen;
 		private string _ContentLabel;
 		private string _StatusBarAppStatus = "Ready!";
 		private string _StatusBarMessage = "Welcome to BluePrint Editor";
 		
-		public MainWindowViewModel()
+		private MainWindowViewModel()
 		{
 		}
+		
+		public static MainWindowViewModel Instance{
+			get{ 
+				if (_Instance == null)
+					_Instance = new MainWindowViewModel();
+				
+				return _Instance;
+			}
+		}
+		
+		
 		
 		public string ContentLabel{
 			get { return this._ContentLabel; }
@@ -43,14 +56,16 @@ namespace BluePrintEditor
 		}
 		
 		public string StatusBarAppStatus {
-			get { 
-				return _StatusBarAppStatus;
+			get { return _StatusBarAppStatus; }
+			set { _StatusBarAppStatus = value; 
+				OnPropertyChanged();
 			}
 		}
 			
 		public string StatusBarMessage{
-			get{ 
-				return _StatusBarMessage;
+			get{ return _StatusBarMessage; }
+			set { _StatusBarMessage = value; 
+				OnPropertyChanged();
 			}
 		}
 		

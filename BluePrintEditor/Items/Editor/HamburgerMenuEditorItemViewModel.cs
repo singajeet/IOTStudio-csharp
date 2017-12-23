@@ -9,7 +9,9 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Controls;
+using MahApps.Metro.Controls;
 
 namespace BluePrintEditor.Items.Editor
 {
@@ -18,32 +20,34 @@ namespace BluePrintEditor.Items.Editor
 	/// </summary>
 	public class HamburgerMenuEditorItemViewModel: INotifyPropertyChanged, IDisposable
 	{
-		private ListBoxItem _MenuSelectedItem;
-		private bool _ToolsFlyoutIsOpen;
+		private ListBoxItem _CommandsBoxSelectedItem;
+		private bool _AddFeatureButtonIsSelected;
+		private Visibility _FeaturesVisibility=Visibility.Hidden;
 		public HamburgerMenuEditorItemViewModel()
 		{
 		}
 		
-		public ListBoxItem MenuSelectedItem{
-			get{ return _MenuSelectedItem; }
-			set{ _MenuSelectedItem = value; 
-				OpenFlyout();
+		public ListBoxItem CommandsBoxSelectedItem {
+			get{ return _CommandsBoxSelectedItem; }
+			set {
+				_CommandsBoxSelectedItem = value; 
+			
 				OnPropertyChanged();
 			}
 		}
 		
-		public bool ToolsFlyoutIsOpen{
-			get{ return _ToolsFlyoutIsOpen; }
-			set{ _ToolsFlyoutIsOpen = value; 
+		public bool AddFeatureButtonIsSelected{
+			get { return _AddFeatureButtonIsSelected;  }
+			set{ _AddFeatureButtonIsSelected = value; 
+				FeaturesVisibility = _AddFeatureButtonIsSelected ? Visibility.Visible : Visibility.Hidden;
 				OnPropertyChanged();
 			}
 		}
 		
-		private void OpenFlyout()
-		{
-			if (MenuSelectedItem.Name.Equals("SelectionTool")) {
-				if (ToolsFlyoutIsOpen == false)
-					ToolsFlyoutIsOpen = true;
+		public Visibility FeaturesVisibility{
+			get{ return _FeaturesVisibility; }
+			set{ _FeaturesVisibility = value; 
+				OnPropertyChanged();
 			}
 		}
 
