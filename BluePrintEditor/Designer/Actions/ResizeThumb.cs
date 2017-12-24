@@ -13,6 +13,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Media;
 using BluePrintEditor.Designer.Adorners;
+using BluePrintEditor.Designer.Controls;
 
 namespace BluePrintEditor.Designer.Actions
 {
@@ -21,8 +22,8 @@ namespace BluePrintEditor.Designer.Actions
 	/// </summary>
 	public class ResizeThumb : Thumb
 	{
-		private ContentControl canvasBaseItem;
-		private Canvas canvas;
+		private CanvasBaseItem canvasBaseItem;
+		private DesignerCanvas designerCanvas;
 		private Adorner adorner;
 		
 		public ResizeThumb()
@@ -34,73 +35,79 @@ namespace BluePrintEditor.Designer.Actions
 
 		void ResizeThumb_DragStarted(object sender, DragStartedEventArgs e)
 		{
-			canvasBaseItem = this.DataContext as ContentControl;
+			canvasBaseItem = this.DataContext as CanvasBaseItem;
 			if (canvasBaseItem != null) {
-				canvas = VisualTreeHelper.GetParent(canvasBaseItem) as Canvas;
-				if (canvas != null) {
-					AdornerLayer adornerLayer = AdornerLayer.GetAdornerLayer(this.canvas);
-					if (adornerLayer != null) {
-						adorner = new SizeAdorner(this.canvasBaseItem);
-						adornerLayer.Add(adorner);
-					}
-				}
+				designerCanvas = VisualTreeHelper.GetParent(canvasBaseItem) as DesignerCanvas;
+//				if (canvas != null) {
+//					AdornerLayer adornerLayer = AdornerLayer.GetAdornerLayer(this.canvas);
+//					if (adornerLayer != null) {
+//						adorner = new SizeAdorner(this.canvasBaseItem);
+//						adornerLayer.Add(adorner);
+//					}
+//				}
 			}
 		}
 
 		void ResizeThumb_DragCompleted(object sender, DragCompletedEventArgs e)
 		{
-			if (this.adorner != null) {
-				AdornerLayer adornerLayer = AdornerLayer.GetAdornerLayer(this.canvas);
-				if (adornerLayer != null) {
-					adornerLayer.Remove(adorner);
-				}
-				this.adorner = null;
-			}
+//			if (this.adorner != null) {
+//				AdornerLayer adornerLayer = AdornerLayer.GetAdornerLayer(this.canvas);
+//				if (adornerLayer != null) {
+//					adornerLayer.Remove(adorner);
+//				}
+//				this.adorner = null;
+//			}
 		}
 		private void ResizeThumb_DragDelta(object sender, DragDeltaEventArgs e)
 		{
-			//Control item = this.DataContext as Control;
+			if (this.canvasBaseItem != null && this.designerCanvas != null && this.canvasBaseItem.IsSelected)
+            {
+                double minLeft = double.MaxValue;
+                double minTop = double.MaxValue;
+                double minDeltaHorizontal = double.MaxValue;
+                double minDeltaVertical = double.MaxValue;
+                double dragDeltaVertical, dragDeltaHorizontal;
 
-			if (canvasBaseItem != null)
-			{
-				double deltaVertical, deltaHorizontal;
+                foreach (CanvasBaseItem item in this.designerCanvas.SelectedItems)
+                {
+                    minLeft = Math.Min(Canvas.GetLeft(item), minLeft);
+                    minTop = Math.Min(Canvas.GetTop(item), minTop);
 
-				switch (VerticalAlignment)
-				{
-					case VerticalAlignment.Bottom:
-						deltaVertical = Math.Min(-e.VerticalChange,
-						                         canvasBaseItem.ActualHeight - canvasBaseItem.MinHeight);
-						canvasBaseItem.Height -= deltaVertical;
-						break;
-					case VerticalAlignment.Top:
-						deltaVertical = Math.Min(e.VerticalChange,
-						                         canvasBaseItem.ActualHeight - canvasBaseItem.MinHeight);
-						Canvas.SetTop(canvasBaseItem, Canvas.GetTop(canvasBaseItem) + deltaVertical);
-						canvasBaseItem.Height -= deltaVertical;
-						break;
-					default:
-						break;
-				}
+                    minDeltaVertical = Math.Min(minDeltaVertical, item.ActualHeight - item.MinHeight);
+                    minDeltaHorizontal = Math.Min(minDeltaHorizontal, item.ActualWidth - item.MinWidth);
+                }
 
-				switch (HorizontalAlignment)
-				{
-					case HorizontalAlignment.Left:
-						deltaHorizontal = Math.Min(e.HorizontalChange,
-						                           canvasBaseItem.ActualWidth - canvasBaseItem.MinWidth);
-						Canvas.SetLeft(canvasBaseItem, Canvas.GetLeft(canvasBaseItem) + deltaHorizontal);
-						canvasBaseItem.Width -= deltaHorizontal;
-						break;
-					case HorizontalAlignment.Right:
-						deltaHorizontal = Math.Min(-e.HorizontalChange,
-						                           canvasBaseItem.ActualWidth - canvasBaseItem.MinWidth);
-						canvasBaseItem.Width -= deltaHorizontal;
-						break;
-					default:
-						break;
-				}
-			}
+                foreach (CanvasBaseItem item in this.designerCanvas.SelectedItems)
+                {
+                    switch (VerticalAlignment)
+                    {
+                        case VerticalAlignment.Bottom:
+                            dragDeltaVertical = Math.Min(-e.VerticalChange, minDeltaVertical);
+                            item.Height = item.ActualHeight - dragDeltaVertical;
+                            break;
+                        case VerticalAlignment.Top:
+                            dragDeltaVertical = Math.Min(Math.Max(-minTop, e.VerticalChange), minDeltaVertical);
+                            Canvas.SetTop(item, Canvas.GetTop(item) + dragDeltaVertical);
+                            item.Height = item.ActualHeight - dragDeltaVertical;
+                            break;
+                    }
 
-			e.Handled = true;
+                    switch (HorizontalAlignment)
+                    {
+                        case HorizontalAlignment.Left:
+                            dragDeltaHorizontal = Math.Min(Math.Max(-minLeft, e.HorizontalChange), minDeltaHorizontal);
+                            Canvas.SetLeft(item, Canvas.GetLeft(item) + dragDeltaHorizontal);
+                            item.Width = item.ActualWidth - dragDeltaHorizontal;
+                            break;
+                        case HorizontalAlignment.Right:
+                            dragDeltaHorizontal = Math.Min(-e.HorizontalChange, minDeltaHorizontal);
+                            item.Width = item.ActualWidth - dragDeltaHorizontal;
+                            break;
+                    }
+                }
+
+                e.Handled = true;
+            }
 		}
 	}
 }

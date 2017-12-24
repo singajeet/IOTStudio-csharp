@@ -102,12 +102,14 @@
     <Compile Include="Designer\Actions\ResizeThumb.cs" />
     <Compile Include="Designer\Adorners\ResizeAdorner.cs" />
     <Compile Include="Designer\Adorners\ResizeChrome.cs" />
+    <Compile Include="Designer\Adorners\RubberbandAdorner.cs" />
     <Compile Include="Designer\Adorners\SizeAdorner.cs" />
     <Compile Include="Designer\Adorners\SizeChrome.cs" />
-    <Compile Include="Designer\Controls\CanvasBaseItem.xaml.cs">
-      <DependentUpon>CanvasBaseItem.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Designer\Controls\CanvasBaseItem.cs" />
+    <Compile Include="Designer\Controls\DesignerCanvas.cs" />
+    <Compile Include="Designer\Controls\Toolbox.cs" />
+    <Compile Include="Designer\Controls\ToolboxItem.cs" />
+    <Compile Include="Designer\Controls\ZoomBox.cs" />
     <Compile Include="Designer\Decorators\CanvasBaseItemDecorator.cs" />
     <Compile Include="Designer\DesignerHost.xaml.cs">
       <DependentUpon>DesignerHost.xaml</DependentUpon>
@@ -139,11 +141,23 @@
     <Compile Include="Services\Implentation\WPFUIVisualizerService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Designer\Controls\CanvasBaseItem.xaml" />
-    <Page Include="Designer\Controls\Resources\BrushResources.xaml" />
+    <Page Include="Designer\Controls\Resources\BasicShapes.xaml" />
+    <Page Include="Designer\Controls\Resources\Brushes.xaml" />
+    <Page Include="Designer\Controls\Resources\DesignerResources.xaml" />
     <Page Include="Designer\Controls\Resources\CanvasBaseItemStyles.xaml" />
+    <Page Include="Designer\Controls\Resources\Expander.xaml" />
+    <Page Include="Designer\Controls\Resources\FlowChartSymbols.xaml" />
+    <Page Include="Designer\Controls\Resources\RegelungstechnikSymbole.xaml" />
     <Page Include="Designer\Controls\Resources\ResizeChrome.xaml" />
+    <Page Include="Designer\Controls\Resources\ScrollBar.xaml" />
+    <Page Include="Designer\Controls\Resources\ScrollViewer.xaml" />
     <Page Include="Designer\Controls\Resources\SizeChrome.xaml" />
+    <Page Include="Designer\Controls\Resources\Slider.xaml" />
+    <Page Include="Designer\Controls\Resources\StatusBar.xaml" />
+    <Page Include="Designer\Controls\Resources\SymbolStencils.xaml" />
+    <Page Include="Designer\Controls\Resources\Toolbox.xaml" />
+    <Page Include="Designer\Controls\Resources\Tooltip.xaml" />
+    <Page Include="Designer\Controls\Resources\ZoomBox.xaml" />
     <Page Include="Designer\DesignerHost.xaml" />
     <Page Include="Items\Editor\HamburgerMenuEditorView.xaml" />
     <Page Include="Items\Start\HamburgerMenuStartView.xaml" />
@@ -158,6 +172,28 @@
     <None Include="packages.config" />
     <None Include="Resources\Entypo-license.txt" />
     <None Include="Resources\Entypo.ttf" />
+    <Resource Include="Designer\Controls\Resources\Images\attention.png" />
+    <Resource Include="Designer\Controls\Resources\Images\chart1.png" />
+    <Resource Include="Designer\Controls\Resources\Images\chart2.png" />
+    <Resource Include="Designer\Controls\Resources\Images\chart3.png" />
+    <Resource Include="Designer\Controls\Resources\Images\cross.png" />
+    <Resource Include="Designer\Controls\Resources\Images\mail.png" />
+    <Resource Include="Designer\Controls\Resources\Images\new.png" />
+    <Resource Include="Designer\Controls\Resources\Images\newBold.png" />
+    <Resource Include="Designer\Controls\Resources\Images\nuclear.png" />
+    <Resource Include="Designer\Controls\Resources\Images\plus.png" />
+    <Resource Include="Designer\Controls\Resources\Images\ring.png" />
+    <Resource Include="Designer\Controls\Resources\Images\rotateLeft.png" />
+    <Resource Include="Designer\Controls\Resources\Images\rotateRight.png" />
+    <Resource Include="Designer\Controls\Resources\Images\rt1.png" />
+    <Resource Include="Designer\Controls\Resources\Images\rt2.png" />
+    <Resource Include="Designer\Controls\Resources\Images\rt3.png" />
+    <Resource Include="Designer\Controls\Resources\Images\rt4.png" />
+    <Resource Include="Designer\Controls\Resources\Images\rt5.png" />
+    <Resource Include="Designer\Controls\Resources\Images\rt6.png" />
+    <Resource Include="Designer\Controls\Resources\Images\software.png" />
+    <Resource Include="Designer\Controls\Resources\Images\walk.png" />
+    <Resource Include="Designer\Controls\Resources\Images\world.png" />
     <None Include="Resources\WindowsIcons-license.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -173,6 +209,7 @@
     <Folder Include="Items\Editor" />
     <Folder Include="Items\Start" />
     <Folder Include="Designer" />
+    <Folder Include="Designer\Controls\Resources\Images" />
     <Folder Include="Services" />
     <Folder Include="Services\Contracts" />
     <Folder Include="Services\Implentation" />

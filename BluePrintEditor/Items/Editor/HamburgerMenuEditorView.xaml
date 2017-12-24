@@ -46,34 +46,19 @@
 							VerticalAlignment="Top"
 							DockPanel.Dock="Top">
 							<ListBoxItem
-								Margin="1"
+								Margin="1" Selected="SelectToolButton_Selected"
 								x:Name="SelectToolButton">
 								<StackPanel>
 									<icons:PackIconModern
-										Kind="CursorDefault"
+										Kind="PageNew"
 										Width="22"
 										Height="22" />
 									<TextBlock
 										FontSize="16">
-										Selection Tool
+										New
 									</TextBlock>
 								</StackPanel>
-							</ListBoxItem>
-							<ListBoxItem
-								Margin="1"
-								x:Name="EditLayoutButton"
-								HorizontalAlignment="Stretch">
-								<StackPanel>
-									<icons:PackIconModern
-										Kind="EditBox"
-										Width="22"
-										Height="22" />
-									<TextBlock
-										FontSize="16">
-										Edit Layout
-									</TextBlock>
-								</StackPanel>
-							</ListBoxItem>
+							</ListBoxItem>							
 							<ListBoxItem
 								Margin="1"
 								x:Name="AddFeaturesButton"
@@ -90,13 +75,28 @@
 								</StackPanel>
 							</ListBoxItem>
 						</ListBox>
-						<Expander
-							Header="Available Features"
-							DockPanel.Dock="Bottom"
-							Visibility="{Binding FeaturesVisibility}"
-							ExpandDirection="Down"
-							VerticalAlignment="Stretch"
-							Margin="0,5,0,0" />
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+							</Grid.RowDefinitions>
+							<Expander IsExpanded="True" Grid.Row="0"
+	                              Header="Symbols"
+	                              Margin="0,1,0,0"
+							      Visibility="{Binding FeaturesVisibility}"
+	                              Content="{StaticResource SymbolStencils}" />
+		                    <Expander IsExpanded="False" Grid.Row="1"
+		                              Header="Flow Chart"
+		                              Visibility="{Binding FeaturesVisibility}"
+		                              Margin="0,1,0,0"
+		                              Content="{StaticResource FlowChartSymbols}" />
+		                    <Expander IsExpanded="False" Grid.Row="2"
+		                              Header="Regelungstechnik"
+		                              Visibility="{Binding FeaturesVisibility}"
+		                              Margin="0,1,0,0"
+		                              Content="{StaticResource RegelungstechnikSymbole}" />
+						</Grid>
 					</DockPanel>
 					<DockPanel LastChildFill="True" VerticalAlignment="Stretch"
 						Margin="0,2,0,0">
@@ -111,7 +111,7 @@
 			</Controls:FlipView>
 			</Grid>
 		</Controls:SplitView.Pane>
-		<designer:DesignerHost VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>		
+		<designer:DesignerHost x:Name="MyDesignerHost" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>		
 		</Controls:SplitView>
 	</Grid>
 </UserControl>

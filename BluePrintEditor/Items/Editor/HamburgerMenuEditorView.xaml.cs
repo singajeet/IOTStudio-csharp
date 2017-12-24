@@ -30,5 +30,9 @@ namespace BluePrintEditor.Items.Editor
 			vm = new HamburgerMenuEditorItemViewModel();
 			this.DataContext = vm;
 		}
+		void SelectToolButton_Selected(object sender, RoutedEventArgs e)
+		{
+			MyDesignerHost.MyDesignerCanvas.Children.Clear();
+		}
 	}
 }

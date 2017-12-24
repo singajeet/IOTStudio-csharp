@@ -9,6 +9,8 @@
 using System;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Media;
+using BluePrintEditor.Designer.Controls;
 
 namespace BluePrintEditor.Designer.Actions
 {
@@ -17,21 +19,46 @@ namespace BluePrintEditor.Designer.Actions
 	/// </summary>
 	public class MoveThumb : Thumb
 	{
+		CanvasBaseItem canvasBaseItem;
+		DesignerCanvas designerCanvas;
+		
 		public MoveThumb()
 		{
+			DragStarted+= MoveThumb_DragStarted;
 			DragDelta+= MoveThumb_DragDelta;
 		}
 
+		void MoveThumb_DragStarted(object sender, DragStartedEventArgs e)
+		{
+			this.canvasBaseItem = DataContext as CanvasBaseItem;
+			if (this.canvasBaseItem != null) {
+				this.designerCanvas = VisualTreeHelper.GetParent(this.canvasBaseItem) as DesignerCanvas;
+			}
+		}
 		void MoveThumb_DragDelta(object sender, DragDeltaEventArgs e)
 		{
-			ContentControl item = this.DataContext as ContentControl;
-			if (item != null) {
-				
-				double left = Canvas.GetLeft(item);
-				double top = Canvas.GetTop(item);
-				Canvas.SetLeft(item, left + e.HorizontalChange);
-				Canvas.SetTop(item, top + e.VerticalChange);
-			}
+			if (this.canvasBaseItem != null && this.designerCanvas != null && this.canvasBaseItem.IsSelected) {
+				double minLeft = double.MaxValue;
+                double minTop = double.MaxValue;
+
+                foreach (CanvasBaseItem item in this.designerCanvas.SelectedItems)
+                {
+                    minLeft = Math.Min(Canvas.GetLeft(item), minLeft);
+                    minTop = Math.Min(Canvas.GetTop(item), minTop);
+                }
+
+                double deltaHorizontal = Math.Max(-minLeft, e.HorizontalChange);
+                double deltaVertical = Math.Max(-minTop, e.VerticalChange);
+
+                foreach (CanvasBaseItem item in this.designerCanvas.SelectedItems)
+                {
+                    Canvas.SetLeft(item, Canvas.GetLeft(item) + deltaHorizontal);
+                    Canvas.SetTop(item, Canvas.GetTop(item) + deltaVertical);
+                }
+
+                this.designerCanvas.InvalidateMeasure();
+                e.Handled = true;
+			}			
 		}
 	}
 }

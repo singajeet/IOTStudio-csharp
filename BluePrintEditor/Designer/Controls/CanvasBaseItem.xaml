@@ -5,7 +5,7 @@
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="Resources/CanvasBaseItemStyles.xaml" />
-				<ResourceDictionary Source="Resources/BrushResources.xaml" />
+				<ResourceDictionary Source="Resources/DesignerResources.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
