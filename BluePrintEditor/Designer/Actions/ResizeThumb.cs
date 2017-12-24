@@ -38,25 +38,25 @@ namespace BluePrintEditor.Designer.Actions
 			canvasBaseItem = this.DataContext as CanvasBaseItem;
 			if (canvasBaseItem != null) {
 				designerCanvas = VisualTreeHelper.GetParent(canvasBaseItem) as DesignerCanvas;
-//				if (canvas != null) {
-//					AdornerLayer adornerLayer = AdornerLayer.GetAdornerLayer(this.canvas);
-//					if (adornerLayer != null) {
-//						adorner = new SizeAdorner(this.canvasBaseItem);
-//						adornerLayer.Add(adorner);
-//					}
-//				}
+				if (designerCanvas != null) {
+					AdornerLayer adornerLayer = AdornerLayer.GetAdornerLayer(this.designerCanvas);
+					if (adornerLayer != null) {
+						adorner = new SizeAdorner(this.canvasBaseItem);
+						adornerLayer.Add(adorner);
+					}
+				}
 			}
 		}
 
 		void ResizeThumb_DragCompleted(object sender, DragCompletedEventArgs e)
 		{
-//			if (this.adorner != null) {
-//				AdornerLayer adornerLayer = AdornerLayer.GetAdornerLayer(this.canvas);
-//				if (adornerLayer != null) {
-//					adornerLayer.Remove(adorner);
-//				}
-//				this.adorner = null;
-//			}
+			if (this.adorner != null) {
+				AdornerLayer adornerLayer = AdornerLayer.GetAdornerLayer(this.designerCanvas);
+				if (adornerLayer != null) {
+					adornerLayer.Remove(adorner);
+				}
+				this.adorner = null;
+			}
 		}
 		private void ResizeThumb_DragDelta(object sender, DragDeltaEventArgs e)
 		{

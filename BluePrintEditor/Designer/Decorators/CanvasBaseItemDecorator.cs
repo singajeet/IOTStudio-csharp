@@ -46,7 +46,7 @@ namespace BluePrintEditor.Designer.Decorators
                     ContentControl canvasBaseItem = this.DataContext as ContentControl;
                     Canvas canvas = VisualTreeHelper.GetParent(canvasBaseItem) as Canvas;
                     this.adorner = new ResizeAdorner(canvasBaseItem);
-                    adornerLayer.Add(this.adorner);
+					adornerLayer.Add(this.adorner);
 
                     if (this.ShowDecorator)
                     {

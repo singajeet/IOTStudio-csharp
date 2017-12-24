@@ -5,17 +5,17 @@
 		<ResourceDictionary Source="ResizeChrome.xaml"/>
 		<ResourceDictionary Source="SizeChrome.xaml"/>	 	
         <ResourceDictionary Source="Brushes.xaml"/>
-        <ResourceDictionary Source="Expander.xaml"/>
-        <ResourceDictionary Source="ScrollBar.xaml"/>
+<!--        <ResourceDictionary Source="Expander.xaml"/>-->
+<!--        <ResourceDictionary Source="ScrollBar.xaml"/>-->
         <ResourceDictionary Source="ScrollViewer.xaml"/>
         <ResourceDictionary Source="Slider.xaml"/>
         <ResourceDictionary Source="Toolbox.xaml"/>
-        <ResourceDictionary Source="Tooltip.xaml"/>
+<!--        <ResourceDictionary Source="Tooltip.xaml"/>-->
         <ResourceDictionary Source="ZoomBox.xaml"/>
-        <ResourceDictionary Source="StatusBar.xaml"/>
+<!--        <ResourceDictionary Source="StatusBar.xaml"/>-->
         <ResourceDictionary Source="BasicShapes.xaml"/>
-        <ResourceDictionary Source="FlowChartSymbols.xaml"/>
-        <ResourceDictionary Source="RegelungstechnikSymbole.xaml"/>
+<!--        <ResourceDictionary Source="FlowChartSymbols.xaml"/>-->
+<!--        <ResourceDictionary Source="RegelungstechnikSymbole.xaml"/>-->
         <ResourceDictionary Source="SymbolStencils.xaml"/>
 	</ResourceDictionary.MergedDictionaries>
 	<DrawingBrush x:Key="MyGridBrushResource"

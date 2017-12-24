@@ -86,16 +86,6 @@
 	                              Margin="0,1,0,0"
 							      Visibility="{Binding FeaturesVisibility}"
 	                              Content="{StaticResource SymbolStencils}" />
-		                    <Expander IsExpanded="False" Grid.Row="1"
-		                              Header="Flow Chart"
-		                              Visibility="{Binding FeaturesVisibility}"
-		                              Margin="0,1,0,0"
-		                              Content="{StaticResource FlowChartSymbols}" />
-		                    <Expander IsExpanded="False" Grid.Row="2"
-		                              Header="Regelungstechnik"
-		                              Visibility="{Binding FeaturesVisibility}"
-		                              Margin="0,1,0,0"
-		                              Content="{StaticResource RegelungstechnikSymbole}" />
 						</Grid>
 					</DockPanel>
 					<DockPanel LastChildFill="True" VerticalAlignment="Stretch"

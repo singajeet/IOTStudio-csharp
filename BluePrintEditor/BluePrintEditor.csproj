@@ -145,18 +145,12 @@
     <Page Include="Designer\Controls\Resources\Brushes.xaml" />
     <Page Include="Designer\Controls\Resources\DesignerResources.xaml" />
     <Page Include="Designer\Controls\Resources\CanvasBaseItemStyles.xaml" />
-    <Page Include="Designer\Controls\Resources\Expander.xaml" />
-    <Page Include="Designer\Controls\Resources\FlowChartSymbols.xaml" />
-    <Page Include="Designer\Controls\Resources\RegelungstechnikSymbole.xaml" />
     <Page Include="Designer\Controls\Resources\ResizeChrome.xaml" />
-    <Page Include="Designer\Controls\Resources\ScrollBar.xaml" />
     <Page Include="Designer\Controls\Resources\ScrollViewer.xaml" />
     <Page Include="Designer\Controls\Resources\SizeChrome.xaml" />
     <Page Include="Designer\Controls\Resources\Slider.xaml" />
-    <Page Include="Designer\Controls\Resources\StatusBar.xaml" />
     <Page Include="Designer\Controls\Resources\SymbolStencils.xaml" />
     <Page Include="Designer\Controls\Resources\Toolbox.xaml" />
-    <Page Include="Designer\Controls\Resources\Tooltip.xaml" />
     <Page Include="Designer\Controls\Resources\ZoomBox.xaml" />
     <Page Include="Designer\DesignerHost.xaml" />
     <Page Include="Items\Editor\HamburgerMenuEditorView.xaml" />
@@ -167,8 +161,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Designer\Controls\Media\cross.png" />
-    <None Include="Designer\Controls\Media\paint.png" />
     <None Include="packages.config" />
     <None Include="Resources\Entypo-license.txt" />
     <None Include="Resources\Entypo.ttf" />
@@ -200,7 +192,6 @@
     <Folder Include="Commands" />
     <Folder Include="Designer\Controls" />
     <Folder Include="Designer\Actions" />
-    <Folder Include="Designer\Controls\Media" />
     <Folder Include="Designer\Controls\Resources" />
     <Folder Include="Designer\Decorators" />
     <Folder Include="Designer\Adorners" />
