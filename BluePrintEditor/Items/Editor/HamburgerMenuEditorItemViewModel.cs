@@ -11,6 +11,8 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using BluePrintEditor.Utilities;
+using log4net;
 using MahApps.Metro.Controls;
 
 namespace BluePrintEditor.Items.Editor
@@ -20,42 +22,21 @@ namespace BluePrintEditor.Items.Editor
 	/// </summary>
 	public class HamburgerMenuEditorItemViewModel: INotifyPropertyChanged, IDisposable
 	{
-		private ListBoxItem _CommandsBoxSelectedItem;
-		private bool _AddFeatureButtonIsSelected;
-		private Visibility _FeaturesVisibility=Visibility.Hidden;
+		ILog Logger = Log.Get(typeof(HamburgerMenuEditorItemViewModel));
+		
 		public HamburgerMenuEditorItemViewModel()
 		{
 		}
 		
-		public ListBoxItem CommandsBoxSelectedItem {
-			get{ return _CommandsBoxSelectedItem; }
-			set {
-				_CommandsBoxSelectedItem = value; 
-			
-				OnPropertyChanged();
-			}
-		}
 		
-		public bool AddFeatureButtonIsSelected{
-			get { return _AddFeatureButtonIsSelected;  }
-			set{ _AddFeatureButtonIsSelected = value; 
-				FeaturesVisibility = _AddFeatureButtonIsSelected ? Visibility.Visible : Visibility.Hidden;
-				OnPropertyChanged();
-			}
-		}
-		
-		public Visibility FeaturesVisibility{
-			get{ return _FeaturesVisibility; }
-			set{ _FeaturesVisibility = value; 
-				OnPropertyChanged();
-			}
-		}
 
 		#region INotifyPropertyChanged implementation
-		protected void OnPropertyChanged([CallerMemberName]string memberName = null)
+		protected void OnPropertyChanged(object value, [CallerMemberName]string memberName = null)
 		{
 			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(memberName));
+			
+			Logger.DebugF("MainWindowViewModel property [{0}] value changed to [{1}]", memberName, value);
 		}
 		public event PropertyChangedEventHandler PropertyChanged;
 		#endregion
@@ -63,7 +44,7 @@ namespace BluePrintEditor.Items.Editor
 
 		public void Dispose()
 		{
-			throw new NotImplementedException();
+			//throw new NotImplementedException();
 		}
 
 		#endregion

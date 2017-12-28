@@ -1,8 +1,8 @@
 ﻿/*
  * Created by SharpDevelop.
  * User: Admin
- * Date: 12/21/2017
- * Time: 20:09
+ * Date: 12/26/2017
+ * Time: 5:49 PM
  * 
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
@@ -15,32 +15,30 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using BluePrintEditor.Designer.Options;
 using BluePrintEditor.Utilities;
 using log4net;
 
-namespace BluePrintEditor.Items.Editor
+namespace BluePrintEditor.Designer.Canvas
 {
 	/// <summary>
-	/// Interaction logic for HamburgerMenuEditorView.xaml
+	/// Interaction logic for CanvasControl.xaml
 	/// </summary>
-	public partial class HamburgerMenuEditorView : UserControl
+	public partial class CanvasControl : UserControl
 	{
-		ILog Logger = Log.Get(typeof(HamburgerMenuEditorView));
+		ILog Logger = Log.Get(typeof(CanvasControl));
 		
-		HamburgerMenuEditorItemViewModel vm;
-		public HamburgerMenuEditorView()
+		public CanvasControl()
 		{
 			Logger.InstanceCreated();
 			
 			InitializeComponent();
-			vm = new HamburgerMenuEditorItemViewModel();
-			this.DataContext = vm;
-			
-			
+			this.DataContextChanged+= CanvasControl_DataContextChanged;			
 		}
-		void SelectToolButton_Selected(object sender, RoutedEventArgs e)
+
+		void CanvasControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			
+			Logger.DataContextChanged(e);
 		}
 	}
 }

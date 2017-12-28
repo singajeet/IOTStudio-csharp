@@ -1,0 +1,17 @@
+<UserControl x:Name="DesignerCanvas"
+	x:Class="BluePrintEditor.Designer.Canvas.CanvasControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:g="clr-namespace:BluePrintEditor.Designer.Others">
+	<Grid x:Name="RootPanel" Margin="3">
+		<g:GridLinesControl ShowGridLines="{Binding ShowGridLines}"
+							GridLinesThickness="{Binding GridLinesThickness}"
+							GridColor="{Binding GridColor}"
+							GridZIndex="{Binding GridZIndex}"
+							RowCount="{Binding RowCount}"
+							ColumnCount="{Binding ColumnCount}"
+							GridCellSize="{Binding GridCellSize}"/>
+		<Canvas x:Name="MainCanvas" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+		</Canvas>
+	</Grid>
+</UserControl>

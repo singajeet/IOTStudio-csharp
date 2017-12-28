@@ -18,14 +18,7 @@
                 <Controls:WindowCommandsOverlayBehavior>Flyouts</Controls:WindowCommandsOverlayBehavior>
                 <Controls:WindowCommandsOverlayBehavior>HiddenTitleBar</Controls:WindowCommandsOverlayBehavior>
                 <Controls:WindowCommandsOverlayBehavior>Never</Controls:WindowCommandsOverlayBehavior>
-            </x:Array>
-			<ResourceDictionary.MergedDictionaries>
-				<ResourceDictionary
-					Source="pack://application:,,,/MahApps.Metro;component/Styles/VS/Colors.xaml" />
-				<ResourceDictionary
-					Source="pack://application:,,,/MahApps.Metro;component/Styles/VS/Styles.xaml" />
-				
-			</ResourceDictionary.MergedDictionaries>
+            </x:Array>			
 		</ResourceDictionary>
 	</Window.Resources>
 	<Controls:MetroWindow.RightWindowCommands>

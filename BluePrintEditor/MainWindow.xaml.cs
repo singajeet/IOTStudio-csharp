@@ -15,6 +15,8 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using BluePrintEditor.Utilities;
+using log4net;
 using MahApps.Metro.Controls;
 
 namespace BluePrintEditor
@@ -25,8 +27,12 @@ namespace BluePrintEditor
 	public partial class MainWindow : MetroWindow
 	{
 		MainWindowViewModel viewModel;
+		ILog Logger = Log.Get(typeof(MainWindow));
+		
 		public MainWindow()
 		{
+			Logger.InstanceCreated();
+			
 			viewModel = MainWindowViewModel.Instance;
 			
 			InitializeComponent();

@@ -9,6 +9,8 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using BluePrintEditor.Utilities;
+using log4net;
 using MahApps.Metro.Controls;
 
 namespace BluePrintEditor
@@ -18,15 +20,18 @@ namespace BluePrintEditor
 	/// </summary>
 	public class MainWindowViewModel: INotifyPropertyChanged, IDataErrorInfo, IDisposable
 	{
-		private static MainWindowViewModel _Instance;
+		private static MainWindowViewModel _Instance;		
 		private HamburgerMenuItem _HamburgerMenuSelectedItem;
 		private bool _ToolsBoxFlyoutIsOpen;
 		private string _ContentLabel;
 		private string _StatusBarAppStatus = "Ready!";
 		private string _StatusBarMessage = "Welcome to BluePrint Editor";
 		
+		ILog Logger = Log.Get(typeof(MainWindowViewModel));
+		
 		private MainWindowViewModel()
 		{
+			Logger.InstanceCreated();
 		}
 		
 		public static MainWindowViewModel Instance{
@@ -44,6 +49,7 @@ namespace BluePrintEditor
 			get { return this._ContentLabel; }
 			set { this._ContentLabel = value; 
 				OnPropertyChanged();
+				Logger.PropertyChanged(value);
 			}
 		}
 
@@ -52,6 +58,7 @@ namespace BluePrintEditor
 			set { this._HamburgerMenuSelectedItem = value;
 				ContentLabel = ((HamburgerMenuIconItem)this._HamburgerMenuSelectedItem).Label;
 				OnPropertyChanged();
+				Logger.PropertyChanged(value);
 			}
 		}
 		
@@ -59,6 +66,7 @@ namespace BluePrintEditor
 			get { return _StatusBarAppStatus; }
 			set { _StatusBarAppStatus = value; 
 				OnPropertyChanged();
+				Logger.PropertyChanged(value);
 			}
 		}
 			
@@ -66,6 +74,7 @@ namespace BluePrintEditor
 			get{ return _StatusBarMessage; }
 			set { _StatusBarMessage = value; 
 				OnPropertyChanged();
+				Logger.PropertyChanged(value);
 			}
 		}
 		
