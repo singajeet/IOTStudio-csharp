@@ -10,8 +10,10 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Threading;
 using BluePrintEditor.Utilities;
 using log4net;
 using MahApps.Metro;
@@ -52,8 +54,11 @@ namespace BluePrintEditor.Designer.Options
 			this.GridCellSizesSource.Add(20);
 			this.GridCellSizesSource.Add(25);
 			
-			Logger.CollectionCreated(GridCellSizesSource);								
+			Logger.CollectionCreated(GridCellSizesSource);		
+
+			
 		}
+
 		
 		int mouseY;
 		
@@ -117,6 +122,17 @@ namespace BluePrintEditor.Designer.Options
 			set { 
 					gridColor = value; 
 					OnPropertyChanged();					
+				Logger.PropertyChanged(value);
+			}
+		}
+		
+		double gridOpacity;
+		
+		public double GridOpacity {
+			get { return gridOpacity; }
+			set { 
+					gridOpacity = value; 
+					OnPropertyChanged();
 				Logger.PropertyChanged(value);
 			}
 		}

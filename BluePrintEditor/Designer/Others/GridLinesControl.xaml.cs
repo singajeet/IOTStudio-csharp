@@ -8,6 +8,7 @@
  */
 using System;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -16,6 +17,7 @@ using System.Windows.Shapes;
 using BluePrintEditor.Designer.Options;
 using BluePrintEditor.Utilities;
 using log4net;
+using MahApps.Metro.Controls.Dialogs;
 
 namespace BluePrintEditor.Designer.Others
 {
@@ -24,16 +26,17 @@ namespace BluePrintEditor.Designer.Others
 	/// </summary>
 	public partial class GridLinesControl : UserControl
 	{
+		bool IsControlLoaded = false;
 		ILog Logger = Log.Get(typeof(GridLinesControl));
 		
 		public static readonly DependencyProperty GridColorProperty =
 			DependencyProperty.Register("GridColor", typeof(Brush), typeof(GridLinesControl),
-				new FrameworkPropertyMetadata(
+			                            new FrameworkPropertyMetadata(
 			                            	Brushes.Red,
 			                            	new PropertyChangedCallback(OnGridColorChanged) ));
 		
 		public Brush GridColor {
-			get { return (Brush)GetValue(GridColorProperty); }		
+			get { return (Brush)GetValue(GridColorProperty); }
 			set {
 				SetValue(GridColorProperty, value);
 				Logger.PropertyChanged(value);
@@ -62,8 +65,25 @@ namespace BluePrintEditor.Designer.Others
 
 		static void OnGridCellSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
-			((GridLinesControl)d).UpdateGridData();
-			((GridLinesControl)d).Logger.CallbackExecuted();
+			if (((GridLinesControl)d).IsControlLoaded) {
+				((GridLinesControl)d).LoadDesigner();
+				((GridLinesControl)d).Logger.CallbackExecuted();
+			}
+		}
+		
+		public static readonly DependencyProperty GridOpacityProperty =
+			DependencyProperty.Register("GridOpacity", typeof(double), typeof(GridLinesControl),
+			                            new FrameworkPropertyMetadata(0.5,
+			                                                          new PropertyChangedCallback(OnGridOpacityChanged)));
+		
+		public double GridOpacity {
+			get { return (double)GetValue(GridOpacityProperty); }
+			set { SetValue(GridOpacityProperty, value); }
+		}
+
+		static void OnGridOpacityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			((GridLinesControl)d).UpdateGridOpacity();
 		}
 		
 		public static readonly DependencyProperty ShowGridLinesProperty =
@@ -174,7 +194,7 @@ namespace BluePrintEditor.Designer.Others
 		{
 			Logger.InstanceCreated();
 			
-			InitializeComponent();	
+			InitializeComponent();
 			this.DataContextChanged+= GridLinesControl_DataContextChanged;
 			UpdateBindings();
 		}
@@ -210,6 +230,9 @@ namespace BluePrintEditor.Designer.Others
 			Binding gridLinesThicknessBinding = new Binding("GridLinesThickness");
 			this.SetBinding(GridLinesThicknessProperty, gridLinesThicknessBinding);
 			
+			Binding gridOpacityBinding = new Binding("GridOpacity");
+			this.SetBinding(GridOpacityProperty, gridOpacityBinding);
+			
 			Logger.Debug("Bindings have been set on all fields");
 		}
 		
@@ -238,9 +261,10 @@ namespace BluePrintEditor.Designer.Others
 			if (this.GridBorder == null) {
 				this.GridBorder = new Rectangle();
 			}
-				
+			
 			this.GridBorder.Stroke = GridColor ?? Brushes.Red;
 			this.GridBorder.StrokeThickness = GridLinesThickness;
+			this.GridBorder.Opacity = GridOpacity;
 			this.GridBorder.Height = GridHeight;
 			this.GridBorder.Width = GridWidth;
 			this.GridBorder.Visibility = (ShowGridLines ? Visibility.Visible : Visibility.Hidden);
@@ -248,7 +272,7 @@ namespace BluePrintEditor.Designer.Others
 			
 			if(!GridLinesCanvas.Children.Contains(GridBorder))
 				GridLinesCanvas.Children.Add(GridBorder);
-		
+			
 			RowCount = (int)Math.Floor(GridHeight / GridCellSize);
 			ColumnCount = (int)Math.Floor(GridWidth / GridCellSize);
 			
@@ -256,21 +280,23 @@ namespace BluePrintEditor.Designer.Others
 				Cells.Clear();
 			else
 				Cells = new ObservableCollection<GridCell>();
-				
+			
 			HorizontalLines = new Line[RowCount];
 			VerticalLines = new Line[ColumnCount];
+			
 			for (int i = 1; i <= ColumnCount; i++) {
 				for (int j = 1; j <= RowCount; j++) {
 					GridCell cell = new GridCell(i-1, j-1, GridCellSize);
 					Cells.Add(cell);
 					Line hline = new Line();
 					hline.X1 = 0;
-					hline.Y1 = j * GridCellSize; 
+					hline.Y1 = j * GridCellSize;
 					hline.X2 = GridWidth;
-					hline.Y2 = (j * GridCellSize);			
+					hline.Y2 = (j * GridCellSize);
 					
 					hline.Stroke = GridColor ?? Brushes.Red;
 					hline.StrokeThickness = GridLinesThickness;
+					hline.Opacity = GridOpacity;
 					hline.Visibility = (ShowGridLines ? Visibility.Visible : Visibility.Hidden);
 					Panel.SetZIndex(hline, GridZIndex);
 					
@@ -285,24 +311,46 @@ namespace BluePrintEditor.Designer.Others
 				
 				vline.Stroke = GridColor ?? Brushes.Red;
 				vline.StrokeThickness = GridLinesThickness;
+				vline.Opacity = GridOpacity;
 				vline.Visibility = (ShowGridLines ? Visibility.Visible : Visibility.Hidden);
 				Panel.SetZIndex(vline, GridZIndex);
 				
 				VerticalLines[i-1] = vline;
 				GridLinesCanvas.Children.Add(vline);
-			}		
+			}
 			
 			Logger.Debug("==========================Grid Data update completed!==========================");
 			Logger.DebugF("Time taken by update: [{0}]", DateTime.Now.Subtract(startTime).ToString());
+			
+//			if(controller!=null && controller.IsOpen)
+//				controller.CloseAsync();
+		}
+		
+		private void UpdateGridOpacity()
+		{
+			if (this.GridBorder != null)
+				this.GridBorder.Opacity = GridOpacity;
+			
+			for (int j = 0; j < RowCount; j++) {
+				if(HorizontalLines[j]!=null)
+					HorizontalLines[j].Opacity = GridOpacity;
+			}
+			
+			for (int i = 0; i < ColumnCount; i++) {
+				if(VerticalLines[i]!= null)
+					VerticalLines[i].Opacity = GridOpacity;
+			}
+			
+			Logger.DebugF("GridLines Opacity Changed => [{0}]", GridOpacity);
 		}
 		
 		private void ChangeGridVisibility(Visibility visibility)
 		{
 			if(this.GridBorder!=null)
-			this.GridBorder.Visibility = visibility;
+				this.GridBorder.Visibility = visibility;
 			
 			for (int j = 0; j < RowCount; j++) {
-				HorizontalLines[j].Visibility = visibility;				
+				HorizontalLines[j].Visibility = visibility;
 			}
 			
 			for (int i = 0; i < ColumnCount; i++) {
@@ -335,7 +383,7 @@ namespace BluePrintEditor.Designer.Others
 			
 			for (int j = 0; j < RowCount; j++) {
 				if(HorizontalLines[j]!=null)
-					HorizontalLines[j].StrokeThickness = GridLinesThickness;				
+					HorizontalLines[j].StrokeThickness = GridLinesThickness;
 			}
 			
 			for (int i = 0; i < ColumnCount; i++) {
@@ -349,7 +397,7 @@ namespace BluePrintEditor.Designer.Others
 		private void UpdateGridZIndex()
 		{
 			if(this.GridBorder!=null)
-			Panel.SetZIndex(this.GridBorder, GridZIndex);
+				Panel.SetZIndex(this.GridBorder, GridZIndex);
 			
 			for (int j = 0; j < RowCount; j++) {
 				Panel.SetZIndex(HorizontalLines[j], GridZIndex);
@@ -363,9 +411,26 @@ namespace BluePrintEditor.Designer.Others
 		}
 		
 		void GridLinesLayer_Loaded(object sender, RoutedEventArgs e)
-		{	
+		{
+			Logger.MethodCalled();
+			LoadDesigner();
+			IsControlLoaded = true;
+		}
+		
+		
+		BaseMetroDialog busyDialog;
+		
+		async void LoadDesigner(){
+			
+			busyDialog = (BaseMetroDialog)this.Resources["BusyIndicatorDialog"];
+			busyDialog.DialogSettings.ColorScheme = MetroDialogColorScheme.Theme;
+			await MainWindow.Instance.ShowMetroDialogAsync(busyDialog);
+			await Task.Delay(200);
+			
 			Logger.MethodCalled();
 			UpdateGridData();
+			
+			await MainWindow.Instance.HideMetroDialogAsync(busyDialog);
 		}
 		
 		void GridLinesLayer_Unloaded(object sender, RoutedEventArgs e)
@@ -376,9 +441,11 @@ namespace BluePrintEditor.Designer.Others
 		}
 		void GridLinesLayer_SizeChanged(object sender, SizeChangedEventArgs e)
 		{
-			Logger.MethodCalled();
-			UpdateGridData();
-		}		
+			if (IsControlLoaded) {
+				Logger.MethodCalled();
+				LoadDesigner();
+			}
+		}
 		
 	}
 }

@@ -5,6 +5,8 @@
 	xmlns:commands="clr-namespace:BluePrintEditor.Commands"	
 	xmlns:startItem="clr-namespace:BluePrintEditor.Items.Start"
 	xmlns:editorItem="clr-namespace:BluePrintEditor.Items.Editor"
+	xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+	Dialog:DialogParticipation.Register="{Binding}"
 	Title="IOTStudio - Blue Print Editor"
 	Height="800"
 	Width="1000"

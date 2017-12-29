@@ -41,6 +41,9 @@
     <Reference Include="Caliburn.Micro.Platform.Core">
       <HintPath>..\packages\Caliburn.Micro.3.0.1\lib\net45\Caliburn.Micro.Platform.Core.dll</HintPath>
     </Reference>
+    <Reference Include="LoadingIndicators.WPF">
+      <HintPath>..\packages\LoadingIndicators.WPF\LoadingIndicators.WPF.dll</HintPath>
+    </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>

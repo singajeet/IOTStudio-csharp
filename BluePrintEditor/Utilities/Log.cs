@@ -60,6 +60,11 @@ namespace BluePrintEditor.Utilities
 			logger.PropertyChanged(propName, val);
 		}
 		
+		public static void PropertyValue(this ILog logger, string propName, object val)
+		{
+			logger.DebugF("[{0}] Property Value => [{1}]", propName, val);
+		}
+		
 		public static void CollectionCreated(this ILog logger, ICollection collection)
 		{
 			logger.DebugF("Collection Created => [{0}, Count={1}]", collection.GetType().Name, collection.Count);

@@ -45,11 +45,12 @@
 										GridColor="{Binding GridColor}"
 										GridColorsSource="{Binding GridColorsSource}"
 										GridLinesThickness="{Binding GridLinesThickness}"
+										GridOpacity="{Binding GridOpacity}"
 				/>
 			</Border>
 			<Border x:Name="CanvasAreaBorder" Grid.Column="0" Grid.Row="1" BorderBrush="White" BorderThickness="1"
 				Margin="3">
-				<canvas:CanvasControl />
+				<canvas:CanvasControl x:Name="CanvasCtrl" />
 			</Border>
 			<Border x:Name="ToolsAreaBorder" Grid.Column="1" Grid.RowSpan="2" BorderBrush="White" BorderThickness="1"
 				Margin="3">

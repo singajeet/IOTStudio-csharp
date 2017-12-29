@@ -29,6 +29,8 @@ namespace BluePrintEditor
 		MainWindowViewModel viewModel;
 		ILog Logger = Log.Get(typeof(MainWindow));
 		
+		public static MainWindow Instance{ get; internal set; }
+		
 		public MainWindow()
 		{
 			Logger.InstanceCreated();
@@ -37,6 +39,8 @@ namespace BluePrintEditor
 			
 			InitializeComponent();
 			this.DataContext = viewModel;
+			
+			MainWindow.Instance = this;
 		}
 		
 		public static readonly DependencyProperty ToggleFullScreenProperty =
@@ -65,6 +69,12 @@ namespace BluePrintEditor
                     metroWindow.IgnoreTaskbarOnMaximize = false;
                 }
             }
+        }
+        
+        public bool ToggleFullScreen
+        {
+            get { return (bool)GetValue(ToggleFullScreenProperty); }
+            set { SetValue(ToggleFullScreenProperty, value); }
         }
 	}
 }
