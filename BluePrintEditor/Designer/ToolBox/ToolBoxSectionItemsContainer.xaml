@@ -1,0 +1,30 @@
+﻿<UserControl x:Class="BluePrintEditor.Designer.ToolBox.ToolBoxSectionItemsContainer"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:local="clr-namespace:BluePrintEditor.Designer.ToolBox"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<Grid>
+		<ItemsControl  ItemsSource="{Binding ToolBoxItems}">
+			<ItemsControl.Template>
+				<ControlTemplate>
+					<Border Margin="{TemplateBinding Padding}"
+					        BorderThickness="{TemplateBinding BorderThickness}"
+					        BorderBrush="{TemplateBinding BorderBrush}"
+					        Background="{TemplateBinding Background}"
+					        >
+						<ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+					</Border>
+				</ControlTemplate>
+			</ItemsControl.Template>
+			<ItemsControl.ItemsPanel>
+				<ItemsPanelTemplate>
+					<UniformGrid Columns="2" />
+				</ItemsPanelTemplate>
+			</ItemsControl.ItemsPanel>
+			<ItemsControl.ItemTemplate>
+				<DataTemplate>
+					<local:ToolBoxItemControl  />
+				</DataTemplate>
+			</ItemsControl.ItemTemplate>
+		</ItemsControl>		
+	</Grid>
+</UserControl>

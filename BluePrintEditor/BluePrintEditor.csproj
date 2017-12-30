@@ -129,6 +129,22 @@
       <DependentUpon>ToolBoxControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Designer\ToolBox\ToolBoxItem.cs" />
+    <Compile Include="Designer\ToolBox\ToolBoxItemControl.xaml.cs">
+      <DependentUpon>ToolBoxItemControl.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Designer\ToolBox\ToolBoxItems.cs" />
+    <Compile Include="Designer\ToolBox\ToolBoxSection.cs" />
+    <Compile Include="Designer\ToolBox\ToolBoxSectionControl.xaml.cs">
+      <DependentUpon>ToolBoxSectionControl.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Designer\ToolBox\ToolBoxSectionItemsContainer.xaml.cs">
+      <DependentUpon>ToolBoxSectionItemsContainer.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Designer\ToolBox\ToolBoxSections.cs" />
     <Compile Include="Designer\ViewModels\CanvasViewModel.cs" />
     <Compile Include="Items\Commands\AboutCommand.cs" />
     <Compile Include="Items\Commands\HelpCommand.cs" />
@@ -170,6 +186,9 @@
     <Page Include="Designer\Options\OptionsControl.xaml" />
     <Page Include="Designer\Others\GridLinesControl.xaml" />
     <Page Include="Designer\ToolBox\ToolBoxControl.xaml" />
+    <Page Include="Designer\ToolBox\ToolBoxItemControl.xaml" />
+    <Page Include="Designer\ToolBox\ToolBoxSectionControl.xaml" />
+    <Page Include="Designer\ToolBox\ToolBoxSectionItemsContainer.xaml" />
     <Page Include="Items\Editor\HamburgerMenuEditorView.xaml" />
     <Page Include="Items\Start\HamburgerMenuStartView.xaml" />
     <Page Include="Resources\Icons.xaml" />

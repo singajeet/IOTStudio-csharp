@@ -14,11 +14,13 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
+using BluePrintEditor.Designer.ToolBox;
 using BluePrintEditor.Utilities;
 using log4net;
 using MahApps.Metro;
 using System.Linq;
 using MahApps.Metro.Controls;
+using MahApps.Metro.IconPacks;
 
 namespace BluePrintEditor.Designer.Options
 {
@@ -56,7 +58,38 @@ namespace BluePrintEditor.Designer.Options
 			
 			Logger.CollectionCreated(GridCellSizesSource);		
 
+			this.ToolBoxSections = new ToolBoxSections();
+			var s1 = new ToolBoxSection(){ 
+			SectionName="Section1",
+			ToolBoxItems=new ToolBoxItems()
+			};
+			var tb1 = new ToolBoxItem(){ToolTitle="Tool1", IconKind=PackIconModernKind.Tools };
+			var tb2 = new ToolBoxItem(){ToolTitle="Tool2", IconKind=PackIconModernKind.Tools };
+			s1.ToolBoxItems.Add(tb1);
+			s1.ToolBoxItems.Add(tb2);
+			this.ToolBoxSections.Add(s1);
 			
+			var s2 = new ToolBoxSection(){ 
+			SectionName="Section2",
+			ToolBoxItems=new ToolBoxItems()
+			};
+			var tb3 = new ToolBoxItem(){ ToolTitle="Tool3", IconKind=PackIconModernKind.Tools};
+			var tb4 = new ToolBoxItem(){ ToolTitle="Tool4", IconKind=PackIconModernKind.Tools};
+			s2.ToolBoxItems.Add(tb3);
+			s2.ToolBoxItems.Add(tb4);
+			this.ToolBoxSections.Add(s2);
+		}
+		
+		ToolBoxSections toolBoxSections;
+		
+		public ToolBoxSections ToolBoxSections {
+			get {return toolBoxSections; 
+			}
+			set { 
+					toolBoxSections = value; 
+					OnPropertyChanged();
+				Logger.PropertyChanged(value);
+			}
 		}
 
 		

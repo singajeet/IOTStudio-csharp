@@ -1,7 +1,44 @@
 ﻿<UserControl x:Class="BluePrintEditor.Designer.ToolBox.ToolBoxControl"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:local="clr-namespace:BluePrintEditor.Designer.ToolBox"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 	<Grid>
-		
+		<ItemsControl x:Name="ToolBoxTemplate" ItemsSource="{Binding ToolBoxSections}">
+			<ItemsControl.Template>
+				<ControlTemplate>
+					<Border Margin="{TemplateBinding Padding}"
+					        BorderThickness="{TemplateBinding BorderThickness}"
+					        BorderBrush="{TemplateBinding BorderBrush}"
+					        Background="{TemplateBinding Background}"
+					        >
+						<ScrollViewer Padding="{TemplateBinding Padding}"
+						              CanContentScroll="{TemplateBinding ScrollViewer.CanContentScroll}"
+						              Focusable="False"
+						              HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+						              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+						              VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
+							<ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+						</ScrollViewer>
+					</Border>
+					<ControlTemplate.Triggers>
+						<!--<Trigger Property="IsGrouping" Value="false">
+							<Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
+						</Trigger>-->
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</ItemsControl.Template>
+			<ItemsControl.ItemsPanel>
+				<ItemsPanelTemplate>
+					<StackPanel Orientation="Vertical"/>
+				</ItemsPanelTemplate>
+			</ItemsControl.ItemsPanel>
+			<ItemsControl.ItemTemplate>
+				<DataTemplate>
+					<Expander Header="{Binding SectionName}" Margin="1">
+						<local:ToolBoxSectionControl />
+					</Expander>
+				</DataTemplate>
+			</ItemsControl.ItemTemplate>
+		</ItemsControl>
 	</Grid>
 </UserControl>
