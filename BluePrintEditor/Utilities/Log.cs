@@ -65,6 +65,11 @@ namespace BluePrintEditor.Utilities
 			logger.DebugF("[{0}] Property Value => [{1}]", propName, val);
 		}
 		
+		public static void SelectionChanged(this ILog logger, object item)
+		{
+			logger.DebugF("Item [{0}, Type={1}] has been selected", item, item.GetType().Name);
+		}
+		
 		public static void CollectionCreated(this ILog logger, ICollection collection)
 		{
 			logger.DebugF("Collection Created => [{0}, Count={1}]", collection.GetType().Name, collection.Count);

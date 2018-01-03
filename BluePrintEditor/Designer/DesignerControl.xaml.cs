@@ -28,10 +28,21 @@ namespace BluePrintEditor.Designer
 	{
 		ILog Logger = Log.Get(typeof(DesignerControl));
 		
+		public static readonly DependencyProperty IdProperty =
+			DependencyProperty.Register("Id", typeof(Guid), typeof(DesignerControl),
+			                            new FrameworkPropertyMetadata());
+		
+		public Guid Id {
+			get { return (Guid)GetValue(IdProperty); }
+			set { SetValue(IdProperty, value); }
+		}
+		
 		public DesignerControl()
 		{
 			Logger.InstanceCreated();
 			InitializeComponent();
+			Id = Guid.NewGuid();
+			
 			this.DataContextChanged+= DesignerControl_DataContextChanged;
 			CanvasViewModel vm = CanvasViewModel.Instance;	
 			vm.GridCellSize = 10;
@@ -46,5 +57,11 @@ namespace BluePrintEditor.Designer
 		{
 			Logger.DataContextChanged(e);
 		}
+		
+		public override string ToString()
+		{
+			return string.Format("[DesignerControl Id={0}]", Id);
+		}
+
 	}
 }

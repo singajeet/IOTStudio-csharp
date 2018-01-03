@@ -10,17 +10,13 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Threading;
 using BluePrintEditor.Designer.ToolBox;
+using BluePrintEditor.Designer.ToolBox.Interfaces;
 using BluePrintEditor.Utilities;
 using log4net;
 using MahApps.Metro;
 using System.Linq;
-using MahApps.Metro.Controls;
-using MahApps.Metro.IconPacks;
 
 namespace BluePrintEditor.Designer.Options
 {
@@ -32,6 +28,16 @@ namespace BluePrintEditor.Designer.Options
 		private static CanvasViewModel instance = new CanvasViewModel();
 		ILog Logger = Log.Get(typeof(CanvasViewModel));
 		
+		Guid id;
+		
+		public Guid Id {
+			get { return id; }
+			set { 
+					id = value; 
+					OnPropertyChanged();
+			}
+		}
+		
 		public static CanvasViewModel Instance {
 			get {
 				return instance;
@@ -41,6 +47,7 @@ namespace BluePrintEditor.Designer.Options
 		private CanvasViewModel()
 		{
 			Logger.InstanceCreated();
+			Id = Guid.NewGuid();
 			
 			this.GridColorsSource = new ObservableCollection<Brush>( 
 			                                        ThemeManager.Accents
@@ -50,34 +57,52 @@ namespace BluePrintEditor.Designer.Options
 			Logger.CollectionCreated(GridColorsSource);				
 			
 			this.GridCellSizesSource = new ObservableCollection<int>();
-			this.GridCellSizesSource.Add(5);
-			this.GridCellSizesSource.Add(10);
-			this.GridCellSizesSource.Add(15);
-			this.GridCellSizesSource.Add(20);
-			this.GridCellSizesSource.Add(25);
+			string cellSizes = Config.GetGridSetting("GridCellSizes");
+			Logger.PropertyValue("GridCellSizes", cellSizes);
+			
+			foreach (string cellSize in cellSizes.Split(',')) {
+				GridCellSizesSource.Add(int.Parse(cellSize));
+			}
 			
 			Logger.CollectionCreated(GridCellSizesSource);		
-
-			this.ToolBoxSections = new ToolBoxSections();
-			var s1 = new ToolBoxSection(){ 
-			SectionName="Section1",
-			ToolBoxItems=new ToolBoxItems()
-			};
-			var tb1 = new ToolBoxItem(){ToolTitle="Tool1", IconKind=PackIconModernKind.Tools };
-			var tb2 = new ToolBoxItem(){ToolTitle="Tool2", IconKind=PackIconModernKind.Tools };
-			s1.ToolBoxItems.Add(tb1);
-			s1.ToolBoxItems.Add(tb2);
-			this.ToolBoxSections.Add(s1);
 			
-			var s2 = new ToolBoxSection(){ 
-			SectionName="Section2",
-			ToolBoxItems=new ToolBoxItems()
-			};
-			var tb3 = new ToolBoxItem(){ ToolTitle="Tool3", IconKind=PackIconModernKind.Tools};
-			var tb4 = new ToolBoxItem(){ ToolTitle="Tool4", IconKind=PackIconModernKind.Tools};
-			s2.ToolBoxItems.Add(tb3);
-			s2.ToolBoxItems.Add(tb4);
-			this.ToolBoxSections.Add(s2);
+			ObservableCollection<IToolItem> items = new ObservableCollection<IToolItem>(ToolBoxItemLoader
+			                                                                            .Instance
+			                                                                            .ToolBoxItems);
+			
+			
+			ObservableCollection<string> sections = ToolBoxItemLoader.Instance.Sections;
+			
+			this.ToolBoxSections = new ToolBoxSections();
+			foreach (string section in sections) {
+				if (!string.IsNullOrEmpty(section)) {
+					var sectionObject = new ToolBoxSection();
+					sectionObject.SectionName = section;
+					Logger.PropertyValue("SectionName", section);
+				
+					var categorizedItems = items.Where((i => i.Category != null && i.Category.Equals(section))).ToList();
+					foreach (IToolItem item in categorizedItems) {
+						if (!item.GetType().Name.Equals("BaseToolBoxItem"))
+							sectionObject.ToolBoxItems.Add(item);
+					}
+				
+					this.ToolBoxSections.Add(sectionObject);
+				}
+			}
+			
+			//Handle case with Empty or Null categories
+			var emptyCategoryItems = items.Where(i => (i.Category == null || i.Category.Equals(string.Empty))).ToList();
+			//Remove BaseToolBoxItem entry from the list
+			emptyCategoryItems.RemoveAll(i => i.Name.Equals("BaseToolBoxItem"));
+			
+			if (emptyCategoryItems.Count > 0) {
+				var emptySection = new ToolBoxSection();
+				emptySection.SectionName = "<Blank>";
+				foreach (IToolItem item in emptyCategoryItems) {
+					emptySection.ToolBoxItems.Add(item);					
+				}
+				ToolBoxSections.Add(emptySection);
+			}
 		}
 		
 		ToolBoxSections toolBoxSections;
@@ -236,5 +261,11 @@ namespace BluePrintEditor.Designer.Options
 		}
 		
 		#endregion
+		
+		public override string ToString()
+		{
+			return string.Format("[CanvasViewModel Id={0}]", id);
+		}
+
 	}
 }

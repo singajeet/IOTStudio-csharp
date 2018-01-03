@@ -24,19 +24,29 @@ namespace BluePrintEditor.Items.Editor
 	{
 		ILog Logger = Log.Get(typeof(HamburgerMenuEditorItemViewModel));
 		
+		Guid id;
+		
+		public Guid Id {
+			get { return id; }
+			set { 
+					id = value; 
+					OnPropertyChanged();
+				Logger.PropertyChanged(value);
+			}
+		}
+		
 		public HamburgerMenuEditorItemViewModel()
 		{
+			Id = Guid.NewGuid();
 		}
 		
 		
 
 		#region INotifyPropertyChanged implementation
-		protected void OnPropertyChanged(object value, [CallerMemberName]string memberName = null)
+		protected void OnPropertyChanged([CallerMemberName]string memberName = null)
 		{
 			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(memberName));
-			
-			Logger.DebugF("MainWindowViewModel property [{0}] value changed to [{1}]", memberName, value);
 		}
 		public event PropertyChangedEventHandler PropertyChanged;
 		#endregion
@@ -48,5 +58,11 @@ namespace BluePrintEditor.Items.Editor
 		}
 
 		#endregion
+		
+		public override string ToString()
+		{
+			return string.Format("[HamburgerMenuEditorItemViewModel Id={0}]", id);
+		}
+
 	}
 }

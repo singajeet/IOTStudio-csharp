@@ -9,18 +9,35 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using BluePrintEditor.Designer.ToolBox.Interfaces;
 using BluePrintEditor.Utilities;
 using log4net;
 using MahApps.Metro.IconPacks;
 
-namespace BluePrintEditor.Designer.ToolBox
+/**********************************************
+ * Sample ToolBoxItem
+ * 		Uncomment the "IToolItem" interface
+ * 		if you are going to use this sample
+ * 		code
+ * ********************************************/
+namespace BluePrintEditor.Designer.ToolBox.Items
 {
 	/// <summary>
 	/// Description of ToolBoxItem.
 	/// </summary>
-	public class ToolBoxItem : INotifyPropertyChanged
+	public class BaseToolBoxItem : IToolItem, INotifyPropertyChanged 
 	{
-		ILog Logger = Log.Get(typeof(ToolBoxItem));
+		ILog Logger = Log.Get(typeof(BaseToolBoxItem));
+		
+		Guid id;
+		
+		public Guid Id {
+			get { return id; }
+			set { 
+					id = value; 
+					OnPropertyChanged();
+			}
+		}
 		
 		string name;
 		
@@ -44,6 +61,16 @@ namespace BluePrintEditor.Designer.ToolBox
 			}
 		}
 		
+		string description;
+		
+		public string Description { 
+			get { return description; } 
+			set { description = value; 
+				OnPropertyChanged();
+				Logger.PropertyChanged(value);
+			}
+		}
+		
 		Type toolCommandType;
 		
 		public Type ToolCommandType {
@@ -52,6 +79,17 @@ namespace BluePrintEditor.Designer.ToolBox
 					toolCommandType = value; 
 					OnPropertyChanged();
 				Logger.PropertyChanged(value);
+			}
+		}
+		
+		string category;
+		
+		public string Category {
+			get { return category; }
+			set { 
+					category = value; 
+					OnPropertyChanged();
+					Logger.PropertyChanged(value);
 			}
 		}
 		
@@ -76,9 +114,10 @@ namespace BluePrintEditor.Designer.ToolBox
 			}
 		}
 		
-		public ToolBoxItem()
+		public BaseToolBoxItem()
 		{
 			Logger.InstanceCreated();
+			Id = Guid.NewGuid();
 		}
 
 		protected void OnPropertyChanged([CallerMemberName]string memberName = null)
@@ -92,5 +131,11 @@ namespace BluePrintEditor.Designer.ToolBox
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		#endregion
+		
+		public override string ToString()
+		{
+			return string.Format("[BaseToolBoxItem Id={0}, Name={1}, ToolCommandType={2}]", id, name, toolCommandType);
+		}
+
 	}
 }

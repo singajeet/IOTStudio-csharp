@@ -28,11 +28,21 @@ namespace BluePrintEditor.Designer.Options
 	{
 		ILog Logger = Log.Get(typeof(OptionsControl));
 		
+		public static readonly DependencyProperty IdProperty =
+			DependencyProperty.Register("Id", typeof(Guid), typeof(OptionsControl),
+			                            new FrameworkPropertyMetadata());
+		
+		public Guid Id {
+			get { return (Guid)GetValue(IdProperty); }
+			set { SetValue(IdProperty, value); }
+		}
+		
 		public OptionsControl()
 		{
-			Logger.InstanceCreated();
-			
+			Logger.InstanceCreated();			
 			InitializeComponent();
+			
+			Id = Guid.NewGuid();
 			this.DataContextChanged+= OptionsControl_DataContextChanged;
 			this.Unloaded+= OptionsControl_Unloaded;
 			this.Loaded+= OptionsControl_Loaded;
@@ -156,5 +166,11 @@ namespace BluePrintEditor.Designer.Options
 			get { return (double)GetValue(GridOpacityProperty); }
 			set { SetValue(GridOpacityProperty, value); }
 		}
+		
+		public override string ToString()
+		{
+			return string.Format("[OptionsControl Id={0}]", Id);
+		}
+
 	}
 }

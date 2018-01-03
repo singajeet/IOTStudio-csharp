@@ -7,14 +7,8 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 
 namespace BluePrintEditor.Designer.ToolBox
 {
@@ -23,9 +17,24 @@ namespace BluePrintEditor.Designer.ToolBox
 	/// </summary>
 	public partial class ToolBoxSectionControl : UserControl
 	{
+		public static readonly DependencyProperty IdProperty =
+			DependencyProperty.Register("Id", typeof(Guid), typeof(ToolBoxSectionControl),
+			                            new FrameworkPropertyMetadata());
+		
+		public Guid Id {
+			get { return (Guid)GetValue(IdProperty); }
+			set { SetValue(IdProperty, value); }
+		}
 		public ToolBoxSectionControl()
 		{
 			InitializeComponent();
+			Id = Guid.NewGuid();
 		}
+		
+		public override string ToString()
+		{
+			return string.Format("[ToolBoxSectionControl Id={0}]", Id);
+		}
+
 	}
 }

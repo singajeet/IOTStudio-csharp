@@ -9,6 +9,7 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using BluePrintEditor.Utilities;
 using log4net;
 using MahApps.Metro.Controls;
@@ -26,12 +27,25 @@ namespace BluePrintEditor
 		private string _ContentLabel;
 		private string _StatusBarAppStatus = "Ready!";
 		private string _StatusBarMessage = "Welcome to BluePrint Editor";
+		private Visibility _ProgressBarVisibility = Visibility.Hidden;
+		private double _ProgressBarValue = 100;
+		
+		Guid id;
+		
+		public Guid Id {
+			get { return id; }
+			set { 
+					id = value; 
+					OnPropertyChanged();
+			}
+		}
 		
 		ILog Logger = Log.Get(typeof(MainWindowViewModel));
 		
 		private MainWindowViewModel()
 		{
 			Logger.InstanceCreated();
+			Id = Guid.NewGuid();
 		}
 		
 		public static MainWindowViewModel Instance{
@@ -78,6 +92,22 @@ namespace BluePrintEditor
 			}
 		}
 		
+		public Visibility ProgressBarVisibility{
+			get { return _ProgressBarVisibility; }
+			set { _ProgressBarVisibility = value; 
+				OnPropertyChanged();
+				Logger.PropertyChanged(value);
+			}
+		}
+		
+		public double ProgressBarValue{
+			get { return _ProgressBarValue; }
+			set { _ProgressBarValue = value; 
+				OnPropertyChanged();
+				Logger.PropertyChanged(value);
+			}
+		}
+		
 		#region INotifyPropertyChanged implementation
 		public event PropertyChangedEventHandler PropertyChanged;
 		
@@ -108,5 +138,11 @@ namespace BluePrintEditor
 		}
 
 		#endregion
+		
+		public override string ToString()
+		{
+			return string.Format("[MainWindowViewModel Id={0}]", id);
+		}
+
 	}
 }

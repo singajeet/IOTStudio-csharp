@@ -14,17 +14,12 @@
 						<ScrollViewer Padding="{TemplateBinding Padding}"
 						              CanContentScroll="{TemplateBinding ScrollViewer.CanContentScroll}"
 						              Focusable="False"
-						              HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+						              HorizontalScrollBarVisibility="Auto"
 						              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-						              VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
+						              VerticalScrollBarVisibility="Auto">
 							<ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
 						</ScrollViewer>
 					</Border>
-					<ControlTemplate.Triggers>
-						<!--<Trigger Property="IsGrouping" Value="false">
-							<Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
-						</Trigger>-->
-					</ControlTemplate.Triggers>
 				</ControlTemplate>
 			</ItemsControl.Template>
 			<ItemsControl.ItemsPanel>

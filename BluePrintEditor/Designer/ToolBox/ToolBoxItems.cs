@@ -8,6 +8,7 @@
  */
 using System;
 using System.Collections.ObjectModel;
+using BluePrintEditor.Designer.ToolBox.Interfaces;
 using BluePrintEditor.Utilities;
 using log4net;
 
@@ -16,7 +17,7 @@ namespace BluePrintEditor.Designer.ToolBox
 	/// <summary>
 	/// Description of ToolBoxItems.
 	/// </summary>
-	public class ToolBoxItems : ObservableCollection<ToolBoxItem>
+	public class ToolBoxItems : ObservableCollection<IToolItem>
 	{
 		ILog Logger = Log.Get(typeof(ToolBoxItems));
 		

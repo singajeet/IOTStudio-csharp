@@ -18,7 +18,7 @@ namespace BluePrintEditor.Commands
 	public static class AddFeaturesCommand
 	{
 		public static readonly RoutedCommand Command = new RoutedCommand();
-		
+				
 		static AddFeaturesCommand()
 		{
 			Application.Current.MainWindow.CommandBindings.Add(new CommandBinding(Command, Execute, CanExecute));

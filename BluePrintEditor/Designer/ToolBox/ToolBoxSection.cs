@@ -25,6 +25,16 @@ namespace BluePrintEditor.Designer.ToolBox
 	{
 		ILog Logger = Log.Get(typeof(ToolBoxSection));
 		
+		Guid id;
+		
+		public Guid Id {
+			get { return id; }
+			set { 
+					id = value; 
+					OnPropertyChanged();
+			}
+		}
+		
 		string sectionName;
 		
 		public string SectionName {
@@ -39,7 +49,11 @@ namespace BluePrintEditor.Designer.ToolBox
 		ToolBoxItems toolBoxItems;
 		
 		public ToolBoxItems ToolBoxItems {
-			get { return toolBoxItems; }
+			get {
+				if (toolBoxItems == null)
+					toolBoxItems = new ToolBoxItems();
+				return toolBoxItems; 
+			}
 			set { 
 					toolBoxItems = value;
 					OnPropertyChanged();
@@ -50,6 +64,7 @@ namespace BluePrintEditor.Designer.ToolBox
 		public ToolBoxSection()
 		{
 			Logger.InstanceCreated();
+			Id = Guid.NewGuid();
 		}
 
 		protected void OnPropertyChanged([CallerMemberName]string memberName = null)
@@ -63,5 +78,11 @@ namespace BluePrintEditor.Designer.ToolBox
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		#endregion
+		
+		public override string ToString()
+		{
+			return string.Format("[ToolBoxSection Id={0}, SectionName={1}]", id, sectionName);
+		}
+
 	}
 }

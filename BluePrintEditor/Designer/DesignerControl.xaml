@@ -1,17 +1,14 @@
-<UserControl x:Name="DesignerControlRootElement" x:Class="BluePrintEditor.Designer.DesignerControl"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:canvas="clr-namespace:BluePrintEditor.Designer.Canvas"
-	xmlns:toolbox="clr-namespace:BluePrintEditor.Designer.ToolBox"
-	xmlns:options="clr-namespace:BluePrintEditor.Designer.Options"
->
+﻿<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+	x:Name="DesignerControlRootElement"
+	x:Class="BluePrintEditor.Designer.DesignerControl" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:canvas="clr-namespace:BluePrintEditor.Designer.Canvas" xmlns:toolbox="clr-namespace:BluePrintEditor.Designer.ToolBox" xmlns:options="clr-namespace:BluePrintEditor.Designer.Options">
 	<UserControl.Resources>
 		<ResourceDictionary>
-			<ResourceDictionary.MergedDictionaries>               
-				<ResourceDictionary 
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary
 					Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
-                <ResourceDictionary 
-                	Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseDark.xaml" />
+				<ResourceDictionary
+					Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseDark.xaml" />
 				<ResourceDictionary
 					Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
 				<ResourceDictionary
@@ -21,40 +18,73 @@
 				<ResourceDictionary
 					Source="pack://application:,,,/MahApps.Metro;component/Styles/VS/Colors.xaml" />
 				<ResourceDictionary
-					Source="pack://application:,,,/MahApps.Metro;component/Styles/VS/Styles.xaml" />							
-		 		<ResourceDictionary 
-		 			Source="pack://application:,,,/MahApps.Metro;component/Styles/FlatSlider.xaml" />
-            </ResourceDictionary.MergedDictionaries>
+					Source="pack://application:,,,/MahApps.Metro;component/Styles/VS/Styles.xaml" />
+				<ResourceDictionary
+					Source="pack://application:,,,/MahApps.Metro;component/Styles/FlatSlider.xaml" />
+			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
 	<Grid>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="48" />
-			<RowDefinition Height="*" />
+			<RowDefinition
+				Height="48" />
+			<RowDefinition
+				Height="*" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="*" />
-			<ColumnDefinition Width="250" />
+			<ColumnDefinition
+				Width="*" />
+			<ColumnDefinition
+				Width="9" />
+			<ColumnDefinition
+				Width="Auto" MinWidth="180" />
 		</Grid.ColumnDefinitions>
-			<Border x:Name="OptionsAreaBorder" VerticalAlignment="Center" Grid.Column="0" Grid.Row="0" BorderBrush="White" BorderThickness="1"
-				Margin="3">
-				<options:OptionsControl x:Name="GridOptions"
-										ShowGridLines="{Binding ShowGridLines}"
-										GridCellSize="{Binding GridCellSize}"
-										GridCellSizesSource="{Binding GridCellSizesSource}"
-										GridColor="{Binding GridColor}"
-										GridColorsSource="{Binding GridColorsSource}"
-										GridLinesThickness="{Binding GridLinesThickness}"
-										GridOpacity="{Binding GridOpacity}"
-				/>
-			</Border>
-			<Border x:Name="CanvasAreaBorder" Grid.Column="0" Grid.Row="1" BorderBrush="White" BorderThickness="1"
-				Margin="3">
-				<canvas:CanvasControl x:Name="CanvasCtrl" />
-			</Border>
-			<Border x:Name="ToolsAreaBorder" Grid.Column="1" Grid.RowSpan="2" BorderBrush="White" BorderThickness="1"
-				Margin="3">
-				<toolbox:ToolBoxControl />
-			</Border>		
+		<Border
+			x:Name="OptionsAreaBorder"
+			VerticalAlignment="Center"
+			Grid.Column="0"
+			Grid.Row="0"
+			BorderBrush="White"
+			BorderThickness="1"
+			Margin="3">
+			<options:OptionsControl
+				x:Name="GridOptions"
+				ShowGridLines="{Binding ShowGridLines}"
+				GridCellSize="{Binding GridCellSize}"
+				GridCellSizesSource="{Binding GridCellSizesSource}"
+				GridColor="{Binding GridColor}"
+				GridColorsSource="{Binding GridColorsSource}"
+				GridLinesThickness="{Binding GridLinesThickness}"
+				GridOpacity="{Binding GridOpacity}" />
+		</Border>
+		<Border
+			x:Name="CanvasAreaBorder"
+			Grid.Column="0"
+			Grid.Row="1"
+			BorderBrush="White"
+			BorderThickness="1"
+			Margin="3">
+			<canvas:CanvasControl
+				x:Name="CanvasCtrl" />
+		</Border>		
+		<GridSplitter
+			x:Name="GridSplitterArea"
+			Grid.Column="1"
+			Grid.RowSpan="2"
+			Width="4"	
+			Margin="3,3,3,3"			
+			ResizeDirection="Columns"
+			HorizontalAlignment="Center"
+			VerticalAlignment="Stretch"				
+			ShowsPreview="True" />
+		<Border
+			x:Name="ToolsAreaBorder"
+			Grid.Column="2"
+			Grid.RowSpan="2"
+			BorderBrush="White"
+			BorderThickness="1"
+			Margin="3">
+			<toolbox:ToolBoxControl />
+		</Border>
 	</Grid>
 </UserControl>

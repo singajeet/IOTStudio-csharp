@@ -15,6 +15,8 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using BluePrintEditor.Utilities;
+using log4net;
 
 namespace BluePrintEditor.Items.Start
 {
@@ -23,9 +25,27 @@ namespace BluePrintEditor.Items.Start
 	/// </summary>
 	public partial class HamburgerMenuStartView : UserControl
 	{
+		ILog Logger = Log.Get(typeof(HamburgerMenuStartView));
+		
+		Guid id;
+		
+		public Guid Id {
+			get { return id; }
+			set { 
+					id = value; 
+				Logger.PropertyChanged(value);
+			}
+		}
 		public HamburgerMenuStartView()
 		{
 			InitializeComponent();
+			Id = Guid.NewGuid();
 		}
+		
+		public override string ToString()
+		{
+			return string.Format("[HamburgerMenuStartView Id={0}]", id);
+		}
+
 	}
 }

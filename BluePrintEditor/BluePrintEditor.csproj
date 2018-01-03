@@ -69,6 +69,7 @@
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -115,7 +116,6 @@
       <DependentUpon>DesignerControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Designer\Options\ColorMenuData.cs" />
     <Compile Include="Designer\Options\OptionsControl.xaml.cs">
       <DependentUpon>OptionsControl.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -125,15 +125,21 @@
       <DependentUpon>GridLinesControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Designer\ToolBox\Interfaces\IToolItem.cs" />
+    <Compile Include="Designer\ToolBox\Items\BaseToolBoxItem.cs" />
+    <Compile Include="Designer\ToolBox\Items\FeatureToolBoxItem.cs" />
+    <Compile Include="Designer\ToolBox\Items\GridToolBoxItem.cs" />
+    <Compile Include="Designer\ToolBox\Items\PointerToolBoxItem.cs" />
     <Compile Include="Designer\ToolBox\ToolBoxControl.xaml.cs">
       <DependentUpon>ToolBoxControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Designer\ToolBox\ToolBoxItem.cs" />
+    <Compile Include="Designer\ToolBox\ToolBoxHelper.cs" />
     <Compile Include="Designer\ToolBox\ToolBoxItemControl.xaml.cs">
       <DependentUpon>ToolBoxItemControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Designer\ToolBox\ToolBoxItemLoader.cs" />
     <Compile Include="Designer\ToolBox\ToolBoxItems.cs" />
     <Compile Include="Designer\ToolBox\ToolBoxSection.cs" />
     <Compile Include="Designer\ToolBox\ToolBoxSectionControl.xaml.cs">
@@ -173,12 +179,15 @@
     <Compile Include="Services\Contracts\IUIVisualizerService.cs" />
     <Compile Include="Services\Implentation\WPFMessageBoxService.cs" />
     <Compile Include="Services\Implentation\WPFUIVisualizerService.cs" />
+    <Compile Include="Utilities\ObjectFactory.cs" />
+    <Compile Include="Utilities\Config.cs" />
     <Compile Include="Utilities\ConverterIntToString.cs" />
     <Compile Include="Utilities\ConverterStringToInt.cs" />
     <Compile Include="Utilities\Log.cs" />
     <Compile Include="Utilities\PropertyAttribute.cs" />
     <Compile Include="Utilities\PropertyGridHelper.cs" />
     <Compile Include="Utilities\PropertyHelper.cs" />
+    <Compile Include="Utilities\StatusBarHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Designer\Canvas\CanvasControl.xaml" />
@@ -196,7 +205,9 @@
     <Page Include="MainWindow.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="log4net.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -209,10 +220,11 @@
     <Folder Include="Designer\Commands" />
     <Folder Include="Designer\Canvas" />
     <Folder Include="Designer\CanvasItems" />
+    <Folder Include="Designer\ToolBox\Interfaces" />
+    <Folder Include="Designer\ToolBox\Items" />
     <Folder Include="Designer\ViewModels" />
     <Folder Include="Designer\Others" />
     <Folder Include="Designer\Options" />
-    <Folder Include="Designer\ToolBoxItems" />
     <Folder Include="Designer\ToolBox" />
     <Folder Include="Items" />
     <Folder Include="Items\Editor" />

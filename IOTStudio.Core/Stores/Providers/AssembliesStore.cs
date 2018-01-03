@@ -13,6 +13,7 @@ using System.IO;
 using System.Reflection;
 using IOTStudio.Core.Interfaces;
 using IOTStudio.Core.Stores.Logs;
+using System.Linq;
 
 namespace IOTStudio.Core.Stores.Providers
 {
@@ -56,7 +57,7 @@ namespace IOTStudio.Core.Stores.Providers
 			Logger.Debug("Loading assembly from the following path: {0}", fileName);
 			return Assembly.LoadFrom(fileName);
 		}		
-		
+				
 		public ObservableCollection<T> GetCollectionOfObjects<T>(string path)
 		{
 			Logger.Debug("Creating object instances of type {0} from the configured path", typeof(T));
@@ -80,9 +81,12 @@ namespace IOTStudio.Core.Stores.Providers
 							Logger.Debug("Checking whether type {0} matches the required type", type.FullName);
 						
 							if (typeof(T).IsInterface) {
+								
 								if (type.GetInterface(typeof(T).FullName) != null) {
 								
-									T instance = (T)Activator.CreateInstance(type);
+									object obj = Activator.CreateInstance(type);									
+									T instance = (T)obj;
+									
 									if (instance != null) {
 										collection.Add(instance);
 										Logger.Debug("Type {0} matches and is added to collection", type);

@@ -29,11 +29,21 @@ namespace BluePrintEditor
 		MainWindowViewModel viewModel;
 		ILog Logger = Log.Get(typeof(MainWindow));
 		
+		public static readonly DependencyProperty IdProperty =
+			DependencyProperty.Register("Id", typeof(Guid), typeof(MainWindow),
+			                            new FrameworkPropertyMetadata());
+		
+		public Guid Id {
+			get { return (Guid)GetValue(IdProperty); }
+			set { SetValue(IdProperty, value); }
+		}
+		
 		public static MainWindow Instance{ get; internal set; }
 		
 		public MainWindow()
 		{
 			Logger.InstanceCreated();
+			Id = Guid.NewGuid();
 			
 			viewModel = MainWindowViewModel.Instance;
 			
@@ -76,5 +86,11 @@ namespace BluePrintEditor
             get { return (bool)GetValue(ToggleFullScreenProperty); }
             set { SetValue(ToggleFullScreenProperty, value); }
         }
+        
+		public override string ToString()
+		{
+			return string.Format("[MainWindow Id={0}]", Id);
+		}
+
 	}
 }

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Windows;
+using BluePrintEditor.Utilities;
+using log4net;
 
 
 
@@ -10,6 +12,22 @@ namespace BluePrintEditor.Services
     /// </summary>
     public class WPFMessageBoxService : IMessageBoxService
     {
+		ILog Logger = Log.Get(typeof(WPFMessageBoxService));
+		
+    	Guid id;
+    	
+    	public Guid Id {
+    		get { return id; }
+    		set { 
+    				id = value; 
+    		}
+    	}
+    	
+		public WPFMessageBoxService()
+		{
+			Logger.InstanceCreated();
+			Id = Guid.NewGuid();
+		}
         #region IMessageBoxService Members
 
         /// <summary>
@@ -385,6 +403,11 @@ namespace BluePrintEditor.Services
             return customDialogResults;
         }
         #endregion
+
+		public override string ToString()
+		{
+			return string.Format("[WPFMessageBoxService Id={0}]", id);
+		}
 
     }
 }

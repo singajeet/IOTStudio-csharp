@@ -15,9 +15,25 @@ namespace BluePrintEditor.Items.Editor
 	/// </summary>
 	public class HamburgerMenuEditorViewItem: HamburgerMenuCustomBaseItem
 	{
+		Guid id;
+		
+		public Guid Id {
+			get { return id; }
+			set { 
+					id = value; 
+					OnPropertyChanged();
+			}
+		}
 		public HamburgerMenuEditorViewItem()
 		{ 
+			Id = Guid.NewGuid();
 			_View = new HamburgerMenuEditorView();
 		}
+		
+		public override string ToString()
+		{
+			return string.Format("[HamburgerMenuEditorViewItem Id={0}]", id);
+		}
+
 	}
 }

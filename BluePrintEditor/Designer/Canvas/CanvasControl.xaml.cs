@@ -28,11 +28,21 @@ namespace BluePrintEditor.Designer.Canvas
 	{
 		ILog Logger = Log.Get(typeof(CanvasControl));
 		
+		public static readonly DependencyProperty IdProperty =
+			DependencyProperty.Register("Id", typeof(Guid), typeof(CanvasControl),
+			                            new FrameworkPropertyMetadata());
+		
+		public Guid Id {
+			get { return (Guid)GetValue(IdProperty); }
+			set { SetValue(IdProperty, value); }
+		}
+		
 		public CanvasControl()
 		{
-			Logger.InstanceCreated();
-			
+			Logger.InstanceCreated();			
 			InitializeComponent();
+			
+			Id = Guid.NewGuid();
 			this.DataContextChanged+= CanvasControl_DataContextChanged;			
 		}
 
@@ -40,5 +50,11 @@ namespace BluePrintEditor.Designer.Canvas
 		{
 			Logger.DataContextChanged(e);
 		}
+		
+		public override string ToString()
+		{
+			return string.Format("[CanvasControl Id={0}]", Id);
+		}
+
 	}
 }

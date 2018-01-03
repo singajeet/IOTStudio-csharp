@@ -27,10 +27,20 @@ namespace BluePrintEditor.Items.Editor
 	{
 		ILog Logger = Log.Get(typeof(HamburgerMenuEditorView));
 		
+		public static readonly DependencyProperty IdProperty =
+			DependencyProperty.Register("Id", typeof(Guid), typeof(HamburgerMenuEditorView),
+			                            new FrameworkPropertyMetadata());
+		
+		public Guid Id {
+			get { return (Guid)GetValue(IdProperty); }
+			set { SetValue(IdProperty, value); }
+		}
+		
 		HamburgerMenuEditorItemViewModel vm;
 		public HamburgerMenuEditorView()
 		{
 			Logger.InstanceCreated();
+			Id = Guid.NewGuid();
 			
 			InitializeComponent();
 			vm = new HamburgerMenuEditorItemViewModel();
@@ -42,5 +52,11 @@ namespace BluePrintEditor.Items.Editor
 		{
 			
 		}
+		
+		public override string ToString()
+		{
+			return string.Format("[HamburgerMenuEditorView Id={0}]", Id);
+		}
+
 	}
 }
