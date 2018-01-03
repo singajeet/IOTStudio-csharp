@@ -19,7 +19,7 @@ namespace BluePrintEditor.Designer.ToolBox.Items
 		{
 			this.Name = "PointerToolBoxItem";
 			this.ToolTitle = "Pointer";
-			//this.IconKind = MahApps.Metro.IconPacks.PackIconModernKind.CursorDefault;
+			this.IconKind = MahApps.Metro.IconPacks.PackIconModernKind.CursorDefault;
 			this.Category = "Selection";
 			this.Description = "A selection tool";
 		}

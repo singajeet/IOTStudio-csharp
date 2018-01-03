@@ -242,7 +242,7 @@ namespace BluePrintEditor.Designer.Others
 			}
 		}
 		
-		private async void UpdateGridData()
+		private void UpdateGridData()
 		{
 			ClearCanvas();
 			
@@ -331,7 +331,7 @@ namespace BluePrintEditor.Designer.Others
 			Logger.DebugF("Grid Visibility Changed => [{0}]", visibility.ToString());
 		}
 		
-		private async void UpdateGridLinesColor()
+		private void UpdateGridLinesColor()
 		{
 			if (this.GridBorder != null)
 				this.GridBorder.Stroke = GridColor ?? Brushes.Red;
@@ -347,7 +347,7 @@ namespace BluePrintEditor.Designer.Others
 			
 		}
 		
-		private async void UpdateGridLinesThickness()
+		private void UpdateGridLinesThickness()
 		{
 			if (this.GridBorder != null)
 				this.GridBorder.StrokeThickness = GridLinesThickness;
@@ -364,7 +364,7 @@ namespace BluePrintEditor.Designer.Others
 			Logger.DebugF("GridLines Thickness Changed => [{0}]", GridLinesThickness);			
 		}
 		
-		private async void UpdateGridZIndex()
+		private void UpdateGridZIndex()
 		{
 			if(this.GridBorder!=null)
 				Panel.SetZIndex(this.GridBorder, GridZIndex);

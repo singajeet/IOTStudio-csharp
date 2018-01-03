@@ -19,7 +19,7 @@ namespace BluePrintEditor.Designer.ToolBox.Items
 		{
 			this.Name = "FeatureToolBoxItem";
 			this.ToolTitle = "Feature";
-			//this.IconKind = MahApps.Metro.IconPacks.PackIconModernKind.PuzzleRound;
+			this.IconKind = MahApps.Metro.IconPacks.PackIconModernKind.PuzzleRound;
 			this.Category = "Elements";
 			this.Description = "Add a feature";
 		}

@@ -18,8 +18,8 @@
 					            BorderThickness="2"
 					            SnapsToDevicePixels="True"/>
 							<StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
-								<!--<icons:PackIconModern x:Name="PackIcon" Height="48" Width="48" Kind="{Binding IconKind}"/>
-								<Image x:Name="ImageIcon" Height="48" Width="48" Source="{Binding IconUri}" Visibility="Collapsed" />-->
+								<icons:PackIconModern x:Name="PackIcon" Height="32" Width="32" Kind="{Binding IconKind}"/>
+								<Image x:Name="ImageIcon" Height="32" Width="32" Source="{Binding IconUri}" Visibility="Collapsed" />
 								<TextBlock Text="{Binding ToolTitle}" TextAlignment="Center" TextWrapping="Wrap"/>
 							</StackPanel>
 						</Grid>

@@ -19,7 +19,7 @@ namespace BluePrintEditor.Designer.ToolBox.Items
 		{
 			this.Name = "GridToolBoxItem";
 			this.ToolTitle = "Grid";
-			//this.IconKind = MahApps.Metro.IconPacks.PackIconModernKind.Grid;
+			this.IconKind = MahApps.Metro.IconPacks.PackIconModernKind.Grid;
 			this.Category = "Elements";
 			this.Description = "Add a Grid";
 		}

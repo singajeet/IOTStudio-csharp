@@ -58,47 +58,76 @@ namespace BluePrintEditor.Designer.ToolBox
 		static void OnIconUriChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
 			ToolBoxItemControl ctrl = (ToolBoxItemControl)d;
+			
+			ctrl.Logger.MethodCalled();
+			ctrl.Logger.PropertyValue("IconUri", ctrl.IconUri);
+			ctrl.Logger.PropertyValue("IconKind", ctrl.IconKind);
+			
 			if (!string.IsNullOrEmpty(ctrl.IconUri)) {
-//				PackIconModern packIcon = (PackIconModern)ctrl.FindName("PackIcon");
-//				if(packIcon != null)
-//					packIcon.Visibility = Visibility.Collapsed;
-//				
-//				Image icon = (Image)ctrl.FindName("ImageIcon");
-//				if(icon != null)
-//					icon.Visibility = Visibility.Visible;
+				ctrl.Logger.Debug("IconUri contains value; PackIcon will be collapsed & ImageIcon will be shown");
+				
+				PackIconModern packIcon = (PackIconModern)ctrl.FindName("PackIcon");
+				if (packIcon != null) {					
+					packIcon.Visibility = Visibility.Collapsed;
+					ctrl.Logger.Debug("PackIcon collapsed");
+				}
+				
+				Image icon = (Image)ctrl.FindName("ImageIcon");
+				if (icon != null) {
+					icon.Visibility = Visibility.Visible;
+					ctrl.Logger.Debug("ImageIcon shown");
+				}
 			} else {
-//				PackIconModern packIcon = (PackIconModern)ctrl.FindName("PackIcon");
-//				if(packIcon != null)
-//					packIcon.Visibility = Visibility.Visible;
-//				
-//				Image icon = (Image)ctrl.FindName("ImageIcon");
-//				if(icon != null)
-//					icon.Visibility = Visibility.Collapsed;
+				ctrl.Logger.Debug("IconUri is empty; ImageIcon will be collapsed & PackIcon will be shown");
+				
+				PackIconModern packIcon = (PackIconModern)ctrl.FindName("PackIcon");
+				if (packIcon != null) {
+					packIcon.Visibility = Visibility.Visible;
+					ctrl.Logger.Debug("PackIcon shown");
+				}
+				
+				Image icon = (Image)ctrl.FindName("ImageIcon");
+				if (icon != null) {
+					icon.Visibility = Visibility.Collapsed;
+					ctrl.Logger.Debug("ImageIcon collapsed");
+				}
 			}
 		}
 		
-//		public static readonly DependencyProperty IconKindProperty =
-//			DependencyProperty.Register("IconKind", typeof(PackIconModernKind), typeof(ToolBoxControl),
-//			                            new FrameworkPropertyMetadata(new PropertyChangedCallback(OnIconKindChanged)));
-//		
-//		public PackIconModernKind IconKind {
-//			get { return (PackIconModernKind)GetValue(IconKindProperty); }
-//			set { SetValue(IconKindProperty, value); }
-//		}
-//
-//		static void OnIconKindChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-//		{
-//			ToolBoxItemControl ctrl = (ToolBoxItemControl)d;
-//			if (string.IsNullOrEmpty(ctrl.IconUri) && ctrl.IconKind != null) {
-//				PackIconModern packIcon = (PackIconModern)ctrl.FindName("PackIcon");
-//				if(packIcon != null)
-//					packIcon.Visibility = Visibility.Visible;
-//				
-//				Image icon = (Image)ctrl.FindName("ImageIcon");
-//				if(icon != null)
-//					icon.Visibility = Visibility.Collapsed;
-//			}
-//		}
+		public static readonly DependencyProperty IconKindProperty =
+			DependencyProperty.Register("IconKind", typeof(PackIconModernKind), typeof(ToolBoxControl),
+			                            new FrameworkPropertyMetadata(new PropertyChangedCallback(OnIconKindChanged)));
+		
+		public PackIconModernKind IconKind {
+			get { return (PackIconModernKind)GetValue(IconKindProperty); }
+			set { SetValue(IconKindProperty, value); }
+		}
+
+		static void OnIconKindChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			ToolBoxItemControl ctrl = (ToolBoxItemControl)d;
+			ctrl.Logger.MethodCalled();
+			ctrl.Logger.PropertyValue("IconUri", ctrl.IconUri);
+			ctrl.Logger.PropertyValue("IconKind", ctrl.IconKind);
+			
+			if (string.IsNullOrEmpty(ctrl.IconUri) && ctrl.IconKind != null) {
+				ctrl.Logger.Debug("IconUri is empty & IconKind is not null");
+				
+				PackIconModern packIcon = (PackIconModern)ctrl.FindName("PackIcon");
+				if (packIcon != null) {
+					packIcon.Visibility = Visibility.Visible;
+					ctrl.Logger.Debug("PackIcon shown");
+				}
+				
+				Image icon = (Image)ctrl.FindName("ImageIcon");
+				if (icon != null) {
+					icon.Visibility = Visibility.Collapsed;
+					ctrl.Logger.Debug("ImageIcon shown");
+				}
+			} else {
+				ctrl.Logger.Debug("Either IconUri is not null or IconKind is null");
+			}
+		}
 		
 		public ToolBoxItemControl()
 		{

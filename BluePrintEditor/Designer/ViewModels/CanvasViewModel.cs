@@ -89,20 +89,6 @@ namespace BluePrintEditor.Designer.Options
 					this.ToolBoxSections.Add(sectionObject);
 				}
 			}
-			
-			//Handle case with Empty or Null categories
-			var emptyCategoryItems = items.Where(i => (i.Category == null || i.Category.Equals(string.Empty))).ToList();
-			//Remove BaseToolBoxItem entry from the list
-			emptyCategoryItems.RemoveAll(i => i.Name.Equals("BaseToolBoxItem"));
-			
-			if (emptyCategoryItems.Count > 0) {
-				var emptySection = new ToolBoxSection();
-				emptySection.SectionName = "<Blank>";
-				foreach (IToolItem item in emptyCategoryItems) {
-					emptySection.ToolBoxItems.Add(item);					
-				}
-				ToolBoxSections.Add(emptySection);
-			}
 		}
 		
 		ToolBoxSections toolBoxSections;
