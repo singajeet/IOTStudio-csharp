@@ -102,6 +102,8 @@
       <SubType>Code</SubType>
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Designer\Canvas\Actions\MoveThumb.cs" />
+    <Compile Include="Designer\Canvas\Actions\ResizeThumb.cs" />
     <Compile Include="Designer\Canvas\CanvasControl.xaml.cs">
       <DependentUpon>CanvasControl.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -217,9 +219,9 @@
     <None Include="Resources\WindowsIcons-license.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Designer\Canvas\Actions" />
     <Folder Include="Designer\Commands" />
     <Folder Include="Designer\Canvas" />
-    <Folder Include="Designer\CanvasItems" />
     <Folder Include="Designer\ToolBox\Interfaces" />
     <Folder Include="Designer\ToolBox\Items" />
     <Folder Include="Designer\ViewModels" />

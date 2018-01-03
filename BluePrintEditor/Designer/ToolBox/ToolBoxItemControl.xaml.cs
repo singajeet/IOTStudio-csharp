@@ -9,6 +9,7 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using BluePrintEditor.Utilities;
@@ -23,6 +24,7 @@ namespace BluePrintEditor.Designer.ToolBox
 	public partial class ToolBoxItemControl : UserControl
 	{
 		ILog Logger = Log.Get(typeof(ToolBoxItemControl));
+		private Point? dragStartPoint = null;
 		
 		public event EventHandler SelectionChanged;	
 		
@@ -35,6 +37,42 @@ namespace BluePrintEditor.Designer.ToolBox
 		public Guid Id {
 			get { return (Guid)GetValue(IdProperty); }
 			set { SetValue(IdProperty, value); }
+		}
+		
+		public static readonly DependencyProperty ItemIdProperty =
+			DependencyProperty.Register("ItemId", typeof(Guid), typeof(ToolBoxItemControl),
+			                            new FrameworkPropertyMetadata());
+		
+		public Guid ItemId {
+			get { return (Guid)GetValue(ItemIdProperty); }
+			set { SetValue(ItemIdProperty, value); }
+		}
+		
+		public static readonly DependencyProperty NameProperty =
+			DependencyProperty.Register("Name", typeof(string), typeof(ToolBoxItemControl),
+			                            new FrameworkPropertyMetadata());
+		
+		public string Name {
+			get { return (string)GetValue(NameProperty); }
+			set { SetValue(NameProperty, value); }
+		}
+		
+		public static readonly DependencyProperty ToolTitleProperty =
+			DependencyProperty.Register("ToolTitle", typeof(string), typeof(ToolBoxItemControl),
+			                            new FrameworkPropertyMetadata());
+		
+		public string ToolTitle {
+			get { return (string)GetValue(ToolTitleProperty); }
+			set { SetValue(ToolTitleProperty, value); }
+		}
+		
+		public static readonly DependencyProperty ToolCommandTypeProperty =
+			DependencyProperty.Register("ToolCommandType", typeof(Type), typeof(ToolBoxItemControl),
+			                            new FrameworkPropertyMetadata());
+		
+		public Type ToolCommandType {
+			get { return (Type)GetValue(ToolCommandTypeProperty); }
+			set { SetValue(ToolCommandTypeProperty, value); }
 		}
 		
 		public static readonly DependencyProperty IsSelectedProperty =
@@ -135,14 +173,61 @@ namespace BluePrintEditor.Designer.ToolBox
 			
 			InitializeComponent();
 			
-			this.Id = Guid.NewGuid();
+			this.ItemId = Guid.NewGuid();
+			
+			UpdateBindings();
 			
 			ToolBoxHelper.Instance.RegisterItem(this);
 			
 			MouseDown += ToolBoxItemControl_MouseDown;
 			MouseUp += ToolBoxItemControl_MouseUp;
+			PreviewMouseDown+= ToolBoxItemControl_PreviewMouseDown;
+			MouseMove += ToolBoxItemControl_MouseMove;
 		}
 
+		void UpdateBindings()
+		{
+			Binding idBinding = new Binding("Id");
+			this.SetBinding(IdProperty, idBinding);
+			Binding iconUriBinding = new Binding("IconUri");
+			this.SetBinding(IconUriProperty, iconUriBinding);
+			Binding iconKindBinding = new Binding("IconKind");
+			this.SetBinding(IconKindProperty, iconKindBinding);
+			Binding nameBinding = new Binding("Name");
+			this.SetBinding(NameProperty, nameBinding);
+			Binding toolTitleBinding = new Binding("ToolTitle");
+			this.SetBinding(ToolTitleProperty, toolTitleBinding);
+			Binding toolCommandTypeBinding = new Binding("ToolCommandType");
+			this.SetBinding(ToolCommandTypeProperty, toolCommandTypeBinding);
+		}
+		
+		void ToolBoxItemControl_MouseMove(object sender, MouseEventArgs e)
+		{
+			if (e.LeftButton != MouseButtonState.Pressed) {
+				this.dragStartPoint = null;
+			}
+			
+			if (this.dragStartPoint.HasValue) {
+			
+				Point position = e.GetPosition(this);
+				if ((SystemParameters.MinimumHorizontalDragDistance <= Math.Abs((double)(position.X - this.dragStartPoint.Value.X))) ||
+				   (SystemParameters.MinimumVerticalDragDistance <=
+				   Math.Abs((double)(position.Y - this.dragStartPoint.Value.Y)))) {
+					
+					DataObject dataObject = new DataObject("ITEM", "");
+					if (dataObject != null) {
+						DragDrop.DoDragDrop(this, dataObject, DragDropEffects.Copy);
+					}
+				}
+				e.Handled = true;
+			}
+		}
+		
+		void ToolBoxItemControl_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+		{
+			this.dragStartPoint = new Point?(e.GetPosition(this));
+		}
+		
 		void ToolBoxItemControl_MouseDown(object sender, MouseButtonEventArgs e)
 		{
 			Logger.MethodCalled();
@@ -170,7 +255,7 @@ namespace BluePrintEditor.Designer.ToolBox
 		
 		public override string ToString()
 		{
-			return string.Format("[ToolBoxItemControl Id={0}, IsSelected={1}]", Id, IsSelected);
+			return string.Format("[ToolBoxItemControl Id={0}, IsSelected={1}]", ItemId, IsSelected);
 		}
 
 	}

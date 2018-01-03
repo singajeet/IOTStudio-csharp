@@ -48,11 +48,11 @@ namespace BluePrintEditor.Designer.ToolBox
 		
 		public void RegisterItem(ToolBoxItemControl item)
 		{
-			if (!ToolBoxItems.ContainsKey(item.Id)) {
-				ToolBoxItems.Add(item.Id, item);
-				Logger.DebugF("ToolBoxItem with Guid [{0}] registered", item.Id);
+			if (!ToolBoxItems.ContainsKey(item.ItemId)) {
+				ToolBoxItems.Add(item.ItemId, item);
+				Logger.DebugF("ToolBoxItem with Guid [{0}] registered", item.ItemId);
 			} else {
-				Logger.WarnF("ToolBoxItem with Guid [{0}] is already registered", item.Id);
+				Logger.WarnF("ToolBoxItem with Guid [{0}] is already registered", item.ItemId);
 			}
 		}
 		
@@ -60,9 +60,9 @@ namespace BluePrintEditor.Designer.ToolBox
 		{
 			Logger.MethodCalled();
 			
-			if (!ToolBoxItems.ContainsKey(item.Id)) {
-				Logger.ErrorF("Invalid item provided for selection => [{0}]. Item is not registered yet", item.Id);
-				throw new ArgumentException(string.Format("Invalid item provided for selection => [{0}]. Item is not registered yet", item.Id));
+			if (!ToolBoxItems.ContainsKey(item.ItemId)) {
+				Logger.ErrorF("Invalid item provided for selection => [{0}]. Item is not registered yet", item.ItemId);
+				throw new ArgumentException(string.Format("Invalid item provided for selection => [{0}]. Item is not registered yet", item.ItemId));
 			}
 			
 			if (SelectedItem == null) {
@@ -71,7 +71,7 @@ namespace BluePrintEditor.Designer.ToolBox
 				
 				Logger.SelectionChanged(item);
 				
-			} else if (SelectedItem.Id == item.Id) {
+			} else if (SelectedItem.ItemId == item.ItemId) {
 				Logger.DebugF("Item [{0}, Type={1}] is already selected", item, item.GetType().Name);
 				return;
 			} else {
@@ -90,7 +90,7 @@ namespace BluePrintEditor.Designer.ToolBox
 						.Where(i => i.Value.IsSelected == true)
 						.ToList().FirstOrDefault().Value;
 			
-			Logger.DebugF("Returning SelectItem => {0}", item.Id);
+			Logger.DebugF("Returning SelectItem => {0}", item.ItemId);
 			return item;
 		}
 		
